@@ -156,8 +156,9 @@ def fetch_story
       {
         id: "door",
         heading: "The Door",
-        description: "The door is not locked. It yields to your touch. 
-                      The door swings ajar by a few inches, revealing a tall slice of shadow. 
+        description: "The door is not locked. It yields to your touch, 
+                      swinging ajar by a few inches, 
+                      revealing a tall slice of shadow. 
                       Reach for the handle. Quickly now, pull it closed. 
                       This door is not for opening. 
                       It is for holding back the nameless dread, 
