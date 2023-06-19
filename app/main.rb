@@ -183,8 +183,8 @@ def fetch_story
                       You turn and walk towards the house.",
         choices: [
           {
-            choice: "Your fate is sealed. This story is over. Begin again.",
-            destination: "threshold"
+            choice: "Return to the door.",
+            destination: "door"
           }
         ]
       }
