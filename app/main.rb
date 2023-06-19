@@ -45,10 +45,6 @@ def calc args
   
 end
 
-def continue_story args
-
-end
-
 def follow args, option
   args.state.current_node = args.state.story.content.select { |k| k[:id] == option.action}[0]
   args.state.current_description = carve args, args.state.current_node[:description]
@@ -109,7 +105,7 @@ def render args
     args.state.options = []
 
     args.state.current_choices.each do |o|
-      opt_text = "-> #{o.choice}"
+      opt_text = " -> #{o.choice}"
       box = args.gtk.calcstringbox opt_text
       y_position -= line_height * 1.5
 
