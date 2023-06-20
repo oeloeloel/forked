@@ -54,20 +54,26 @@ def follow args, option
 end
 
 def carve args, txt
-  words = txt.split ' '
+
+  paragraphs = txt.split "\n"
   lines = []
-  line = ''
+  
+  paragraphs.each do |para|
+    words = para.split ' '
+    line = ''
 
-  until words.empty?
-    new_line = line + words[0]
+    until words.empty?
+      new_line = line + words[0]
 
-    if calcstringwidth(new_line) > args.state.display_w
-      lines << line
-      line = new_line = ''
+      if calcstringwidth(new_line) > args.state.display_w
+        lines << line
+        line = new_line = ''
+      end
+
+      line += words.delete_at(0) + ' '
+      lines << line if words.size.zero?
     end
-
-    line += words.delete_at(0) + ' '
-    lines << line if words.size.zero?
+    lines << "" if line.size.zero?
   end
 
   lines
@@ -139,9 +145,11 @@ def fetch_story
       {
         id: "threshold",
         heading: "The Threshold",
-        description: "You have never been here before. You have never seen this house. 
-        But you feel like it knows you. Why did you come here? You heard the call.
-        You heard the call and you answered.",
+        description: "You have never been here before. You have never seen this house. But you feel like it knows you.
+
+Why did you come here? You heard the call.
+
+You heard the call and you answered.",
         choices: [
           {
             choice: "Enter.",
@@ -156,14 +164,11 @@ def fetch_story
       {
         id: "door",
         heading: "The Door",
-        description: "The door is not locked. It yields to your touch, 
-                      swinging ajar by a few inches, 
-                      revealing a tall slice of shadow. 
-                      Reach for the handle. Quickly now, pull it closed. 
-                      This door is not for opening. 
-                      It is for holding back the nameless dread, 
-                      to keep it from leaking out into the world of light and warmth and life. 
-                      The world you leave behind you now, as you cross over the threshold.",
+        description: "The door is not locked. It yields to your touch, swinging ajar by a few inches, revealing a tall slice of shadow.
+
+Reach for the handle. Quickly now, pull it closed. This door is not for opening. It is for holding back the cold dread, to keep it from leaking out into the world of light and warmth and life.
+
+That is the world you leave behind you now, as you cross over the threshold.",
         choices: [
           {
             choice: "Your fate is sealed. This story is over. Begin again.",
@@ -174,14 +179,11 @@ def fetch_story
       {
         id: "driveway",
         heading: "The Driveway",
-        description: "Your heels spin, 
-                      your shoes tap down the stone steps and crunch over the sparse gravel
-                      of the overgrown driveway. 
-                      What might be stealing up behind you? 
-                      A stripe of terror rises up your neck and you bolt forwards, 
-                      towards the gate, where you stop. 
-                      The voice. There is the voice again. It calls you. 
-                      You turn and walk towards the house.",
+        description: "Your heels spin, your shoes tap down the stone steps and crunch over the sparse gravel of the overgrown driveway. 
+
+What might be stealing up behind you? A stripe of terror rises up your neck and you bolt forwards, towards the gate, where you stop. 
+
+The voice. There is the voice again. It calls you. You turn and walk towards the house.",
         choices: [
           {
             choice: "Return to the door.",
