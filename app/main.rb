@@ -15,18 +15,13 @@ def defaults args
   args.state.display_w = 600
   args.state.line_height = 26
 
-  args.state.story = fetch_story
+  args.state.story = fetch_story args
 
   args.state.root_node = args.state.story[:content][0]
   args.state.title = args.state.story[:title]
 
-  args.state.current_node = args.state.root_node
-  args.state.current_heading = args.state.current_node[:heading] || ""
-  args.state.current_description = carve args, args.state.current_node[:description]
+  follow args
 
-  args.state.current_choices = args.state.current_node[:choices]
-  args.state.options = []
-  
   args.state.defaults_set = true
 end
 
@@ -45,21 +40,25 @@ def calc args
   
 end
 
-def follow args, option
-  args.state.current_node = args.state.story.content.select { |k| k[:id] == option.action}[0]
-  args.state.current_description = carve args, args.state.current_node[:description]
+def follow args, option = nil
+  args.state.current_node =
+    if option
+      args.state.story.content.select { |k| k[:id] == option.action }[0]
+    else
+      args.state.root_node
+    end
+  args.state.current_description = args.state.current_node[:description]
   args.state.current_choices = args.state.current_node[:choices] || []
   args.state.options = []
-  args.state.current_heading = args.state.current_node[:heading] || ""
+  args.state.current_heading = args.state.current_node[:heading] || ''
 end
 
-def carve args, txt
-
-  paragraphs = txt.split "\n"
+def carve args, paragraphs
+  paragraphs = paragraphs.split("\n")
   lines = []
-  
+
   paragraphs.each do |para|
-    words = para.split ' '
+    words = para.split(' ')
     line = ''
 
     until words.empty?
@@ -71,9 +70,13 @@ def carve args, txt
       end
 
       line += words.delete_at(0) + ' '
-      lines << line if words.size.zero?
+
+      if words.size.zero?
+        lines << line
+      end
     end
-    lines << "" if line.size.zero?
+
+    lines << '' if line.size.zero?
   end
 
   lines
@@ -111,7 +114,7 @@ def render args
     args.state.options = []
 
     args.state.current_choices.each do |o|
-      opt_text = " -> #{o.choice}"
+      opt_text = " > #{o.choice}"
       box = args.gtk.calcstringbox opt_text
       y_position -= line_height * 1.5
 
@@ -138,60 +141,70 @@ def render args
   args.outputs.labels << labels
 end
 
-def fetch_story
+def fetch_story args
+  story_file = args.gtk.read_file "app/story.md"
+  parse_story args, story_file
+end
+
+def parse_story args, story_file
+  story = { content: [] }
+  current_heading_number = -1
+  temp_description = ''
+  flush_description = false
+
+  story_file.each_line.with_index do |l, i|
+    l.strip!
+    if l.start_with? '##'
+      # found heading
+      current_heading_number += 1
+      story[:content] << new_heading(l)
+      flush_description = true
+    elsif l.start_with? '#'
+      # found title
+      story[:title] = l[2..l.length]
+    elsif l.start_with? '['
+      # found link
+      story[:content][current_heading_number][:choices] << new_choice(l)
+    else
+      # found description
+      temp_description += "\n" + l
+    end
+
+    if flush_description || i == story_file.size - 1 # eof
+      story[:content][current_heading_number - 1][:description] = new_description(args, temp_description)
+      temp_description = ''
+      flush_description = false
+    end
+  end
+  story[:content][current_heading_number][:description] = new_description(args, temp_description)
+
+  story
+end
+
+def new_heading line
+  line.delete_prefix!('##').strip!
+  heading, id = line.split('{')
+  heading.strip!
+  id.chomp!('}').strip!
   {
-    title: "The Threshold",
-    content: [
-      {
-        id: "threshold",
-        heading: "The Threshold",
-        description: "You have never been here before. You have never seen this house. But you feel like it knows you.
+    heading: heading,
+    id: id,
+    choices: [],
+    description: []
+  }
+end
 
-Why did you come here? You heard the call.
+def new_description args, para
+  carve args, para.strip
+end
 
-You heard the call and you answered.",
-        choices: [
-          {
-            choice: "Enter.",
-            destination: "door"
-          },
-          {
-            choice: "Flee!",
-            destination: "driveway"
-          }
-        ],
-      },
-      {
-        id: "door",
-        heading: "The Door",
-        description: "The door is not locked. It yields to your touch, swinging ajar by a few inches, revealing a tall slice of shadow.
-
-Reach for the handle. Quickly now, pull it closed. This door is not for opening. It is for holding back the cold dread, to keep it from leaking out into the world of light and warmth and life.
-
-That is the world you leave behind you now, as you cross over the threshold.",
-        choices: [
-          {
-            choice: "Your fate is sealed. This story is over. Begin again.",
-            destination: "threshold"
-          }
-        ]
-      },
-      {
-        id: "driveway",
-        heading: "The Driveway",
-        description: "Your heels spin, your shoes tap down the stone steps and crunch over the sparse gravel of the overgrown driveway. 
-
-What might be stealing up behind you? A stripe of terror rises up your neck and you bolt forwards, towards the gate, where you stop. 
-
-The voice. There is the voice again. It calls you. You turn and walk towards the house.",
-        choices: [
-          {
-            choice: "Return to the door.",
-            destination: "door"
-          }
-        ]
-      }
-    ]
+def new_choice line
+  choice, destination = line.strip.split(']')
+  choice.delete!('[').strip!
+  destination.delete!('()').strip!
+  {
+    choice: choice,
+    destination: destination
   }
 end
 
