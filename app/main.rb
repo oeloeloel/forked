@@ -1,5 +1,8 @@
 $gtk.reset
 
+# STORY_FILE = 'app/story.md'
+STORY_FILE = 'app/peas.md'
+
 def tick args
   defaults args unless args.state.defaults_set
   input args
@@ -16,10 +19,10 @@ def defaults args
   args.state.line_height = 26
 
   args.state.story = fetch_story args
-
+ 
   args.state.root_node = args.state.story[:content][0]
   args.state.title = args.state.story[:title]
-
+  
   follow args
 
   args.state.defaults_set = true
@@ -91,9 +94,12 @@ def render args
   y_position = args.state.display_margin_y.from_top
 
   labels = []
+
+  heading = args.state.current_heading
+  heading = args.state.title if heading.empty?
   labels << {
     x: 20, y: y_position,
-    text: args.state.current_heading,
+    text: heading,
     vertical_alignment_enum: 2
   }
 
@@ -142,8 +148,8 @@ def render args
 end
 
 def fetch_story args
-  story_file = args.gtk.read_file "app/story.md"
-  parse_story args, story_file
+  story_text = args.gtk.read_file STORY_FILE
+  parse_story args, story_text
 end
 
 def parse_story args, story_file
@@ -157,7 +163,7 @@ def parse_story args, story_file
     if l.start_with? '##'
       # found heading
       current_heading_number += 1
-      story[:content] << new_heading(l)
+      story[:content] << new_heading(args, l)
       flush_description = true
     elsif l.start_with? '#'
       # found title
@@ -176,15 +182,17 @@ def parse_story args, story_file
       flush_description = false
     end
   end
+
   story[:content][current_heading_number][:description] = new_description(args, temp_description)
 
   story
 end
 
-def new_heading line
+def new_heading args, line
   line.delete_prefix!('##').strip!
   heading, id = line.split('{')
   heading.strip!
+
   id.chomp!('}').strip!
   {
     heading: heading,
