@@ -1,5 +1,27 @@
 # TODO LIST
 
+## Syntax
+- Title: `# title`
+- Heading line: `heading text #{chunk_id}`
+- Trigger & target `[Trigger text](#chunk_id)`
+  - or: `[Trigger text]{```code```}
+- Code block: ```code``` (also multiline)
+- Block `<...>`
+- Conditional text: `<```code```> inserts result into text unless code is `true` or `falsey`.
+  - <```code``` text displayed if true */* text displayed if falsey>.
+
+
+
+- [] Change name from `target`
+- [] Backslash escapes characters: #
+- [] Choose a new identifier for inline code.
+- [] What's a good identifier for the alternate block
+
+
+## Errors
+- [] Navigating to a chunk_id that does not exist
+- [] Exception if there is more than one title
+
 ## Things that need to be figured out or might be game changers
 - [ ] Include more advanced code blocks. Maybe surround code in backticks?
 - [ ] Think deeply about situations that allow freer use of code execution. For example, 
