@@ -17,6 +17,8 @@ module Forked
     end
 
     def defaults
+      state.display = DISPLAY.dup
+
       args.state.forked.story = fetch_story args
 
       args.state.forked.defaults_set = true
@@ -37,7 +39,7 @@ module Forked
 
         if option.intersect_rect? args.inputs.mouse.point
           follow args, option if args.inputs.mouse.up
-          option.merge!(DISPLAY[:button_rollover_color])
+          option.merge!(state.display[:button_rollover_color])
         end
       end
     end
@@ -70,7 +72,7 @@ module Forked
       end
     end
 
-    def carve args, paragraphs
+    def carve args, paragraphs, font, line_width
       paragraphs = paragraphs.split("\n")
       lines = []
 
@@ -81,7 +83,7 @@ module Forked
         until words.empty?
           new_line = line + words[0]
 
-          if args.gtk.calcstringbox(new_line, 0, DISPLAY[:font_regular])[0] > DISPLAY[:w]
+          if args.gtk.calcstringbox(new_line, 0, font)[0] > line_width
             lines << line
             line = new_line = ''
           end
@@ -100,8 +102,10 @@ module Forked
     end
 
     def present args
-      line_height = DISPLAY[:line_height]
-      y_position = DISPLAY[:margin_left].from_top - line_height
+      outputs.background_color = state.display[:background_color]
+
+      line_height = state.display[:line_height]
+      y_position = state.display[:margin_top].from_top - line_height
 
       args.state.forked.options = []
       options = []
@@ -111,26 +115,29 @@ module Forked
       heading = args.state.forked.current_heading
       heading = args.state.forked.title if heading.empty?
 
-      heading_w = args.gtk.calcstringbox(heading, 0, DISPLAY[:heading_font])[0]
+      heading_w = args.gtk.calcstringbox(heading, 0, state.display[:heading_font])[0]
       primitives << {
-        x: 20, y: y_position,
+        x: state.display[:margin_left], y: y_position,
         text: heading,
         vertical_alignment_enum: 0,
-        font: DISPLAY[:heading_font],
-        size_enum: DISPLAY[:heading_font_size_enum],
-        **DISPLAY[:heading_text_color]
+        font: state.display[:heading_font],
+        size_enum: state.display[:heading_font_size_enum],
+        **state.display[:heading_text_color]
       }.label!
 
       primitives << {
-        x: DISPLAY[:margin_left],
-        y: y_position - 2,
-        w: DISPLAY[:w],
-        h: 2
+        x: state.display[:margin_left],
+        y: y_position - line_height * 0.5,
+        w: state.display[:w],
+        h: 2,
+        **state.display[:horizontal_line_color]
       }.solid!
 
       if args.state.forked.current_lines.empty?
         raise "No lines available. Cannot map it."
       end
+
+      y_position -= line_height
 
       args.state.forked.current_lines.each do |line|
 
@@ -144,61 +151,83 @@ module Forked
             next
         end
 
-        y_position -= line_height
+        # y_position -= line_height * 0.2 # state.display[:paragraph_spacing]
 
         text = line.text
-        text_color = DISPLAY[:text_color]
-        box_color = DISPLAY[:button_color]
+        text_color = state.display[:text_color]
+        box_color = state.display[:button_color]
         unless line.trigger.empty?
 
-          y_position -= DISPLAY[:line_height] * 0.5
+          y_position -= state.display[:line_height] * 0.5
           opt_text = line.trigger
-          box = args.gtk.calcstringbox opt_text, 0, DISPLAY[:button_font]
+          box = args.gtk.calcstringbox opt_text, 0, state.display[:button_font]
 
-          box_color = DISPLAY[:button_disabled_color] if line.action.empty?
+          box_color = state.display[:button_disabled_color] if line.action.empty?
           args.state.forked.options << {
-            x: DISPLAY[:margin_left],
-            y: y_position - DISPLAY[:button_padding_bottom] - line_height - 1,
-            w: box[0] + DISPLAY[:button_padding_left] * 2,
-            h: line_height + DISPLAY[:button_padding_bottom] * 2,
+            x: state.display[:margin_left],
+            y: y_position - state.display[:button_padding_bottom] - line_height,
+            w: box[0] + state.display[:button_padding_left] * 2,
+            h: line_height + state.display[:button_padding_bottom] * 2,
             **box_color,
             action: line.action
           }.solid!
 
           text = opt_text
-          text_color = DISPLAY[:button_text_color] unless line.action.empty?
+          text_color = state.display[:button_text_color] unless line.action.empty?
           
           primitives << {
-            x: DISPLAY[:margin_left] + DISPLAY[:button_padding_left],
+            x: state.display[:margin_left] + state.display[:button_padding_left],
             y: y_position - line_height,
             text: text,
             vertical_alignment_enum: 0,
             **text_color,
-            font: DISPLAY[:button_font]
+            font: state.display[:button_font]
           }.label!
+
+          y_position -= line_height
         else
-          font = DISPLAY[:font_regular]
+          font = state.display[:font_regular]
           indent = 0
+          display_w = state.display[:w]
+          
           if line.text_format == 'code'
-            font = DISPLAY[:code_font]
+            font = state.display[:code_font]
             indent = 20
-            text_color = DISPLAY[:code_text_color]
+            display_w -= indent * 2
+            text_color = state.display[:code_text_color]
+
+            # primitives << {
+            #   x: state.display[:margin_left],
+            #   y: y_position - line_height * (2 * state.display[:paragraph_spacing]),
+            #   y: y_position - line_height - (line_height * state.display[:paragraph_spacing]) * 2,
+            #   w: state.display[:w],
+            #   h: line_height + line_height * (2 * state.display[:paragraph_spacing]),
+            #   **state.display[:code_background_color],
+            #   a: 100,
+            # }.solid!
+
+            # y_position -= line_height * state.display[:paragraph_spacing]
+
           end
 
-          primitives << (carve args, line.text).map do |item|
+          primitives << (carve args, line.text, font, display_w).map do |item|
             {
-              x: DISPLAY[:margin_left] + indent,
-              y: y_position -= DISPLAY[:line_height],
+              x: state.display[:margin_left] + indent,
+              y: y_position -= state.display[:line_height],
               text: item,
               vertical_alignment_enum: 0,
               **text_color,
               font: font
             }.label!
           end
+
+          # y_position -= line_height * state.display[:paragraph_spacing] if line.text_format == 'code'
+          y_position -= line_height * state.display[:paragraph_spacing]
         end
       end
 
       args.outputs.primitives << [args.state.forked.options, primitives]
+ 
     end
 
     def fetch_story args
@@ -270,7 +299,9 @@ module Forked
 
         lines = []
         chunk_actions = []
+        
         chunk_lines.each do |line_text|
+          
           line = LINE_TEMPLATE.dup
           process_line line, line_text
         
@@ -373,24 +404,81 @@ module Forked
     end
 
     def process_line line, line_text
+
+      state.forked.parser_context ||= []
+      state.forked.code_string ||= ''
+
       line_text.strip!
 
-      # if the line starts with a %, don't process it. Display it as it is.
+      ### IGNORE FORMATTING IN LINE
+      # if the line starts with a %, don't process it. 
+      # Display it as it is. MUST be at start of line.
       if line_text.start_with? '%'
         line_text.delete_prefix!('%').strip!
         line[:text] = line_text
         return line
       end
 
-      # check to see if the line is code formatted
-      # if it is, process it as text and back out.
+      ### BLOCKS GROUP TOGETHER TEXT AND ALLOW CONDITIONAL TEXT
+      # Multiple lines/paragraphs can be wrapped in <> symbols to
+      # Be treated as a unit.
+      # Blocked lines (even if on a single line) can be used to 
+      # Conditionally display text.
+      
+      
+
+      ### FORMATTED AS CODE (not executable)
+      # Non executable code can be displayed by
+      # wrapping it with three tildes ~ on either side.
+  
       if line_text.start_with?('~~~') && line_text.end_with?('~~~')
         line_text = pull_out '~~~', '~~~', line_text
         line[:text] = line_text[1]
         line[:text_format] = "code"
         return line
       end
-        
+
+      # ### CHUNK ACTIONS, single line.
+      # if line_text.start_with?('```') && line_text.end_with?('```')
+      #   line_text = pull_out('```', '```', line_text)[1]
+      #   evaluate args, line_text
+      #   return
+      # end
+
+      ### CHUNK ACTIONS multiline.
+      # Actions surrounded with three backticks on either
+      # side will be evaluated one time, whenever the chunk
+      # is displayed.
+      
+      
+      if line_text.start_with?('```')
+        # opening backticks found, remove them
+        line_text.delete_prefix!('```').strip!
+        # code block is open
+        state.forked.parser_context |= [:code]
+        # empty the code string
+        state.forked.code_string = ''
+      end
+      
+      if state.forked.parser_context.include? :code
+        # code block is open
+        if line_text.end_with?('```')
+          # found the closing backticks, delete them
+          line_text.delete_suffix!('```').strip!
+          # code block is closed
+          state.forked.parser_context.delete(:code)
+          # add this line to the code string
+          state.forked.code_string += line_text
+          # update the story with the code string
+          line[:action] = state.forked.code_string
+        else
+          # code block is open and not ending
+          # add the line to the code string
+          state.forked.code_string += line_text + "\n"
+        end
+        return
+      end
+      
       # first process and remove conditions and lonely code calls
       # money = line_text.include? 'money_add'
       if line_text.start_with? '<```'
@@ -414,7 +502,13 @@ module Forked
       if line_text.include? ']('
         # this line is an option
         line_text, line[:trigger] = pull_out('[', ']', line_text)
-        line_text, line[:action] = pull_out('(', ')', line_text)
+        # line_text, line[:action] = pull_out('(', ')', line_text)
+        line_text, action = pull_out('(', ')', line_text)
+        if action.start_with?('```') && action.end_with?('```')
+            nothing, action = pull_out('```', '```', action)
+        end
+        line[:action] = action
+      
       else
         # this line is plain old text
         line[:text] = line_text
@@ -488,9 +582,9 @@ module Forked
       chunk.each_line do |line|
         line.strip!
         if line.start_with? '<'
-          # found the start of a multiline
+          # "found the start of a multiline"
           if line.include? '>'
-            # this is a single line condition
+            # "this is a single line condition"
             lines << line
           else
             # this is a multi line condtion
@@ -504,11 +598,11 @@ module Forked
           if line.include? '>'
             # the multiline ends here
             in_condition = false
-            line = "<(#{method_name}) " + line
+            line = "<```#{method_name}``` " + line
             lines << line
           else
             # the middle of a multiline
-            line = "<(#{method_name}) #{line}>"
+            line = "<```#{method_name}``` #{line}>"
             lines << line
           end
         else
@@ -520,7 +614,7 @@ module Forked
     end
 
     def find_method_name str
-      read_between('(', ')', str)
+      read_between('```', '```', str)
     end
 
     #####################
@@ -546,7 +640,10 @@ module Forked
 
     def read_between left, right, str
       left_index = str.index(left)
-      right_index = str.index(right)
+
+      if left_index
+        right_index = str.index(right, left.length)
+      end
       
       return unless left_index && right_index
 
@@ -567,6 +664,10 @@ module Forked
       str.sub!(left + right, '')
       
       [str.strip, pulled.strip]
+    end
+
+    def change_theme theme
+      state.display = DISPLAY.dup.merge(theme)
     end
   end
 end
