@@ -22,8 +22,6 @@ Forked is intended to be simple to pick up and easy for non-programmers to work 
 [Actions](#actions)
 [Using Actions with Triggers](#actions_with_triggers)
 [Blocks](#blocks)
-[Show or Hide Blocks]()
-[Show or Hide Triggers]()
 [Alternative Text in Blocks]()
 [Embedding Ruby Code]()
 [Examples](#examples)
@@ -64,7 +62,7 @@ That's all for titles.
 [Contents](#contents)
 
 ## Story Chunks {#story_chunk}
-In Forked, stories are divided into chunks. Chunks are sections of the story that contain related text and which the player can navigate between.
+In Forked, stories are divided into chunks. Chunks are sections of the story that the player can navigate between.
 
 Everything you see on the screen now is one chunk of the story. When you click on one of the buttons below, you'll be taken to another chunk.
 
@@ -85,7 +83,7 @@ The first line of a chunk is the heading line. It's what lets Forked know that a
 
 The heading line begins with two hash symbols (##). 
 
-Next is the text of the heading (The Start of My Story). This text will be shown at the top of the screen when the chunk is displayed. This text is optional and if it is left out, Forked will show the story title instead.
+Next is the text of the heading (The Day of My Birth). It will be shown at the top of the screen when the chunk is displayed. This text is optional and if it is left out, Forked will show the story title instead.
 
 Finally, there is the Chunk ID {#start}. This identifies the chunk so we can navigate to it from other chunks. It begins with a hash (#) followed by a unique name, without any spaces. It is wrapped in curly brackets {}.
 
@@ -163,11 +161,11 @@ Blocks group things together. Blocks begin and end with angle brackets < >, and 
 
 In the example below, a block is used to combine an action with a paragraph to create text that only appears under certain conditions:
 
-~~~<```inventory_has? "dinghy"``` Leaving the submariners taking turns to fill the inflatable dingly with air, I leaped from the boat in pursuit of my quarry.>~~~
+~~~<```inventory_has? "dinghy"``` Leaving the submariners taking turns to fill the inflatable dinghy with air, I leaped from the boat in pursuit of my quarry.>~~~
 
-The paragraph above will only be shown if the player has acquired an infflatable dinghy along the way.
+The paragraph above will only be shown if the player has acquired an inflatable dinghy along the way.
 
-Blocks can wrap around multiple paragraphs as well as triggers.
+Blocks can contain multiple paragraphs as well as triggers.
 
 ~~~<```inventory_has? "pistol"``` I touched the barrel of my dueling pistol to the tip of the archduke's nose.~~~
 
