@@ -159,16 +159,23 @@ In this case, the item "dueling pistol" will be removed from the player's invent
 [Contents](#contents)
 
 ## Blocks {#blocks}
-Blocks group things together. In the example below, a block is used to combine an action with a paragraph to create text that only appears under certain conditions:
+Blocks group things together. Blocks begin and end with angle brackets < >, and they can contain paragraphs (one or more) or triggers, or both. 
 
-~~~<```inventory_has? "Maharajah Diamond"``` Luckily, I still had the Maharajah Diamond hidden in a place where nobody would have dared to look.>~~~
+In the example below, a block is used to combine an action with a paragraph to create text that only appears under certain conditions:
 
-If the player has found the Maharajah Diamond, the paragraph will be displayed. If not, the paragraph will be hidden.
+~~~<```inventory_has? "dinghy"``` Leaving the submariners taking turns to fill the inflatable dingly with air, I leaped from the boat in pursuit of my quarry.>~~~
+
+The paragraph above will only be shown if the player has acquired an infflatable dinghy along the way.
 
 Blocks can wrap around multiple paragraphs as well as triggers.
 
-~~~<```inventory_has? ">
+~~~<```inventory_has? "pistol"``` I touched the barrel of my dueling pistol to the tip of the archduke's nose.~~~
 
+~~~[Pull the trigger and become a fugitive crocodile](#on_the_run)>~~~
+
+
+[Prev: Using Actions with Triggers](#actions_with_triggers)
+[Contents](#contents)
 
 ## Examples {#examples}
 
