@@ -125,7 +125,7 @@ If the trigger action is empty, Forked will display a non-clickable button like 
 [I do not wish to discuss it any further]()
 
 [Next: Actions](#actions)
-[Prev: Adding Text](#Adding Text)
+[Prev: Adding Text](#adding_text)
 [Contents](#contents)
 
 ## Actions {#actions}
@@ -183,8 +183,8 @@ Blocks can contain multiple paragraphs as well as triggers.
 
 Change the presentation of the story.
 
-[Dark Mode](```change_theme DARK_MODE ```)
-[Light Mode](```change_theme LIGHT_MODE ```)
+[Turn the lights off](```change_theme DARK_MODE ```)
+[Turn the lights on](```change_theme LIGHT_MODE ```)
 
 %
 %
