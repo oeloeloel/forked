@@ -1,5 +1,4 @@
 # Forked
-
 Forked is a prototype system for scripting interactive narratives in DragonRuby.
 
 Forked uses a simplified markup similar to markdown. It is intended to be simple to use, easy to learn for people without programming experience and to make it easier to focus on writing.
@@ -39,3 +38,4 @@ The default project is the user manual.
 |`inventory_add item` | adds an item to the player's inventory |
 |`inventory_del item` | removes an item from the player's inventory |
 |`inventory_has? item` | `true` if the item is in the player's inventory or `false` if not |
+=======
