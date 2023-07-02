@@ -39,4 +39,4 @@ The default project is the user manual.
 |`inventory_del item` | removes an item from the player's inventory |
 |`inventory_has? item` | `true` if the item is in the player's inventory or `false` if not |
 |`inventory_clear` | clear all items from the inventory |
-=======
+
