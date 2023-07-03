@@ -2,6 +2,10 @@ $gtk.reset
 
 class Display
   attr_gtk
+  
+  def initialize theme = nil
+    @theme = theme
+  end
 
   def tick
     defaults unless data.defaults_set
@@ -10,20 +14,22 @@ class Display
   end
 
   def data
-    args.state.forked.display ||= state.new_entity('forked display')
+    args.state.forked.display ||= args.state.new_entity('forked display')
   end
 
   def defaults
     data.config = config_defaults
-    apply_theme(DARK_MODE)
     data.options = []
     data.defaults_set = true
-    update(some_text)
+    apply_theme(@theme)
+    # update(some_text)
   end
 
   def apply_theme(theme)
     data.config = config_defaults
-    DARK_MODE.each do |k, v|
+    return unless theme
+
+    theme.each do |k, v|
       data.config[k].merge!(v)
     end
   end
@@ -37,7 +43,7 @@ class Display
       if option.intersect_rect?(inputs.mouse.point)
         option.merge!(data.config.rollover_button_box)
 
-        eval option.action if args.inputs.mouse.up
+        $story.follow(args, option) if args.inputs.mouse.up
       else
         option.merge!(data.config.button_box)
       end
@@ -45,7 +51,9 @@ class Display
   end
 
   def update content
+
     data.primitives = []
+    data.options = []
 
     display = data.config.display
     paragraph = data.config.paragraph
@@ -57,6 +65,7 @@ class Display
     blockquote_box = data.config.blockquote_box
     button = data.config.button
     button_box = data.config.button_box
+    inactive_button_box = data.config.inactive_button_box
 
     data.primitives << {
       x: display.margin_left,
@@ -207,26 +216,45 @@ class Display
         y_pos -= blockquote.size_px * blockquote.spacing_after
 
       when :button
+
         button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
         text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
         button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom) 
-        option = {
-          x: display.margin_left,
-          y: y_pos - button_h,
-          w: text_w + button_box.padding_left + button_box.padding_right,
-          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
-          action: item.action
-        }.sprite!(button_box)
-        y_pos -= button_box.padding_top
 
-        data.primitives << option
-        data.options << option unless data.options.include? option
+
+        if !item.action.empty?
+
+          option = {
+            x: display.margin_left,
+            y: y_pos - button_h,
+            w: text_w + button_box.padding_left + button_box.padding_right,
+            h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+            action: item.action
+          }.sprite!(button_box)
+          y_pos -= button_box.padding_top
+
+          data.primitives << option
+          data.options << option unless data.options.include? option
+        else
+          data.primitives << {
+            x: display.margin_left,
+            y: y_pos - button_h,
+            w: text_w + button_box.padding_left + button_box.padding_right,
+            h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+
+          }.sprite!(inactive_button_box)
+
+          y_pos -= button_box.padding_top
+        end
 
         data.primitives << {
           x: display.margin_left + button_box.padding_left,
           y: y_pos,
           text: item.text,
         }.label!(button)
+
+        y_pos -= button.size_px + button_box.padding_bottom
+        y_pos -= button.size_px * button.spacing_after
       end
     end
   end
@@ -247,7 +275,6 @@ class Display
 
   # make a one line label in the specified style
   def make_paragraph_label text, font_style
-
     {
        text: text,
     }.label!(data.display.paragraph).merge!(font_style)
@@ -286,76 +313,76 @@ class Display
   end
 end
 
-def some_text
-  [
-    {
-      type: :heading,
-      text: "Non eram nescius",
-    },
-    {
-      type: :rule
-    },
-    {
-      type: :paragraph,
-      atoms: [
-        {
-          text: "Non eram nescius 😀,",
-          styles: []
-        },
-        {
-          text: "Brute, cum, quae summis ingeniis",
-          styles: [:italic]
-        }, 
-        {
-          text: " exquisitaque doctrina philosophi Graeco sermone tractavissent, ea",
-          styles: []
-        },
-        {
-          text: " Latinis litteris mandaremus,",
-          styles: [:bold]
-        },
-        {
-          text: "fore ut hic noster labor in varias reprehensiones incurreret. nam quibusdam, et iis quidem non admodum indoctis,",
-          styles: []
-        },
-        {
-          text: " totum hoc displicet",
-          styles: [:bold, :italic]
-        },   
-        {
-          text: " philosophari. quidam autem non tam id",
-          styles: []
-        }, 
-        {
-          text: " reprehendunt",
-          styles: [:code]
-        },
-        {
-          text: "si remissius agatur sed.",
-          styles: []
-        },  
-       ]
-    },
-    {
-    type: :code_block,
-    text: "def default_code_block # defaults for code block text
-  {
-    font: 'fonts/Roboto_Mono/static/RobotoMono-Regular.ttf',
-    size_px: 22,
-    line_spacing: 0.85,
-    r: 76, g: 51, b: 127,
-    spacing_after: 0.7, # 1.0 is line_height.
-  }
-end",
-    },
-    {
-    type: :blockquote,
-    text: "Contra quos omnis dicendum breviter existimo. Quamquam philosophiae quidem vituperatoribus satis responsum est eo libro, quo a nobis philosophia defensa et collaudata est, cum esset accusata et vituperata ab Hortensio.",
-    },
-    {
-    type: :button,
-    text: "Contra quos omnis",
-    action: "putz 'This button was clicked'"
-    },
-  ]
-end
+
+# reference for display format
+#   [
+#     {
+#       type: :heading,
+#       text: "Non eram nescius",
+#     },
+#     {
+#       type: :rule
+#     },
+#     {
+#       type: :paragraph,
+#       atoms: [
+#         {
+#           text: "Non eram nescius,",
+#           styles: []
+#         },
+#         {
+#           text: "Brute, cum, quae summis ingeniis",
+#           styles: [:italic]
+#         }, 
+#         {
+#           text: " exquisitaque doctrina philosophi Graeco sermone tractavissent, ea",
+#           styles: []
+#         },
+#         {
+#           text: " Latinis litteris mandaremus,",
+#           styles: [:bold]
+#         },
+#         {
+#           text: "fore ut hic noster labor in varias reprehensiones incurreret. nam quibusdam, et iis quidem non admodum indoctis,",
+#           styles: []
+#         },
+#         {
+#           text: " totum hoc displicet",
+#           styles: [:bold, :italic]
+#         },   
+#         {
+#           text: " philosophari. quidam autem non tam id",
+#           styles: []
+#         }, 
+#         {
+#           text: " reprehendunt",
+#           styles: [:code]
+#         },
+#         {
+#           text: "si remissius agatur sed.",
+#           styles: []
+#         },  
+#        ]
+#     },
+#     {
+#     type: :code_block,
+#     text: "def default_code_block # defaults for code block text
+#   {
+#     font: 'fonts/Roboto_Mono/static/RobotoMono-Regular.ttf',
+#     size_px: 22,
+#     line_spacing: 0.85,
+#     r: 76, g: 51, b: 127,
+#     spacing_after: 0.7, # 1.0 is line_height.
+#   }
+# end",
+#     },
+#     {
+#     type: :blockquote,
+#     text: "Contra quos omnis dicendum breviter existimo. Quamquam philosophiae quidem vituperatoribus satis responsum est eo libro, quo a nobis philosophia defensa et collaudata est, cum esset accusata et vituperata ab Hortensio.",
+#     },
+#     {
+#     type: :button,
+#     text: "Contra quos omnis",
+#     action: "putz 'This button was clicked'"
+#     },
+#   ]
