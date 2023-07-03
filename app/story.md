@@ -123,7 +123,7 @@ As well as navigating to other chunks, trigger actions can run Ruby code. We'll 
 
 If the trigger action is empty, Forked will display a non-clickable button like the next button below:
 [I do not wish to discuss it any further]()
-
+%
 [Next: Actions](#actions)
 [Prev: Adding Text](#adding_text)
 [Contents](#contents)
@@ -137,7 +137,7 @@ The action `inventory_add` is a custom command that is included with Forked. If 
 
 Actions are wrapped with three tick ` symbols on each side. 
 
-When you drop an action into a chunk like this, it will run once, each time this chunk is loaded.
+When you drop an action into a chunk like this, it will run once, each time this chunk is loaded. That's the perfect time to add or remove an item to your inventory.
 
 [Next: Using Actions with Triggers](#actions_with_triggers)
 [Prev: Triggers](#triggers)
@@ -186,10 +186,8 @@ Change the presentation of the story.
 [Turn the lights off](```change_theme DARK_MODE ```)
 [Turn the lights on](```change_theme nil ```)
 [Turn the lights fun and stupid](```change_theme KIFASS_THEME```)
-
 %
-%
-You can edit the display theme to change the colour scheme. Open the file `tick.rb` and you can see the configuration options near the top.
+You can edit the display theme to change the colour scheme. Open the file `app/themes/dark-mode-theme.rb` and you can see how it's done.
 
 [Back to Examples](#examples)
 [Back to Contents](#contents)
