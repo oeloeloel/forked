@@ -24,12 +24,12 @@ module Forked
         # begins with title so we can have a nice error message if the user doesn't provide one.
 
         # Elements understood by the parser:
-        # :blockquote (physical div)
+        # [x] :blockquote (physical div)
         # :block (logical div)
         # :action (single line code)
         # :action_block (multiline code)
         # :code (present with code format < 1 line)
-        # :code_block (present code style, multiline)
+        # [x] :code_block (present code style, multiline)
         # :bold (inline strong style)
         # :italic (inline emphasis style)
         # :bold italic (inline strong + emphasis style)
@@ -72,6 +72,8 @@ module Forked
           # putz "# #{line_no}: #{line.strip}" 
 
           ### PRESERVE LINE (^%)
+          result = parse_preserve_line(line, context)
+
           unless context.intersection([:title, :block, :long_code]).any?
             if (result = parse_preserver(line))
               story[:chunks][-1][:content] << {
@@ -271,6 +273,32 @@ Please add a heading line after the title and before any other content. Example:
         end
         putz "Context: #{context}"
         story
+      end
+
+      # check to see if it is safe to proceed based on
+      # context rules
+      def context_safe?(context, prohibited, mandatory)
+        array_intersect?(context, prohibited) &&
+        array_intersect?(context, mandatory)
+      end
+
+      def array_intersect?(arr1, arr2)
+        arr1.intersection(arr2).any?
+      end
+
+      def parse_preserve_line(line, context)
+        # forbidden contexts
+        prohibited_contexts = [:title]
+        mandatory_contexts = [:title]
+
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        return unless line.strip.start_with?('%') 
+
+
+          line.delete_prefix('%')
+
+        return line
       end
 
       def parse_paragraph(line)

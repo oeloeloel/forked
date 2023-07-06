@@ -219,25 +219,12 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
-## Test {#test}
-
-Text
-
-<^^^true^^^ display this text>
-<^^^false^^^ do not display this text>
-
-<^^^true^^^ display this multiline
-text>
-
-<^^^true^^^[display this button]()>
-<^^^false^^^[don't display this button]()>
-
 ## The TODO list (next release) {#todo}
 For the next release
 > TODO: Blocks
 > TODO: Parser: Make code work again
 > TODO: Parser: Inline styles (bold, italic, etc.).
-> TODO: Parser/Display: Single newline ignored. Double newline is a paragraph. Single newline\ is line feed.
+
 
 Exceptions:
 
@@ -254,9 +241,35 @@ For after the next release
 > TODO: Forked: Fall through if button has no link
 > TODO: Forked: Refresh from file but retain current location in story IF POSSIBLE.
 > TODO: ? Title screen if any content between Title and Root Chunk
+> TODO: Parser/Display: Single newline ignored. Double newline is a paragraph. Single newline\ is line feed.
+
+[New Newline Behaviour](#test_newline_change)
 
 Something to think about: People want a title screen and they can have one. If the title is followed by a header, the header is the first chunk. If the title has content between, that's the first chunk. The title screen layout will be different (header lower down), everything centered?
 
 Exceptions:
 [TODO List](#todo)
 [Welcome](#welcome)
+
+## New Newline Behaviour {#test_newline_change}
+For paragraphs, one newline is ignored (added to previous with one space). Two newlines marks a new paragraph.
+
+For every other element, is it case by case?
+
+Code blocks should be as-is, without any fucking around. Need to think through every element (current and planned behaviour) and decide if the newline changes should be applied at the element level or before it gets there (code blocks excluded.)
+
+This is the first paragraph.
+This text should be displayed on the first paragraph.
+
+This is the second paragraph.\
+This text should be displayed in the second paragraph but with a newline before it. The backslash should not be displayed.
+
+[This link](#test) should be on the same line as 
+[This other link](#test).
+
+[This link](#test) should be separated by a newline from\
+[this other link](#test).
+
+[This link](#test) should be separated by a paragraph from
+
+[This link](#test).
