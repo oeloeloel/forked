@@ -29,6 +29,10 @@ end
 def inventory_clear
   $args.state.forked_inventory = []
 end
+
+def jump label
+  $story.follow $args, { action: label }
+end
   
 def tick args
   args.outputs.background_color = [51, 51, 51]
@@ -36,7 +40,26 @@ def tick args
   $story = Forked::Story.new
   $story.args = args
   $story.tick
+
+  if args.inputs.keyboard.key_held.nine
+    args.outputs.labels  << { 
+      x: 640, y: 360, 
+      text: "#{args.gtk.current_framerate_render} fps render, #{args.gtk.current_framerate_calc} fps simulation", 
+      size_enum: 20, 
+      r: 255, g: 0, b: 0, alignment_enum: 1, vertical_alignment_enum: 1 }
+    args.outputs.primitives << args.gtk.current_framerate_primitives
+  end
+
+  jump "#todo" if args.inputs.keyboard.key_held.one && args.inputs.keyboard.key_held.zero
+  jump "#test" if args.inputs.keyboard.key_held.two && args.inputs.keyboard.key_held.zero
+
+
+  reset if args.inputs.keyboard.key_down.backspace
 end
 
-$gtk.reset
-$story = nil
+def reset
+  $story = nil
+  $args.gtk.reset
+end
+
+reset

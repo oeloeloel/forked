@@ -9,6 +9,7 @@ def config_defaults
     code_block_box: default_code_block_box,
     blockquote: default_blockquote,
     blockquote_box: default_blockquote_box,
+    blockquote_image: default_blockquote_image,
     button: default_button,
     button_box: default_button_box,
     rollover_button: default_rollover_button,
@@ -40,7 +41,8 @@ def default_paragraph
     size_enum: 0,
     line_spacing: 1, # 1.0 is the height of the font.
     r: 51, g: 51, b: 51,
-    spacing_after: 0.7, 
+    spacing_after: 0.7,
+    spacing_between: 0.7
   }
 end
 
@@ -53,7 +55,8 @@ def default_box
     margin_left: 0,
     margin_right: 0,
     margin_top: 0,
-    margin_bottom: 0
+    margin_bottom: 0,
+    min_height: 0,
   }
 end
 
@@ -89,27 +92,37 @@ def default_code_block_box # defaults for code block background
     r: 192, g: 188, b: 204,
     padding_left: 20,
     padding_right: 20,
-    padding_top: 10,
-    padding_bottom: 10,
+    padding_top: 7,
+    padding_bottom: 12,
   )
 end
 
 def default_blockquote # defaults for block quote text
   default_paragraph.merge(
     r: 102, g: 76, b: 51,
+    spacing_between: 0
   )
 end
 
-def default_blockquote_box # defualts for blockquote background
+def default_blockquote_box # defaults for blockquote background
   default_box.merge(
     r: 204, g: 192, b: 168,
-    padding_left: 100,
+    padding_left: 20,
     padding_right: 20,
     padding_top: 10,
     padding_bottom: 10,
     margin_left: 20,
     margin_right: 20,
+    min_height: 0 # default_blockquote_image[:height] + 20
   )
+end
+
+def default_blockquote_image
+  {
+    width: 80,
+    height: 80,
+    path: 'sprites/haunted.png'
+  }
 end
 
 def default_button
@@ -117,7 +130,8 @@ def default_button
     size_enum: 0,
     font: 'fonts/Roboto/Roboto-Bold.ttf',
     r: 204, g: 204, b: 204,
-    spacing_after: 0.25
+    spacing_after: 0.7,
+    spacing_between: 0.25
   )
 end
 

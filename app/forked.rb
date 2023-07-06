@@ -13,6 +13,7 @@ module Forked
       @display.tick
 
       present args 
+    return
       input args
 
       if args.inputs.keyboard.key_down.backspace ||
@@ -22,11 +23,12 @@ module Forked
     end
 
     def defaults
-      args.state.forked.story = fetch_story args
-
-      args.state.forked.defaults_set = true
+      story_text = fetch_story args
+      # putz story_text
+      args.state.forked.story = Parser.parse(story_text)
 
       args.state.forked.root_chunk = args.state.forked.story[:chunks][0]
+      putz args.state.forked.story[:chunks][0]
       args.state.forked.title = args.state.forked.story[:title]
 
       follow args
@@ -55,20 +57,23 @@ module Forked
 
       args.state.forked.current_chunk =
         if option
+          # putz "not root chunk"
           args.state.forked.story.chunks.select { |k| k[:id] == option.action }[0]
         else
+          # putz "root chunk"
           args.state.forked.root_chunk
         end
-
-      args.state.forked.current_lines = args.state.forked.current_chunk[:lines]
+# putz args.state.forked.root_chunk
+      # args.state.forked.current_lines = args.state.forked.current_chunk[:lines]
+      args.state.forked.current_lines = args.state.forked.current_chunk[:content]
       args.state.forked.options = []
       args.state.forked.current_heading = args.state.forked.current_chunk[:heading] || ''
-
-      unless args.state.forked.current_chunk.actions.empty?
-        args.state.forked.current_chunk.actions.each do |a|
-          evaluate args, a
-        end
-      end
+# putz args.state.forked.story
+      # unless args.state.forked.current_chunk.actions.empty?
+      #   args.state.forked.current_chunk.actions.each do |a|
+      #     evaluate args, a
+      #   end
+      # end
 
       if args.state.forked.current_lines.empty?
         raise "No lines were found in the current story chunk. Current chunk is #{args.state.current_chunk}" 
@@ -76,41 +81,44 @@ module Forked
     end
 
     def present args
-      display_format = []
+      # display_format = []
 
-      display_format << {
-        type: :heading,
-        text: args.state.forked.current_heading 
-      }
+      # display_format << {
+      #   type: :heading,
+      #   text: args.state.forked.current_heading 
+      # }
 
-      display_format << {
-        type: :rule
-      }
+      # display_format << {
+      #   type: :rule
+      # }
 
-      args.state.forked.current_lines.each do |line|
-        
-        # button contains trigger, action
-        if line.trigger.filled?
-          display_format << {
-            type: :button,
-            text: line.trigger,
-            action: line.action
-          }
-        else
-          # this is text
-          display_format << {
-            type: :paragraph,
-            atoms: [
-              {
-                text: line.text,
-                styles: []
-              }
-            ]
-          }
-        end
-      end
+      # args.state.forked.current_lines.each do |line|
+        # putz line
+# if false
+#         # button contains trigger, action
+      #   if line.trigger.filled?
+      #     display_format << {
+      #       type: :button,
+      #       text: line.trigger,
+      #       action: line.action
+      #     }
+      #   else
+      #     # this is text
+      #     display_format << {
+      #       type: :paragraph,
+      #       atoms: [
+      #         {
+      #           text: line.text,
+      #           styles: []
+      #         }
+      #       ]
+      #     }
+      #   end
+      # end
 
-      @display.update(display_format) 
+      # putz args.state.story.
+      # @display.update(display_format)
+      @display.update(args.state.forked.current_lines) 
     end
 
     def fetch_story args
@@ -119,6 +127,8 @@ module Forked
       if story_text.nil?
         raise "The file #{STORY_FILE} failed to load. Please check it."
       end
+
+      return story_text
 
       parse_story args, story_text
     end
