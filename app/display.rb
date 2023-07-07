@@ -52,7 +52,6 @@ module Forked
     end
 
     def update content
-
       data.primitives = []
       data.options = []
 
@@ -69,18 +68,22 @@ module Forked
       button_box = data.config.button_box
       inactive_button_box = data.config.inactive_button_box
 
-      data.primitives << {
-        x: display.margin_left,
-        y: display.margin_bottom,
-        w: display.w,
-        h: display.h,
-        **display.background_color
-      }.sprite!
+      # data.primitives << {
+      #   x: display.margin_left,
+      #   y: display.margin_bottom,
+      #   w: display.w,
+      #   h: display.h,
+      #   **display.background_color
+      # }.sprite!
       y_pos = display.margin_top.from_top
 
       content.each_with_index do |item, i|
         case item[:type]
         when :heading
+          text = item.text
+          # text = $story.title if item.text.empty?
+          
+
           heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
 
           data.primitives << {
@@ -147,7 +150,6 @@ module Forked
         when :code_block
 
           text_array = wrap_lines_code_block(item.text, code_block.font, code_block.size_enum, display.w - (code_block_box.padding_left + code_block_box.padding_right))
-          # putz text_array
           code_block.size_px = args.gtk.calcstringbox('X', code_block.size_enum, code_block.font)[1]
 
           box_height = text_array.count * (code_block.size_px * code_block.line_spacing) +
@@ -195,8 +197,6 @@ module Forked
           box_height = text_array.count * (blockquote.size_px * blockquote.line_spacing) +
                       blockquote_box.padding_top + blockquote_box.padding_bottom
           box_height = box_height.greater(blockquote_box[:min_height])
-
-
 
           data.primitives << {
             x: display.margin_left,
