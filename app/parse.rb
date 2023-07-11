@@ -16,18 +16,13 @@ module Forked
             ]
         }
 
-        content = [] # where we stick the results
-        actions = [] # bucket for any code found along the way
-        chunk_actions = [] # track any actions that operate at the chunk level
-
         context = [:title] # if we're in the middle of something
-        # begins with title so we can have a nice error message if the user doesn't provide one.
 
         # Elements understood by the parser:
         # [x] :blockquote (physical div)
         # :block (logical div)
-        # CANCELLED :action (single line code)
-        # :action_block (multiline code)
+        # :action (single line code)
+        # [x] :action_block (multiline code)
         # :code (present with code format < 1 line)
         # [x] :code_block (present code style, multiline)
         # :bold (inline strong style)
@@ -41,54 +36,17 @@ module Forked
         # :paragraph (plain text)
         # [x] preserved line (do not parse line and present as text)
         # [x] comments (stripped and ignored)
-
-        # Example output format
-        # {
-        #   title: title,
-        #   chunks: {
-        #     chunk_id: "#id"
-        #     content: [
-        #       {
-        #         type: :heading,
-        #         text: "heading"
-        #       },
-        #       {
-        #         type: rule,
-        #       },
-        #       {
-        #         type: paragraph,
-        #         atoms: [
-        #           {
-        #             text: "abc",
-        #             styles: []
-        #           }
-        #         ]
-        #       }
-        #     ]
-        #   }
-        # }
         
         story_file.each_line.with_index do |line, line_no|
-          # putz "# #{line_no}: #{line.strip}" 
+          # "#{line_no}: #{line.strip}" 
 
           ### PRESERVE LINE (^%) and stop parsing it
-          result = parse_preserve_line(line, context)
-          if result
-            story[:chunks][-1][:content] << {
-                type: :paragraph,
-                atoms: [
-                  {
-                    text: result,
-                    styles: []
-                  }
-                ]
-              }
-              next
-          end
+          result = parse_preserve_line(line, context, story, line_no)
+          next if result
 
           ### STRIP COMMENT (//) and continue parsing line
-            result = parse_comment(line, context)
-            line = result if result
+          result = parse_comment(line, context)
+          line = result if result
 
           ### TITLE
           result = parse_title(line, context)
@@ -104,7 +62,6 @@ module Forked
           result = parse_blockquote(line)
       
           if result && !result.empty?
-            context << :blockquote
             story[:chunks][-1][:content] << {
               type: :blockquote,
               text: result,
@@ -113,39 +70,34 @@ module Forked
           end
 
           ### HEADING LINE
-
-          # unless (context.intersection([:code_block])).any?
-            result = parse_heading(line, context)
-            if result
-              heading, chunk_id = result
-              putz result
-              if heading.empty? && chunk_id.nil?
-                raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
-              end
-
-              heading = story.title if heading.empty?
-
-              story[:chunks] << {
-                id: chunk_id,
-                actions: [],
-                content: [
-                  {
-                    type: :heading,
-                    text: heading
-                  },
-                  {
-                    # TODO: This should be in the story file
-                    # or the display and not here.
-                    type: :rule
-                  }
-                ]
-              }
-
-              # context.delete(:heading)
-
-              next
+          result = parse_heading(line, context)
+          if result
+            heading, chunk_id = result
+            if heading.empty? && chunk_id.nil?
+              raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
             end
-          # end
+
+            heading = story.title if heading.empty?
+
+            story[:chunks] << {
+              id: chunk_id,
+              actions: [],
+              conditions: [],
+              content: [
+                {
+                  type: :heading,
+                  text: heading
+                },
+                {
+                  # TODO: This should be in the story file
+                  # or the display and not here.
+                  type: :rule
+                }
+              ]
+            }
+
+            next
+          end
 
           if context.include?(:heading) && !line.strip.empty?
             # we were looking for a heading and didn't find one
@@ -160,17 +112,12 @@ Please add a heading line after the title and before any other content. Example:
 
           ### TRIGGER
 
-          unless (context & [:code_block]).any?
-             if (result = parse_trigger(line))
-              text, action = result
-              story[:chunks][-1][:content] << {
-                type: :button,
-                text: text,
-                action: action || ''
-              }
-              next
-            end
-          end
+          result = parse_trigger(line, context, story, line_no)
+          next if result
+
+          ### CONDITION BLOCK
+          result = parse_condition_block(line, context, story, line_no)
+          next if result
 
           ### CODE BLOCK
           result = parse_code_block(line, context, story)
@@ -181,71 +128,14 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           # PARAGRAPH
-          unless context.intersection([:title]).any?
-            if (result = parse_paragraph(line))
-              unless result.empty?
-                story[:chunks][-1][:content] << {
-                  type: :paragraph,
-                  atoms: [
-                    text: result[0],
-                    styles: []
-                  ]
-                }#
-              end
-            end
-          end
+          result = parse_paragraph(line, context, story,  line_no)
 
-          line.each_char.with_index do |char, char_no|
-            # # "char #{char_no}: #{char}" if line_no == 0
-          end
-
-          # need to go character by character from start of line.
-          
-          # > at start of line
-          # context is blockquote
-          # unless context block
-          # unless context code
-          # unless any context?
-          # unless context format
-
-          # ` at start of line
-          # context is short code chunk action
-          # unless context is blockquote
-          # unless context is long code
-          # unless context is code format
-
-          # ``` at start of line
-          # context is long code chunk action
-          # unless context is blockquote
-          # unless context is short code
-          # unless contect code format
-
-          # <` at any point in line
-          # context is block
-          # context is short code
-          # unless context is blockquote
-          # unless context is short code
-          # unless context is long code
-          # unless context is short code format
-          # unless context is long code format
-
-
-        #   ### ACTIONS (` and ```)
-        #   result = parse_action(line)
-
-        #   ### BLOCK CONTEXT (< | >)
-        #   result = parse_block(line)
-        #   ### TITLE (^#)
-        #   result = parse_title(line)
-
-        #   if result && content[:title].nil?
-        #     content[:title] = result
-        #   end
-
-
+          # line.each_char.with_index do |char, char_no|
+            # parse inline elements
+          # end
 
         end
-        putz "Context: #{context}"
+
         story
       end
 
@@ -254,9 +144,6 @@ Please add a heading line after the title and before any other content. Example:
       def context_safe?(context, prohibited, mandatory)
         context_prohibited = array_intersect?(context, prohibited)
         context_mandatory = mandatory.empty? ||  array_intersect?(context, mandatory) 
-
-        # putz "context_prohibited #{context_prohibited}"
-        # putz "context_mandatory  #{context_mandatory}"
 
         context_mandatory && !context_prohibited
       end
@@ -268,20 +155,68 @@ Please add a heading line after the title and before any other content. Example:
 
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
-      def parse_preserve_line(line, context)
+      def parse_preserve_line(line, context, story, line_no)
         return unless line.strip.start_with?('%')
 
         prohibited_contexts = [:title]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
         
-        line.delete_prefix('%')
+        line.delete_prefix!('%')
+
+        story[:chunks][-1][:content] << {
+          type: :paragraph,
+          atoms: [
+            {
+              text: line,
+              styles: []
+            }
+          ]
+        }
+        true
       end
 
-      def parse_paragraph(line)
-        line.strip!
+      def parse_paragraph(line, context, story, line_no)
+        prohibited_contexts = [:title, :codeblock, :heading]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+        
+        # at this point, we've been through all the other possible
+        # elements so we know it's OK to process paragraphs now.
 
-        line.split('\n')
+        line.strip!
+        if line.empty?
+          if context.include?(:paragraph)
+            context.delete(:paragraph)
+          end
+        else
+          
+        # check to see if the paragraph context is closed
+        ## OR! the previous element is anything other than paragraph
+        ### (it may have changed and we don't want to append to some other element)
+        if  !context.include?(:paragraph) || story[:chunks][-1][:content][-1][:type] != :paragraph
+          context << (:paragraph)
+
+          story[:chunks][-1][:content] << {
+            type: :paragraph,
+            atoms: [
+              text: '',
+              condition: [],
+              styles: []
+            ]
+          }
+        end
+
+          cond =  story[:chunks][-1][:content][-1][:atoms][-1][:condition]
+          if cond && cond.class == String
+            story[:chunks][-1][:content][-1][:atoms] << {
+              text: line + ' ',
+              styles: [],
+            }
+          else
+            story[:chunks][-1][:content][-1][:atoms][-1][:text] << line + ' '
+          end
+        end
       end
 
       # strip comments from line (comments begin with //)
@@ -334,10 +269,14 @@ Please add a heading line after the title and before any other content. Example:
         end
       end
 
-      # Code blocks format code for display
-      # They begin with three ticks ``` on a blank line
-      # and end with three ticks on a blank line
+      # action blocks contain executable code 
+      # They begin with three carets ^^^ on a blank line
+      # and end with three carets on a blank line
       def parse_action_block(line, context, story)
+        prohibited_contexts = [:code_block, :trigger_action]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
         if line.include? '^^^'
           if context.include?(:action_block)
             context.delete(:action_block)
@@ -352,34 +291,40 @@ Please add a heading line after the title and before any other content. Example:
         end
       end
 
-      # def parse_action(line)
-      #   # actions are surrounded with ` ` for one line code
-      #   # or with ``` ``` for multiline code
+      # condition blocks allow for conditional text
+      # CURRENTLY
+      # They begin with a left angle bracket followed by 3 carets <^^^
+      # and end with 3 carets followed by a right angle bracket ^^^>
+      # The current functionality is to conditionally include text
+      # returned from the block as a string
+      def parse_condition_block(line, context, story, line_no)
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-      #   # if we meet an opening ``` with no closure in the same line,
-      #   # open a context and keep reading lines until the ``` appears.
+        if line.strip.end_with?('<^^^')
+          context << :condition_block
+          story[:chunks][-1][:conditions] << ''
+          return true
+        end
 
-      #   # if no ``` appears by the end of the chunk, terminate it or
-      #   # raise an error.
+        if line.strip.start_with?('^^^>')
+          context.delete(:condition_block)
+          if story[:chunks][-1][:content][-1].type == :paragraph
+            story[:chunks][-1][:content][-1][:atoms] << {
+                text: 'some default text',
+                styles: [],
+                condition: story[:chunks][-1][:conditions][-1]
+              }
+          end
+          return true
+        end
 
-      #   # DON'T catch it if:
-      #   # line starts with %
-      #   # escaped (\```)
-      #   # Inside a code formatted block (~~~)
 
-      #   if line.include?('```')
-      #     # # line
-      #   end
-
-      # end
-
-      def parse_block(line)
-        # blocks start with <
-        # blocks are divided with |
-        # blocks end with >
-        
-        # anything in these lines an any line between uses the same action
-        # so it has to be applied everywhere
+        if context.include?(:condition_block)
+          story[:chunks][-1][:conditions][-1] += line
+          return true
+        end
 
       end
 
@@ -400,7 +345,7 @@ Please add a title to the top of the Story File. Example:
 
 `# The Name of this Story`
 "
-          end
+        end
       end
 
       # The heading line starts a new chunk
@@ -427,19 +372,53 @@ Please add a title to the top of the Story File. Example:
         line
       end
 
-      def parse_trigger(line)
-        # triggers are in two parts
-        # [trigger_text](trigger_action)
-        # Triggers can have empty actions
-        # Triggers can have empty text
-        # Triggers can't have empty both
+      # triggers are represented as buttons that perform actions
+      # [Trigger Text](Trigger Action)
+      # Trigger action may be chunk id or an action block
+      def parse_trigger(line, context, story, line_no)
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        if line.strip.start_with?('[') && line.strip.end_with?(')') && line.include?('](')
-          line.strip!
-          line.delete_prefix!('[')
-          line.delete_suffix!(')')
-          line.strip!
-          line = line.split('](')
+        # identify trigger and catch text (keep parsing)
+        if line.strip.start_with?('[') && line.include?('](')
+          line = line.strip.delete_prefix!('[')
+          line.split(']', 2).then do |trigger, action|
+            trigger.strip!
+            action.strip!
+            story[:chunks][-1][:content] << {
+              type: :button,
+              text: trigger,
+              action: ''
+            }
+            
+            ### identify and catch chunk id action (return)
+            if action.end_with?(')')
+              action.delete_prefix!('(')
+              action.delete_suffix!(')')
+
+              if action.start_with?('#') || action.strip.empty?
+                story[:chunks][-1][:content][-1].action = action
+                return true
+              else
+                raise ("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
+              end
+
+            # identify action block and open context (keep parsing)
+            elsif action.end_with?('(^^^')
+              context << :trigger_action
+            end
+          end
+
+        # identfy action block close and close context, if open (return)
+        elsif line.strip.start_with?('^^^)') && context.include?(:trigger_action)
+          context.delete(:trigger_action)
+          return true
+
+        # if context is open, add line to trigger action (return)
+        elsif context.include?(:trigger_action) 
+          story[:chunks][-1][:content][-1].action += line
+          return true
         end
       end
 
@@ -449,21 +428,14 @@ Please add a title to the top of the Story File. Example:
         if left_index
           right_index = str.index(right, left.length)
         end
-        
         return unless left_index && right_index
-        
+
         pulled = str.slice!(left_index + left.size..right_index - 1)
         str.sub!(left + right, '')
-        
         [str.strip, pulled.strip]
       end
-
     end
-
-
   end
-
-  
 end
 
 $gtk.reset

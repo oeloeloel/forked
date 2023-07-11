@@ -1,10 +1,11 @@
-# STORY_FILE = 'app/story.md'
+STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
-STORY_FILE = 'app/tests.md'
+# STORY_FILE = 'app/tests.md'
+# STORY_FILE = 'app/todo.md'
 
-THEME = LIGHT_MODE
-# THEME = DARK_MODE
+# THEME = LIGHT_MODE
+THEME = DARK_MODE
 # THEME = KIFASS_THEME
 
 #################
@@ -43,6 +44,7 @@ def tick args
   $story.tick
 
   if args.inputs.keyboard.key_held.nine
+
     args.outputs.labels  << { 
       x: 640, y: 360, 
       text: "#{args.gtk.current_framerate_render} fps render, #{args.gtk.current_framerate_calc} fps simulation", 
@@ -50,11 +52,6 @@ def tick args
       r: 255, g: 0, b: 0, alignment_enum: 1, vertical_alignment_enum: 1 }
     args.outputs.primitives << args.gtk.current_framerate_primitives
   end
-
-  jump "#todo" if args.inputs.keyboard.key_held.one && args.inputs.keyboard.key_held.zero
-  jump "#test" if args.inputs.keyboard.key_held.two && args.inputs.keyboard.key_held.zero
-
-
   reset if args.inputs.keyboard.key_down.backspace
 end
 

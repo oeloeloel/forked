@@ -22,9 +22,7 @@ With Forked, you can learn how to write a simple interactive story in a few minu
 [Triggers](#triggers)
 [Actions](#actions)
 [Using Actions with Triggers](#actions_with_triggers)
-[Blocks](#blocks)
-[Alternative Text in Blocks]()
-[Embedding Ruby Code]()
+[Conditional Text](#blocks)
 [Examples](#examples)
 
 ## Getting Started {#getting_started}
@@ -100,7 +98,7 @@ The heading line begins with two hash symbols ##.
 
 Next is the text of the heading (My Birth). This will be shown at the top of the screen when the chunk is displayed. This text is optional and if it is left out, Forked will show the story title instead.
 
-Finally, there is the Chunk ID {#start}. This identifies the chunk so Forked knows how to find it. It begins with a hash # followed by a unique name, without any spaces. It is wrapped in curly brackets, also known as braces {}.
+Finally, there is the Chunk ID {#birth}. This identifies the chunk so Forked knows how to find it. It begins with a hash # followed by a unique name, without any spaces. It is wrapped in curly brackets, also known as braces {}.
 
 [Next: Adding Text](#adding_text)
 [Back: Story Chunks](#story_chunk)
@@ -113,7 +111,7 @@ Now that you have your heading line, you can start writing text underneath it.
 ```
 ## My Birth {#birth} 
 
-My story begins on the day of my birth, though I do not remember much of that momentous occasion.
+My story begins on the day of my birth, though I do not remember much of that occasion.
 
 My mother has never discussed it with me. Being a typical crocodile of the West African species, she is not much for conversation.
 ```
@@ -125,10 +123,10 @@ In Forked, you write text in paragraphs separated by a blank line.
 [Contents](#contents)
 
 ## Triggers {#triggers}
-To navigate between chunks, we can use Triggers.
+To allow the player to move from one chunk to another, we can use Triggers.
 
 ```
-[Learn more about my birth](#my_father)
+[Learn more about my birth](#crocodile_parenting)
 [Let's get to the adventures!](#crocodile_hunters)
 ```
 
@@ -151,12 +149,13 @@ If the trigger action is empty, Forked will display a non-clickable button like 
 Actions get things done. You can drop an action into a chunk like this:
 
 ```
-^^^inventory_add "pith helmet" ^^^
+^^^
+inventory_add "pith helmet"
+^^^
 ```
+Actions begin and end with three caret ^ symbols on the line above and another three carets on the line below. On the lines in-between, you can issue commands.
 
-The action `inventory_add` is a custom command that is included with Forked. If you're making an adventure game, the inventory will help you keep track of any items your player character posesses. In this case, we have added an attractive, yet sturdy, pith helmet to the player's inventory.
-
-Actions are wrapped with three tick ` symbols on each side. 
+In this case, we are telling Forked to add a sturdy, yet attractive, "pith helmet" to the player's inventory. Forked comes with some useful commands added, including the ability to store and retrieve items from an inventory. More about custom commands later.
 
 When you drop an action into a chunk like this, it will run once, each time this chunk is loaded. That's the perfect time to add or remove an item to your inventory.
 
@@ -168,35 +167,30 @@ When you drop an action into a chunk like this, it will run once, each time this
 Sometimes you will want a trigger to perform some kind of action instead of navigating to another chunk.
 
 ```
-Drop the weapon](^^^inventory_remove "dueling pistol"^^^)
+Drop the weapon](^^^
+inventory_remove "dueling pistol"
+^^^)
 ```
 
-You can combine an action with a trigger by replacing the chunk id with a command wrapped in backticks as in the example above.
+You can combine an action with a trigger by replacing the chunk id with a command wrapped in carets as in the example above. The carets must be on the line above and the line below the action.
 
 In this case, the item "dueling pistol" will be removed from the player's inventory when the button is clicked.
 
-[Next: Blocks](#blocks)
+[Next: Conditional Text](#conditions)
 [Back: Actions](#actions)
 [Contents](#contents)
 
-## Blocks {#blocks}
-Blocks group things together. Blocks begin and end with angle brackets < >, and they can contain paragraphs (one or more) or triggers, or both. 
-
-In the example below, a block is used to combine an action with a paragraph to create text that only appears under certain conditions:
-
+## Conditional Text {#blocks}
+Sometimes you may want to show, hide or change text depending on the situation.
 ```
-<^^^inventory_has? "dinghy"^^^ Leaving the submariners taking turns to fill the inflatable dinghy with air, I leaped from the boat in pursuit of my quarry.>
+The crew of the submarine threw themselves into the sea and proceeded to <^^^
+    inventory_has? "dinghy" ? "row for shore." : "drown."
+^^^>
 ```
+In this example, if the player's inventory contains a "dinghy", the result will be:
+> The crew of the submarine threw themselves into the sea and proceeded to row for shore.
 
-The paragraph above will only be shown if the player has acquired an inflatable dinghy along the way.
-
-Blocks can contain multiple paragraphs as well as triggers.
-
-```
-<^^^inventory_has? "pistol"^^^ I touched the barrel of my dueling pistol to the tip of the archduke's nose.
-
-[Pull the trigger and become a fugitive crocodile](#on_the_run)>
-```
+If the player does not have a "dinghy" by this time, let us bow our heads and say a prayer for those poor, brave submariners.
 
 [Back: Using Actions with Triggers](#actions_with_triggers)
 [Contents](#contents)
@@ -209,50 +203,17 @@ Blocks can contain multiple paragraphs as well as triggers.
 
 Change the presentation of the story.
 
-[Turn the lights off](^^^change_theme DARK_MODE ^^^)
-[Turn the lights on](^^^change_theme nil ^^^)
-[Turn the lights fun and stupid](^^^change_theme KIFASS_THEME^^^)
+[Turn the lights on](^^^
+change_theme nil
+^^^)
+[Turn the lights off](^^^
+change_theme DARK_MODE
+^^^)
+[Turn the lights fun and stupid](^^^
+change_theme KIFASS_THEME
+^^^)
 %
 You can edit the display theme to change the colour scheme. Open the file `app/themes/dark-mode-theme.rb` and you can see how it's done.
 
 [Back to Examples](#examples)
 [Back to Contents](#contents)
-
-## The TODO list (next release) {#todo}
-For the next release
-> TODO: Parser: Make code work again
->   Done multiline chunk actions
->   Next: Trigger actions
->   Then Conditions
-> TODO: Blocks
-
-> TODO: Parser: Inline styles (bold, italic, etc.).
-
-
-Exceptions:
-
-> User enters a ID link that does not correspond with an ID
-
-[Next](#future)
-
-## TODO list {#future}
-
-For after the next release
-> Actions go back to three backticks? Code block goes back to tildes? Code block with backticks in it becomes 4 backticks surrounding 3 backticks?
-> TODO: Design: Inline links?
-> TODO: Design: External links?
-> TODO: Forked: Fall through if button has no link
-> TODO: Forked: Refresh from file but retain current location in story IF POSSIBLE.
-> TODO: ? Title screen if any content between Title and Root Chunk
-> TODO: Parser/Display: Single newline ignored. Double newline is a paragraph. Single newline\ is line feed.
-> TODO: Allow writer to hide Forked completely and do something else for a while
-> TODO: Track every chunk the player goes through and give the writer access to it
-> TODO: Allow multiple files and switch between them, keeping the same history?
-
-[New Newline Behaviour](#test_newline_change)
-
-Something to think about: People want a title screen and they can have one. If the title is followed by a header, the header is the first chunk. If the title has content between, that's the first chunk. The title screen layout will be different (header lower down), everything centered?
-
-Exceptions:
-[TODO List](#todo)
-[Welcome](#welcome)

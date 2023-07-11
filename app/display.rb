@@ -23,7 +23,6 @@ module Forked
       data.options = []
       data.defaults_set = true
       apply_theme(@theme)
-      # update(some_text)
     end
 
     def apply_theme(theme)
@@ -68,6 +67,8 @@ module Forked
       button_box = data.config.button_box
       inactive_button_box = data.config.inactive_button_box
 
+      # background solid for display area, not very useful
+
       # data.primitives << {
       #   x: display.margin_left,
       #   y: display.margin_bottom,
@@ -81,8 +82,7 @@ module Forked
         case item[:type]
         when :heading
           text = item.text
-          # text = $story.title if item.text.empty?
-          
+          text = $story.title if item.text.empty?
 
           heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
 
@@ -148,7 +148,6 @@ module Forked
           y_pos -= paragraph.size_px * paragraph.spacing_after
 
         when :code_block
-
           text_array = wrap_lines_code_block(item.text, code_block.font, code_block.size_enum, display.w - (code_block_box.padding_left + code_block_box.padding_right))
           code_block.size_px = args.gtk.calcstringbox('X', code_block.size_enum, code_block.font)[1]
 
@@ -195,7 +194,7 @@ module Forked
           blockquote.size_px = args.gtk.calcstringbox('X', blockquote.size_enum, blockquote.font)[1]
 
           box_height = text_array.count * (blockquote.size_px * blockquote.line_spacing) +
-                      blockquote_box.padding_top + blockquote_box.padding_bottom
+          blockquote_box.padding_top + blockquote_box.padding_bottom
           box_height = box_height.greater(blockquote_box[:min_height])
 
           data.primitives << {
@@ -206,16 +205,6 @@ module Forked
           }.sprite!(blockquote_box)
 
           temp_y_pos = y_pos - blockquote_box.padding_top
-
-          # data.primitives << {
-          #   x: display.margin_left + 10, 
-          #   y: temp_y_pos - blockquote_image.height, 
-          #   w: blockquote_image.width, h: blockquote_image.height,
-          #   path: blockquote_image[:path],
-          #   r: blockquote.r,
-          #   g: blockquote.g,
-          #   b: blockquote.b,
-          # }
 
           data.primitives << text_array.map do |line| 
             label = {
@@ -240,12 +229,12 @@ module Forked
           end
 
           button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
+          
           text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
           button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom) 
 
 
           if !item.action.empty?
-
             option = {
               x: display.margin_left,
               y: y_pos - button_h,
@@ -353,7 +342,6 @@ module Forked
 
           if words.empty?
             wrapped_text << fixed_width_line
-            # wrapped_text << ''
           end
         end
       end
@@ -438,6 +426,6 @@ end
   #     {
   #     type: :button,
   #     text: "Contra quos omnis",
-  #     action: "putz 'This button was clicked'"
+  #     action: "puz'This button was clicked'"
   #     },
   #   ]
