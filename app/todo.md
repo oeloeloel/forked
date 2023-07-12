@@ -3,6 +3,9 @@
 
 ## Todo list (next release) {#todo}
 For the next release
+> TODO: Continue refactoring def parse
+> TODO: Make Conditional blocks work when there is no context (make a paragraph)
+> TODO: Make methods to create parts of story hash instead of writing them out over again
 > BUG: Code block not indenting properly (leading spaces may be stripped)
 > MANUAL: More explanation on coding before getting to conditional text.
 > TODO: Inline styles (bold, italic, etc.).
@@ -23,11 +26,17 @@ For some time in the future
 > Fall through if button has no link
 > Refresh from file but retain current location in story IF feasible.
 > \ at end of line is hard wrap
-> Allow writer to hide Forked completely and do something else for a while
-> Track every chunk the player goes through and give the writer access to it
 [Allow multiple files and switch between them](#multi-files)
+[Add commands](#commands)
 
 [TODO List](#todo)
+
+## Commands and Helpers to Add {#commands}
+> Track every chunk the player goes through and give the writer access to it
+> Timers
+> Money
+> Hide/Show Forked (& suspend interactivity)
+
 
 ## Multiple files (#multi-files)
 Allow user to create more than one Forked instance. This will allow writers to split long scenes into multiple files or allow switching between stories mid-flow.
