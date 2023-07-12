@@ -22,7 +22,7 @@ Would you prefer the story of the three middling mediocre bushes?
 [No](#finished)
 
 ## {#pod}
-Once upon a time there were three peas dressed in green who were fast asleep in their pod. Their round faced breathed through the holes in their nostrils, and one could hear their soft and harmonious snoring.
+Once upon a time there were three peas dressed in green who were fast asleep in their pod. Their round faces breathed through the holes in their nostrils, and one could hear their soft and harmonious snoring.
 
 [I prefer another description.](#highway)
 [This description suits me.](#not_dreaming)

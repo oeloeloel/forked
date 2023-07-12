@@ -22,15 +22,54 @@ Download or clone the project and run it in DragonRuby.
 The default project is the user manual.
 
 ## Quick Reference
-|||
-|-------------|---------|
-| Story title | `# Title` |
-| Chunk heading and ID | `## Heading Name {#chunk_id}` |
-| Trigger and target | `[Trigger text](#target_id)` |
-| Chunk action | ` ```action``` ` |
-| Trigger action | `[Trigger text](```action```)` |
-| Condition | `<```condition``` conditional text or trigger/target>` |
-| Comment | `// this line is a comment` |
+
+Story title:
+```
+# Title
+```
+
+Chunk heading and ID:
+```
+## Heading Name {#chunk_id}`
+```
+
+Trigger and target:
+```
+[Trigger text](#target_id)
+```
+
+Chunk action:
+```
+^^^
+action
+^^^
+```
+
+Trigger action:
+```
+[Trigger text](^^^
+action
+^^^)
+```
+
+Conditional text (string interpolation):
+```
+<^^^
+condition
+^^^>
+```
+
+Conditional text (show/hide text) [note: to be improved]:
+```
+<^^^
+condition ? "text displayed if true" : "text displayed if false"
+^^^>
+```
+
+Comment:
+```
+// this line is a comment
+```
 
 ## Available Actions
 |Inventory Management| (experimental) |
@@ -39,4 +78,3 @@ The default project is the user manual.
 |`inventory_del item` | removes an item from the player's inventory |
 |`inventory_has? item` | `true` if the item is in the player's inventory or `false` if not |
 |`inventory_clear` | clear all items from the inventory |
-
