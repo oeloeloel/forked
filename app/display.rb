@@ -164,7 +164,6 @@ module Forked
           }.sprite!(code_block_box)
 
           temp_y_pos -= code_block_box.padding_top
-
           data.primitives << text_array.map do |line|
 
             label = {
@@ -291,30 +290,55 @@ module Forked
       }.label!(data.display.paragraph).merge!(font_style)
     end
 
-    def wrap_lines_code_block str, font, size_px, width
-      
+    def wrap_lines_code_block str, font, size_px, width     
       wrapped_text = []
       str.lines.map do |l|
         fixed_width_line = ''
-        if l.strip.empty?
-          wrapped_text << ''
-          next
-        end
-        words = l.strip.split(" ") 
+        
+        i = 0
+        frag = ''
+        sp = 0
+        while sp
+          sp = l.index(' ')
+          if sp 
+            if sp.zero?
+              # if space is the first character
+              # check width of line so far (fixed_width_line + frag)
+              test_w = args.gtk.calcstringbox(fixed_width_line + frag, size_px, font)[0]
+              # if we're still inside the boundary
+              if test_w < width
+                # add the current fragment to the line
+                fixed_width_line += frag
+                # add the current character (a space) to the line
+                frag = ' '
+              else # the next frag will push us over the line so soft wrap
+                wrapped_text << fixed_width_line
 
-        until words.empty?
-          line_next = fixed_width_line + words[0]
-          if args.gtk.calcstringbox(line_next, size_px, font)[0] < width
-            fixed_width_line = line_next + ' '
-            words.shift
-          else
-            wrapped_text << fixed_width_line
-            fixed_width_line = ''
-          end
+                # empty the line and add the non-fitting frag to it
+                fixed_width_line = frag.delete_prefix!(' ')
+                # putz [frag]
+                # empty the frag but add a space
+                frag = ' '
+              end
 
-          if words.empty?
+              # empty frag and add a space
+              
+              # All hell will break loose if this line is removed
+              # removes the found space, whether or not if goes in the
+              # current soft line
+              l.delete_prefix!(' ')
+
+            else # space is not the first character. Add the previous word to frag
+              ret = l.slice!(0, sp)
+              frag += ret
+            end
+          else # there are no more spaces left in this line
+            # add the remnant to frag
+            frag += l
+            # at the end of the line so add it to fwl
+            fixed_width_line += frag
+            # and add that to the wrapped text array
             wrapped_text << fixed_width_line
-            wrapped_text << '' if l.strip.empty?
           end
         end
       end
@@ -322,6 +346,54 @@ module Forked
       wrapped_text
     end
 
+
+    def wrap_lines_code_block_slow str, font, size_px, width
+      wrapped_text = []
+      str.lines.map do |l|
+        fixed_width_line = ''
+        
+        c = 0
+        frag = ''
+        while c < l.length
+          
+          if l.chars[c] == ' '
+            # check w of frag + fixed_width_line
+            test_w = args.gtk.calcstringbox(fixed_width_line + frag, size_px, font)[0]
+            # if it fits display w
+            
+            if test_w < width
+              # add frag to line
+              fixed_width_line += frag
+              # empty frag and add the matched space
+              frag = ' '
+            else # the line is too long to add the frag
+              # add the line to the wrapped text array
+              
+              wrapped_text << fixed_width_line
+              # empty the line and add the non-fitting frag to it
+              fixed_width_line = frag
+              # empty the frag
+              frag = ' '
+            end
+          else # any character that is not a space
+            # add char to frag
+            frag += l.chars[c]
+          end
+
+          # we got to the end of the line
+          if c == l.length - 1
+            fixed_width_line += frag
+            wrapped_text << fixed_width_line
+          end
+          c += 1
+        end
+      end
+
+      # TODO: Small wrinkle with this code: a word can happily sit at the end of a line
+      # but when another word is added after, the word will shift to the next line.
+      # This might be due to the word having a space added to the width calculation?
+      wrapped_text
+    end
 
     def wrap_lines str, font, size_px, width
       wrapped_text = []

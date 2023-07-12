@@ -1,14 +1,14 @@
 # TODO LISTS
 
-
 ## Todo list (next release) {#todo}
 For the next release
-> TODO: Continue refactoring def parse
-> TODO: Make Conditional blocks work when there is no context (make a paragraph)
-> TODO: Make methods to create parts of story hash instead of writing them out over again
-> BUG: Code block not indenting properly (leading spaces may be stripped)
+> BUG: Blockquote inside a code block has incorrect result
+> BUG: Make Conditional blocks work when there is no context (make a paragraph)
 > MANUAL: More explanation on coding before getting to conditional text.
+> MANUAL: Section on formatting (code block, blockquote)
+> TODO: Make methods to create parts of story hash instead of writing them out over again
 > TODO: Inline styles (bold, italic, etc.).
+> Helpers: Background image, timer, wallet, memo
 
 Exceptions need adding:
 > User enters a ID link that does not correspond with an ID
@@ -26,6 +26,8 @@ For some time in the future
 > Fall through if button has no link
 > Refresh from file but retain current location in story IF feasible.
 > \ at end of line is hard wrap
+> Images
+> Images in blockquotes (left or right)
 [Allow multiple files and switch between them](#multi-files)
 [Add commands](#commands)
 

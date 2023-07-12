@@ -49,58 +49,25 @@ module Forked
           line = result if result
 
           ### TITLE
-          result = parse_title(line, context)
-          if result 
-            story[:title] = result
-            context.delete(:title) # title is found
-            context << :heading  # second element must be a heading
-            # no further processing on this line
-            next
-          end
+          result = parse_title(line, context, story, line_no)
+          next if result
+
+          # Forked wants the first non-blank, non comment line of 
+          # the story file to be the title. The exception was
+          # removed here to allow for different behaviour here
+          # (possible secret title page behaviour)
 
           ### BLOCKQUOTE
-          result = parse_blockquote(line)
-      
-          if result && !result.empty?
-            story[:chunks][-1][:content] << {
-              type: :blockquote,
-              text: result,
-            }
-            next
-          end
+          result = parse_blockquote(line, context, story, line_no)
+          next if result
 
           ### HEADING LINE
-          result = parse_heading(line, context)
-          if result
-            heading, chunk_id = result
-            if heading.empty? && chunk_id.nil?
-              raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
-            end
+          result = parse_heading(line, context, story, line_no)
+          next if result
 
-            heading = story.title if heading.empty?
-
-            story[:chunks] << {
-              id: chunk_id,
-              actions: [],
-              conditions: [],
-              content: [
-                {
-                  type: :heading,
-                  text: heading
-                },
-                {
-                  # TODO: This should be in the story file
-                  # or the display and not here.
-                  type: :rule
-                }
-              ]
-            }
-
-            next
-          end
-
+          # Forked wants the first non blank line after the title
+          # to be a heading and will throw a wobbly if it isn't
           if context.include?(:heading) && !line.strip.empty?
-            # we were looking for a heading and didn't find one
             raise "FORKED: CONTENT BEFORE FIRST HEADING.
 
 Forked expects to find a heading before finding any content. 
@@ -133,7 +100,6 @@ Please add a heading line after the title and before any other content. Example:
           # line.each_char.with_index do |char, char_no|
             # parse inline elements
           # end
-
         end
 
         story
@@ -237,14 +203,22 @@ Please add a heading line after the title and before any other content. Example:
         nil
       end
 
-      def parse_blockquote(line)
+      def parse_blockquote(line, context, story, line_no)
         # blockquotes must begin the line with >
         # The blockquote will continue until there
         # is a line that does not begin with >
         if line.strip.start_with?('>')
 
           line.delete_prefix!('>')
-          return line
+
+          unless line.empty?
+            story[:chunks][-1][:content] << {
+              type: :blockquote,
+              text: line,
+            } 
+          end
+
+          return true
         end
       end
 
@@ -330,7 +304,7 @@ Please add a heading line after the title and before any other content. Example:
 
       # The title is required. No content can come before it.
       # The Title line starts with a single #
-      def parse_title(line, context)
+      def parse_title(line, context, story, line_no)
         prohibited_contexts = []
         mandatory_contexts = [:title]
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -346,11 +320,15 @@ Please add a title to the top of the Story File. Example:
 `# The Name of this Story`
 "
         end
+
+        story[:title] = line
+        context.delete(:title) # title is found
+        context << :heading  # second element must be a heading
       end
 
       # The heading line starts a new chunk
       # The heading line begins with a double #
-      def parse_heading(line, context)
+      def parse_heading(line, context, story, line_no)
         return unless line.strip.start_with?('##') && !line.strip.start_with?('###')
 
         prohibited_contexts = [:code_block]
@@ -369,7 +347,32 @@ Please add a title to the top of the Story File. Example:
           line = [line]
         end
 
-        line
+        # line
+        heading, chunk_id = line
+            if heading.empty? && chunk_id.nil?
+              raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
+            end
+
+            heading = story.title if heading.empty?
+
+            story[:chunks] << {
+              id: chunk_id,
+              actions: [],
+              conditions: [],
+              content: [
+                {
+                  type: :heading,
+                  text: heading
+                },
+                {
+                  # TODO: This should be in the story file
+                  # or the display and not here.
+                  type: :rule
+                }
+              ]
+            }
+
+            true
       end
 
       # triggers are represented as buttons that perform actions

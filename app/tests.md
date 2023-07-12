@@ -19,6 +19,7 @@ Warning: The next test test plays audio.
 [Multiline Ruby in trigger actions](#multi_trigger_action)
 [Button Action](#button_action)
 [Conditions: String Interpolation](#condition-string-interpolation)
+[Code Block](#code-block)
 
 ## {#no_heading_text}
 
@@ -175,4 +176,25 @@ args.state.variable + ' ' + args.tick_count.to_s
 
 This is a new paragraph. (3/3)
 
+[All tests](#tests)
+
+## Code Block {#code-block}
+Code block indentation
+```
+This is a code block
+..
+  This line is indented by 2 spaces
+....
+    This line is indented again
+......
+      This line is more indented
+      This line has a             long space in it
+
+
+      This line is preceeded by two blank lines
+......
+      This line is long and it will wrap around to the next line when it                          reaches the maximum allowed width. This line is long and it will wrap around to the next line when it reaches the maximum allowed width. This line is long and it will wrap around to the next line when it reaches the maximum allowed width. This line is long and it will wrap around to the next line when it reaches the maximum allowed width. This line is long and it will wrap around to the next line when it reaches the maximum allowed width. 
+      
+      # this is a nice short line
+```
 [All tests](#tests)

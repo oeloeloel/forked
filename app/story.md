@@ -1,24 +1,5 @@
 # Forked User Manual
 
-## Countdown Timer {#timer}
-^^^
-args.state.countdown_timer = 11.seconds
-^^^
-Warning: space suit rupture detected.
-<^^^
-  message = "Oxygen remaining "
-  message += args.state.countdown_timer.idiv(60).to_s
-  args.state.countdown_timer -= 1
-  
-  if args.state.countdown_timer <= 1
-    message = "You ran out of oxygen and you are feeling poorly."
-  end
-
-  return message
-^^^>
-
-[Contents](#contents)
-
 ## Welcome to Forked {#welcome}
 Forked is a scripting system for DragonRuby that lets you write interactive stories, branching dialogues or anything else that requires writing and choices like, for example, this manual.
 
@@ -217,6 +198,7 @@ If the player does not have a "dinghy" by this time, let us bow our heads and sa
 ## Examples {#examples}
 
 [Setting the Display Theme](#theme)
+[Countdown Timer](#timer)
 
 ## Example: Setting the Display Theme {#theme}
 
@@ -236,3 +218,22 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 
 [Back to Examples](#examples)
 [Back to Contents](#contents)
+
+## Countdown Timer {#timer}
+^^^
+args.state.countdown_timer = 11.seconds
+^^^
+Warning: space suit rupture detected.
+<^^^
+  message = "Oxygen remaining "
+  message += args.state.countdown_timer.idiv(60).to_s
+  args.state.countdown_timer -= 1
+  
+  if args.state.countdown_timer <= 1
+    message = "You ran out of oxygen and you are feeling poorly."
+  end
+
+  return message
+^^^>
+
+[Contents](#contents)
