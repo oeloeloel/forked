@@ -1,5 +1,33 @@
 # Forked Tests
 
+## Things that shouldn't be inside a blockquote Part 1 {#blockquote-context-1}
+
+> ```
+> code block shouldn't be inside a blockquote (yet?)
+> ```
+> > Blockquote shouldn't be inside a blockquote (yet)
+> <^^^
+> condition shouldn't be inside a blockquote (yet)
+> ^^^>
+> ^^^
+> action block shouldn't be inside a blockquote (yet)
+> ^^^
+
+[Back to Contexts](#contexts)
+[All tests](#tests)
+
+
+## Things that shouldn't be inside a blockquote Part 2 {#blockquote-context-2}
+
+> [Trigger shouldn't be inside a Blockquote](#yet)
+> # Title shouldn't be inside a blockquote
+> ## Heading shouldn't be inside a blockquote
+> % Preserved line shouldn't be inside a blockquote
+> Comments // shouldn't be inside a blockquote
+
+[Back to Contexts](#contexts)
+[All tests](#tests)
+
 ## About this file {#about}
 
 This file is not a story, it's a set of tests to help with development of Forked.
@@ -20,6 +48,7 @@ Warning: The next test test plays audio.
 [Button Action](#button_action)
 [Conditions: String Interpolation](#condition-string-interpolation)
 [Code Block](#code-block)
+[Contexts](#contexts)
 
 ## {#no_heading_text}
 
@@ -197,4 +226,37 @@ This is a code block
       
       # this is a nice short line
 ```
+[All tests](#tests)
+
+## Contexts {#contexts}
+[Code block context](#code-block-context)
+[Blockquote context part 1](#blockquote-context-1)
+[Blockquote context part 2](#blockquote-context-2)
+[All tests](#tests)
+
+## Things that shouldn't be inside a code block {#code-block-context}
+
+```
+Code block
+> Block quote shouldn't be inside a code block
+
+^^^
+multiline action shouldn't be inside a code block
+^^^
+
+# Title shouldn't be inside a code block
+
+## Heading shouldn't be inside a code block
+
+% Preserved line shouldn't be inside a code block
+
+Comment // shouldn't be inside a code block
+
+[Trigger shouldn't be inside a code block](#action)
+
+<^^^
+Condition shouldn't be inside a code block
+^^^>
+```
+[Back to Contexts](#contexts)
 [All tests](#tests)

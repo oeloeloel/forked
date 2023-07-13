@@ -20,7 +20,7 @@ module Forked
 
         # Elements understood by the parser:
         # [x] :blockquote (physical div)
-        # :block (logical div)
+        # :condition block (logical div)
         # :action (single line code)
         # [x] :action_block (multiline code)
         # :code (present with code format < 1 line)
@@ -124,7 +124,7 @@ Please add a heading line after the title and before any other content. Example:
       def parse_preserve_line(line, context, story, line_no)
         return unless line.strip.start_with?('%')
 
-        prohibited_contexts = [:title]
+        prohibited_contexts = [:title, :code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
         
@@ -204,6 +204,10 @@ Please add a heading line after the title and before any other content. Example:
       end
 
       def parse_blockquote(line, context, story, line_no)
+        prohibited_contexts = [:code_block, :trigger_action]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
         # blockquotes must begin the line with >
         # The blockquote will continue until there
         # is a line that does not begin with >
