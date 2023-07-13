@@ -152,7 +152,7 @@ Now that you know how to write a story, we can do a few things about the way it 
 
 Simple formatting:
 [Blockquotes](#blockquotes)
-[Code Blocks]()
+[Code Blocks](#code-blocks)
 
 For more advanced presentations:
 [Themes]()
@@ -193,13 +193,16 @@ inventory_add "The Maharajah's Star"
 
 Code blocks start and end with three backticks `
 ```
-```
-```
+\```
+  inventory_add "The Maharajah's Star"
+\```
 ```
 
-Code blocks present code 'as-is', without any formatting changes except for wrapping long lines.
+Code blocks present text 'as-is', without any formatting changes except for wrapping long lines.
 
+Not every story will need to have code blocks. It's super-useful for manuals though.
 
+[Back to Formatting](#formatting)
 
 ## Themes {#themes}
 

@@ -1,33 +1,5 @@
 # Forked Tests
 
-## Things that shouldn't be inside a blockquote Part 1 {#blockquote-context-1}
-
-> ```
-> code block shouldn't be inside a blockquote (yet?)
-> ```
-> > Blockquote shouldn't be inside a blockquote (yet)
-> <^^^
-> condition shouldn't be inside a blockquote (yet)
-> ^^^>
-> ^^^
-> action block shouldn't be inside a blockquote (yet)
-> ^^^
-
-[Back to Contexts](#contexts)
-[All tests](#tests)
-
-
-## Things that shouldn't be inside a blockquote Part 2 {#blockquote-context-2}
-
-> [Trigger shouldn't be inside a Blockquote](#yet)
-> # Title shouldn't be inside a blockquote
-> ## Heading shouldn't be inside a blockquote
-> % Preserved line shouldn't be inside a blockquote
-> Comments // shouldn't be inside a blockquote
-
-[Back to Contexts](#contexts)
-[All tests](#tests)
-
 ## About this file {#about}
 
 This file is not a story, it's a set of tests to help with development of Forked.
@@ -49,6 +21,7 @@ Warning: The next test test plays audio.
 [Conditions: String Interpolation](#condition-string-interpolation)
 [Code Block](#code-block)
 [Contexts](#contexts)
+[Hard Wrap](#hard-wrap)
 
 ## {#no_heading_text}
 
@@ -259,4 +232,47 @@ Condition shouldn't be inside a code block
 ^^^>
 ```
 [Back to Contexts](#contexts)
+[All tests](#tests)
+
+## Things that shouldn't be inside a blockquote Part 1 {#blockquote-context-1}
+
+> ```
+> code block shouldn't be inside a blockquote (yet?)
+> ```
+> > Blockquote shouldn't be inside a blockquote (yet)
+> <^^^
+> condition shouldn't be inside a blockquote (yet)
+> ^^^>
+> ^^^
+> action block shouldn't be inside a blockquote (yet)
+> ^^^
+
+[Back to Contexts](#contexts)
+[All tests](#tests)
+
+
+## Things that shouldn't be inside a blockquote Part 2 {#blockquote-context-2}
+
+> [Trigger shouldn't be inside a Blockquote](#yet)
+> # Title shouldn't be inside a blockquote
+> ## Heading shouldn't be inside a blockquote
+> % Preserved line shouldn't be inside a blockquote
+> Comments // shouldn't be inside a blockquote
+
+[Back to Contexts](#contexts)
+[All tests](#tests)
+
+## Hard Wrap {#hard-wrap}
+If a line\
+Ends with a backslash\
+Add a newline\
+And continue\
+The same\
+Paragraph. (1)
+
+Normal separation of paragraphs is not affected. (2)
+
+Normal removal of single newlines
+is not affected. (3/3)
+
 [All tests](#tests)

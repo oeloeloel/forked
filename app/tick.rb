@@ -1,8 +1,8 @@
-STORY_FILE = 'app/story.md'
+# STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
 # STORY_FILE = 'app/tests.md'
-# STORY_FILE = 'app/todo.md'
+STORY_FILE = 'app/todo.md'
 
 # THEME = LIGHT_MODE
 THEME = DARK_MODE
@@ -35,7 +35,7 @@ end
 def jump label
   $story.follow $args, { action: label }
 end
-  
+
 def tick args
   args.outputs.background_color = [51, 51, 51]
 
@@ -45,10 +45,10 @@ def tick args
 
   if args.inputs.keyboard.key_held.nine
 
-    args.outputs.labels  << { 
-      x: 640, y: 360, 
-      text: "#{args.gtk.current_framerate_render} fps render, #{args.gtk.current_framerate_calc} fps simulation", 
-      size_enum: 20, 
+    args.outputs.labels  << {
+      x: 640, y: 360,
+      text: "#{args.gtk.current_framerate_render} fps render, #{args.gtk.current_framerate_calc} fps simulation",
+      size_enum: 20,
       r: 255, g: 0, b: 0, alignment_enum: 1, vertical_alignment_enum: 1 }
     args.outputs.primitives << args.gtk.current_framerate_primitives
   end

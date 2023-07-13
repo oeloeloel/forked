@@ -2,17 +2,16 @@
 
 ## Todo list (next release) {#todo}
 
-^^^
-$gtk.notify_extended! message: "wake up!", duration: 300, env: :prod
-^^^
 For the next release
-> TODO: Escapes
-> BUG: Make Conditional blocks work when there is no context (make a paragraph)
-> MANUAL: More explanation on coding before getting to conditional text.
-> MANUAL: Section on formatting (code block, blockquote)
-> TODO: Make methods to create parts of story hash instead of writing them out over again
-> TODO: Inline styles (bold, italic, etc.).
-> Helpers: Background image, timer, wallet, memo
+
+DONE: \ at end of line is hard wrap
+
+TODO: Escapes [Done for Code Block]\
+BUG: Make Conditional blocks work when there is no context (make a paragraph)\
+MANUAL: More explanation on coding before getting to conditional text.\
+TODO: Make methods to create parts of story hash instead of writing them out over again\
+TODO: Inline styles (bold, italic, etc.).\
+Helpers: Background image, timer, wallet, memo\
 
 Exceptions need adding:
 > User enters a ID link that does not correspond with an ID
@@ -29,14 +28,35 @@ For some time in the future
 > Inline links?
 > Fall through if button has no link
 > Refresh from file but retain current location in story IF feasible.
-> \ at end of line is hard wrap
+
+
+
+[Future Todo List Part 2](#future-2)
+[Todo List](#todo)
+
+## Future Todo List 2 {#future-2}
+
 > Images
 > Images in blockquotes (left or right)
 > Blank line between buttons leaves a bigger gap between them
-[Allow multiple files and switch between them](#multi-files)
+> Autogenerate contents
+> Button rows
+[Allow multiple files and switch between them + launcher](#multi-files)
 [Add commands](#commands)
-
+Add formats: Lists
+[Performance improvements](#perf)
+%
 [TODO List](#todo)
+
+## Performance improvements {#perf}
+Render blocks to render targets.
+Especially code blocks.
+Every block level element should have a dirty flag.
+When an update on that block is needed (most won't need it) the content changes and the block is marked as dirty.
+Display should handle the rendering and lower the flag each time.
+
+[Back](#future)
+[Todo List](#todo)
 
 ## Commands and Helpers to Add {#commands}
 > Track every chunk the player goes through and give the writer access to it

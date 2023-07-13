@@ -1,10 +1,11 @@
-  $gtk.reset
+$gtk.reset
 
 module Forked
+  # Display class
   class Display
     attr_gtk
-    
-    def initialize theme = nil
+
+    def initialize(theme = nil)
       @theme = theme
     end
 
@@ -50,7 +51,7 @@ module Forked
       end
     end
 
-    def update content
+    def update(content)
       data.primitives = []
       data.options = []
 
@@ -62,7 +63,7 @@ module Forked
       code_block_box = data.config.code_block_box
       blockquote = data.config.blockquote
       blockquote_box = data.config.blockquote_box
-      blockquote_image = data.config.blockquote_image
+      # blockquote_image = data.config.blockquote_image # For later
       button = data.config.button
       button_box = data.config.button_box
       inactive_button_box = data.config.inactive_button_box
@@ -81,9 +82,6 @@ module Forked
       content.each_with_index do |item, i|
         case item[:type]
         when :heading
-          text = item.text
-          text = $story.title if item.text.empty?
-
           heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
 
           data.primitives << {
@@ -93,7 +91,7 @@ module Forked
           }.label!(heading)
 
           y_pos -= heading.size_px * heading.spacing_after
-          
+
         when :rule
           data.primitives << {
             x: display.margin_left,
@@ -106,7 +104,7 @@ module Forked
 
         when :paragraph
           x_pos = 0
-          item.atoms.each_with_index do |atom, i|
+          item.atoms.each do |atom|
             # defaults
             paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
 
@@ -116,10 +114,10 @@ module Forked
             default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
             words = atom.text.split(' ')
             line_frag = ''
-
+            # putz atom
             until words.empty?
               word = words[0]
-
+              # putz word
               new_frag = line_frag + word
               new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.enum, font_style.font)[0]
 
@@ -135,12 +133,16 @@ module Forked
                 words.shift
               end
 
-              if words.empty?
-                loc = { x: x_pos + display.margin_left, y: y_pos }
-                lab = loc.merge(make_paragraph_label(line_frag, font_style))
-                data.primitives << lab 
-                x_pos = new_x_pos + default_space_w
-                line_frag = ''
+              next unless words.empty?
+
+              loc = { x: x_pos + display.margin_left, y: y_pos }
+              lab = loc.merge(make_paragraph_label(line_frag, font_style))
+              data.primitives << lab
+              x_pos = new_x_pos + default_space_w
+              line_frag = ''
+              if atom.text[-1] == "\n"
+                x_pos = 0
+                y_pos -= paragraph.size_px
               end
             end
           end
@@ -148,7 +150,10 @@ module Forked
           y_pos -= paragraph.size_px * paragraph.spacing_after
 
         when :code_block
-          text_array = wrap_lines_code_block(item.text, code_block.font, code_block.size_enum, display.w - (code_block_box.padding_left + code_block_box.padding_right))
+          text_array = wrap_lines_code_block(
+            item.text, code_block.font, code_block.size_enum,
+            display.w - (code_block_box.padding_left + code_block_box.padding_right)
+          )
           code_block.size_px = args.gtk.calcstringbox('X', code_block.size_enum, code_block.font)[1]
 
           box_height = text_array.count * (code_block.size_px * code_block.line_spacing) +
@@ -205,7 +210,7 @@ module Forked
 
           temp_y_pos = y_pos - blockquote_box.padding_top
 
-          data.primitives << text_array.map do |line| 
+          data.primitives << text_array.map do |line|
             label = {
               x: display.margin_left + blockquote_box.padding_left,
               y: temp_y_pos,
@@ -228,9 +233,9 @@ module Forked
           end
 
           button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
-          
+
           text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
-          button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom) 
+          button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
 
 
           if !item.action.empty?
@@ -290,17 +295,16 @@ module Forked
       }.label!(data.display.paragraph).merge!(font_style)
     end
 
-    def wrap_lines_code_block str, font, size_px, width     
+    def wrap_lines_code_block str, font, size_px, width
       wrapped_text = []
       str.lines.map do |l|
         fixed_width_line = ''
-        
-        i = 0
+
         frag = ''
-        sp = 0
+        sp = 0 # index of first space
         while sp
           sp = l.index(' ')
-          if sp 
+          if sp
             if sp.zero?
               # if space is the first character
               # check width of line so far (fixed_width_line + frag)
@@ -322,7 +326,7 @@ module Forked
               end
 
               # empty frag and add a space
-              
+
               # All hell will break loose if this line is removed
               # removes the found space, whether or not if goes in the
               # current soft line
@@ -351,16 +355,16 @@ module Forked
       wrapped_text = []
       str.lines.map do |l|
         fixed_width_line = ''
-        
+
         c = 0
         frag = ''
         while c < l.length
-          
+
           if l.chars[c] == ' '
             # check w of frag + fixed_width_line
             test_w = args.gtk.calcstringbox(fixed_width_line + frag, size_px, font)[0]
             # if it fits display w
-            
+
             if test_w < width
               # add frag to line
               fixed_width_line += frag
@@ -368,7 +372,7 @@ module Forked
               frag = ' '
             else # the line is too long to add the frag
               # add the line to the wrapped text array
-              
+
               wrapped_text << fixed_width_line
               # empty the line and add the non-fitting frag to it
               fixed_width_line = frag
@@ -400,7 +404,7 @@ module Forked
       str.lines.map do |l|
         fixed_width_line = ''
 
-        words = l.strip.split(" ") 
+        words = l.strip.split(" ")
 
         until words.empty?
           line_next = fixed_width_line + words[0]
@@ -448,7 +452,7 @@ end
   #         {
   #           text: "Brute, cum, quae summis ingeniis",
   #           styles: [:italic]
-  #         }, 
+  #         },
   #         {
   #           text: " exquisitaque doctrina philosophi Graeco sermone tractavissent, ea",
   #           styles: []
@@ -464,11 +468,11 @@ end
   #         {
   #           text: " totum hoc displicet",
   #           styles: [:bold, :italic]
-  #         },   
+  #         },
   #         {
   #           text: " philosophari. quidam autem non tam id",
   #           styles: []
-  #         }, 
+  #         },
   #         {
   #           text: " reprehendunt",
   #           styles: [:code]
@@ -476,7 +480,7 @@ end
   #         {
   #           text: "si remissius agatur sed.",
   #           styles: []
-  #         },  
+  #         },
   #        ]
   #     },
   #     {

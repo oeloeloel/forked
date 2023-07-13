@@ -1,19 +1,17 @@
-
 module Forked
+  # parses the story file
   class Parser
-    DEFAULT_TITLE = "A Forked Story"
+    DEFAULT_TITLE = 'A Forked Story'.freeze
 
     class << self
-
       def parse(story_file)
-        raise "The story file is missing." if story_file.nil?
-        raise "The story file is empty." if story_file.empty?
+        raise 'The story file is missing.' if story_file.nil?
+        raise 'The story file is empty.' if story_file.empty?
 
         # Empty story
         story = {
           title: DEFAULT_TITLE,
-          chunks: [
-            ]
+          chunks: []
         }
 
         context = [:title] # if we're in the middle of something
@@ -36,9 +34,9 @@ module Forked
         # [x] :paragraph (plain text)
         # [x] preserved line (do not parse line and present as text)
         # [x] comments (stripped and ignored)
-        
+
         story_file.each_line.with_index do |line, line_no|
-          # "#{line_no}: #{line.strip}" 
+          # "#{line_no}: #{line.strip}"
 
           ### PRESERVE LINE (^%) and stop parsing it
           result = parse_preserve_line(line, context, story, line_no)
@@ -52,7 +50,7 @@ module Forked
           result = parse_title(line, context, story, line_no)
           next if result
 
-          # Forked wants the first non-blank, non comment line of 
+          # Forked wants the first non-blank, non comment line of
           # the story file to be the title. The exception was
           # removed here to allow for different behaviour here
           # (possible secret title page behaviour)
@@ -70,7 +68,7 @@ module Forked
           if context.include?(:heading) && !line.strip.empty?
             raise "FORKED: CONTENT BEFORE FIRST HEADING.
 
-Forked expects to find a heading before finding any content. 
+Forked expects to find a heading before finding any content.
 Please add a heading line after the title and before any other content. Example:
 
 `## The First Chapter {#start}`
@@ -95,7 +93,7 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           # PARAGRAPH
-          result = parse_paragraph(line, context, story,  line_no)
+          parse_paragraph(line, context, story,  line_no)
 
           # line.each_char.with_index do |char, char_no|
             # parse inline elements
@@ -109,7 +107,7 @@ Please add a heading line after the title and before any other content. Example:
       # context rules
       def context_safe?(context, prohibited, mandatory)
         context_prohibited = array_intersect?(context, prohibited)
-        context_mandatory = mandatory.empty? ||  array_intersect?(context, mandatory) 
+        context_mandatory = mandatory.empty? ||  array_intersect?(context, mandatory)
 
         context_mandatory && !context_prohibited
       end
@@ -121,13 +119,13 @@ Please add a heading line after the title and before any other content. Example:
 
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
-      def parse_preserve_line(line, context, story, line_no)
+      def parse_preserve_line(line, context, story, _line_no)
         return unless line.strip.start_with?('%')
 
         prohibited_contexts = [:title, :code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-        
+
         line.delete_prefix!('%')
 
         story[:chunks][-1][:content] << {
@@ -142,36 +140,34 @@ Please add a heading line after the title and before any other content. Example:
         true
       end
 
-      def parse_paragraph(line, context, story, line_no)
+      def parse_paragraph(line, context, story, _line_no)
         prohibited_contexts = [:title, :codeblock, :heading]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-        
+
         # at this point, we've been through all the other possible
         # elements so we know it's OK to process paragraphs now.
 
         line.strip!
         if line.empty?
-          if context.include?(:paragraph)
-            context.delete(:paragraph)
-          end
+          context.delete(:paragraph) if context.include?(:paragraph)
         else
-          
-        # check to see if the paragraph context is closed
-        ## OR! the previous element is anything other than paragraph
-        ### (it may have changed and we don't want to append to some other element)
-        if  !context.include?(:paragraph) || story[:chunks][-1][:content][-1][:type] != :paragraph
-          context << (:paragraph)
 
-          story[:chunks][-1][:content] << {
-            type: :paragraph,
-            atoms: [
-              text: '',
-              condition: [],
-              styles: []
-            ]
-          }
-        end
+          # check to see if the paragraph context is closed
+          ## OR! the previous element is anything other than paragraph
+          ### (it may have changed and we don't want to append to some other element)
+          if !context.include?(:paragraph) || story[:chunks][-1][:content][-1][:type] != :paragraph
+            context << (:paragraph)
+
+            story[:chunks][-1][:content] << {
+              type: :paragraph,
+              atoms: [
+                text: '',
+                condition: [],
+                styles: []
+              ]
+            }
+          end
 
           cond =  story[:chunks][-1][:content][-1][:atoms][-1][:condition]
           if cond && cond.class == String
@@ -180,7 +176,20 @@ Please add a heading line after the title and before any other content. Example:
               styles: [],
             }
           else
-            story[:chunks][-1][:content][-1][:atoms][-1][:text] << line + ' '
+            if line.strip[-1] == '\\'
+              line = line.delete_suffix('\\') + "\n"
+            else
+              line += ' '
+            end
+            prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
+            if prev && prev[-1] == "\n"
+              story[:chunks][-1][:content][-1][:atoms] << {
+                text: line,
+                styles: [],
+              }
+            else
+              story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
+            end
           end
         end
       end
@@ -203,7 +212,7 @@ Please add a heading line after the title and before any other content. Example:
         nil
       end
 
-      def parse_blockquote(line, context, story, line_no)
+      def parse_blockquote(line, context, story, _line_no)
         prohibited_contexts = [:code_block, :trigger_action]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -219,7 +228,7 @@ Please add a heading line after the title and before any other content. Example:
             story[:chunks][-1][:content] << {
               type: :blockquote,
               text: line,
-            } 
+            }
           end
 
           return true
@@ -249,7 +258,7 @@ Please add a heading line after the title and before any other content. Example:
         end
       end
 
-      # action blocks contain executable code 
+      # action blocks contain executable code
       # They begin with three carets ^^^ on a blank line
       # and end with three carets on a blank line
       def parse_action_block(line, context, story)
@@ -277,7 +286,7 @@ Please add a heading line after the title and before any other content. Example:
       # and end with 3 carets followed by a right angle bracket ^^^>
       # The current functionality is to conditionally include text
       # returned from the block as a string
-      def parse_condition_block(line, context, story, line_no)
+      def parse_condition_block(line, context, story, _line_no)
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -310,7 +319,7 @@ Please add a heading line after the title and before any other content. Example:
 
       # The title is required. No content can come before it.
       # The Title line starts with a single #
-      def parse_title(line, context, story, line_no)
+      def parse_title(line, context, story, _line_no)
         prohibited_contexts = []
         mandatory_contexts = [:title]
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -400,7 +409,7 @@ Please add a title to the top of the Story File. Example:
               text: trigger,
               action: ''
             }
-            
+
             ### identify and catch chunk id action (return)
             if action.end_with?(')')
               action.delete_prefix!('(')
@@ -410,7 +419,7 @@ Please add a title to the top of the Story File. Example:
                 story[:chunks][-1][:content][-1].action = action
                 return true
               else
-                raise ("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
+                raise("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
               end
 
             # identify action block and open context (keep parsing)
@@ -425,7 +434,7 @@ Please add a title to the top of the Story File. Example:
           return true
 
         # if context is open, add line to trigger action (return)
-        elsif context.include?(:trigger_action) 
+        elsif context.include?(:trigger_action)
           story[:chunks][-1][:content][-1].action += line
           return true
         end
