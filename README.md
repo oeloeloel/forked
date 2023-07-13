@@ -88,7 +88,7 @@ This text looks like code
 ## Available Actions
 |Inventory Management| (experimental) |
 |-|-|
-|`inventory_add item` | adds an item to the player's inventory |
-|`inventory_del item` | removes an item from the player's inventory |
-|`inventory_has? item` | `true` if the item is in the player's inventory or `false` if not |
-|`inventory_clear` | clear all items from the inventory |
+|`bag_add item` | adds an item to the player's inventory |
+|`bag_del item` | removes an item from the player's inventory |
+|`bag_has? item` | `true` if the item is in the player's inventory or `false` if not |
+|`bag_clear` | clear all items from the inventory |
