@@ -81,6 +81,9 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           ### CONDITION BLOCK
+          # Condition block can start mid-line so it needs to
+          # come after blockquote, which always starts at the
+          # beginning of a line
           result = parse_condition_block(line, context, story, line_no)
           next if result
 
@@ -286,7 +289,16 @@ Please add a heading line after the title and before any other content. Example:
       # and end with 3 carets followed by a right angle bracket ^^^>
       # The current functionality is to conditionally include text
       # returned from the block as a string
-      def parse_condition_block(line, context, story, _line_no)
+      def parse_condition_block(line, context, story, line_no)
+        # problem: condition block appends to paragraph.
+        # If there is no paragraph context open, it breaks.
+        # If no paragraph context is open,
+        # get out and let the paragraph (or other element)
+        # code take over.
+
+        # paragraph (or other element) must be responsible for
+        # the condition being applied to the element/atom.
+
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -301,14 +313,24 @@ Please add a heading line after the title and before any other content. Example:
           context.delete(:condition_block)
           if story[:chunks][-1][:content][-1].type == :paragraph
             story[:chunks][-1][:content][-1][:atoms] << {
-                text: 'some default text',
-                styles: [],
-                condition: story[:chunks][-1][:conditions][-1]
-              }
+              text: 'some default text',
+              styles: [],
+              condition: story[:chunks][-1][:conditions][-1]
+            }
+            story[:chunks][-1][:content][-1][:atoms]
+          else
+            context << (:paragraph)
+            story[:chunks][-1][:content] << {
+              type: :paragraph,
+              atoms: [
+                text: '',
+                condition: story[:chunks][-1][:conditions][-1],
+                styles: []
+              ]
+            }
           end
           return true
         end
-
 
         if context.include?(:condition_block)
           story[:chunks][-1][:conditions][-1] += line

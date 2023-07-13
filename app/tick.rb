@@ -1,8 +1,8 @@
 # STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
-# STORY_FILE = 'app/tests.md'
-STORY_FILE = 'app/todo.md'
+STORY_FILE = 'app/tests.md'
+# STORY_FILE = 'app/todo.md'
 
 # THEME = LIGHT_MODE
 THEME = DARK_MODE
@@ -12,28 +12,49 @@ THEME = DARK_MODE
 # Custom commands
 #################
 
-def inventory_add item
-  inventory << item unless inventory_has? item
+### BAG (player inventory)
+
+# adds an item to the player inventory
+def bag_add item
+  bag << item unless bag_has? item
 end
 
-def inventory_del item
-  inventory.delete item
+# removes an item from the player inventory
+def bag_del item
+  bag.delete item
 end
 
-def inventory_has? item
-  inventory.include? item
+# returns true if the player inventory includes item
+def bag_has? item
+  bag.include? item
 end
 
-def inventory
-  $args.state.forked_inventory ||= []
+# the player inventory
+def bag
+  $args.state.forked_bag ||= []
 end
 
-def inventory_clear
-  $args.state.forked_inventory = []
+# empties the player inventory
+def bag_clear
+  $args.state.forked_bag = []
 end
 
+### Navigation
+
+# Jump to a specified label
 def jump label
   $story.follow $args, { action: label }
+end
+
+### Background
+def background_image(path)
+  $args.outputs.sprites << {
+    x: 0,
+    y: 0,
+    w: 1280,
+    h: 720,
+    path: path
+  }
 end
 
 def tick args

@@ -12,16 +12,27 @@ This file is not a story, it's a set of tests to help with development of Forked
 [Preserved lines](#preserve)
 [Comments](#comment)
 [Blockquote](#blockquote)
-[Paragraph Newlines](#newlines)
+[Newlines](#newlines)
 [Background Image](#background)
 Warning: The next test test plays audio.
 [Multiline Chunk Action](#multi_chunk_action)
 [Multiline Ruby in trigger actions](#multi_trigger_action)
 [Button Action](#button_action)
-[Conditions: String Interpolation](#condition-string-interpolation)
 [Code Block](#code-block)
 [Contexts](#contexts)
+[Conditions](#conditions)
+
+## Newlines {#newlines}
+[Paragraph Newlines](#paragraph-newlines)
 [Hard Wrap](#hard-wrap)
+
+[All tests](#tests)
+
+## Conditions {#conditions}
+[Conditions: String Interpolation](#condition-string-interpolation)
+[Condition without paragraph](#background-image)
+
+[All tests](#tests)
 
 ## {#no_heading_text}
 
@@ -80,7 +91,7 @@ A blank line here should prevent the next blockquote from latching onto the prev
 TODO: A blank line between blockquotes should end the blockquote. Currently it extends the blockquote.
 [All tests](#tests)
 
-## Newlines {#newlines}
+## Paragraph Newlines {#paragraph-newlines}
 
 This is a paragraph. It is followed by a blank line and it should be displayed with a blank space afterwards. (1)
 
@@ -96,7 +107,7 @@ empty lines. (3)
 
 This is the last paragraph. (4/4)
 
-[All tests](#tests)
+[Back to newlines](#newlines)
 
 ## Set background image {#background}
 
@@ -178,7 +189,7 @@ args.state.variable + ' ' + args.tick_count.to_s
 
 This is a new paragraph. (3/3)
 
-[All tests](#tests)
+[Back to Conditions](#conditions)
 
 ## Code Block {#code-block}
 Code block indentation
@@ -275,4 +286,11 @@ Normal separation of paragraphs is not affected. (2)
 Normal removal of single newlines
 is not affected. (3/3)
 
-[All tests](#tests)
+[Back to Newlines](#newlines)
+
+## Condition without paragraph {#background-image}
+> The following condition block should start a new paragraph. It is working if the background of this chunk is a white image.
+<^^^
+background_image "sprites/bg2.png"
+^^^>
+[Back to Conditions](#conditions)

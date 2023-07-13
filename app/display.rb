@@ -103,8 +103,12 @@ module Forked
           y_pos -= rule.spacing_after
 
         when :paragraph
+          zero_height = true # paragraph could have no text, in which case it will have no height
           x_pos = 0
           item.atoms.each do |atom|
+            next if atom[:text].empty?
+
+            zero_height = false
             # defaults
             paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
 
@@ -114,10 +118,10 @@ module Forked
             default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
             words = atom.text.split(' ')
             line_frag = ''
-            # putz atom
+
             until words.empty?
               word = words[0]
-              # putz word
+
               new_frag = line_frag + word
               new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.enum, font_style.font)[0]
 
@@ -146,8 +150,8 @@ module Forked
               end
             end
           end
-          y_pos -= paragraph.size_px
-          y_pos -= paragraph.size_px * paragraph.spacing_after
+          y_pos -= paragraph.size_px unless zero_height
+          y_pos -= paragraph.size_px * paragraph.spacing_after unless zero_height
 
         when :code_block
           text_array = wrap_lines_code_block(

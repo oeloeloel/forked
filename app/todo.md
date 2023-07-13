@@ -2,12 +2,11 @@
 
 ## Todo list (next release) {#todo}
 
-For the next release
+Todo now/next
 
 DONE: \ at end of line is hard wrap
-
-TODO: Escapes [Done for Code Block]\
-BUG: Make Conditional blocks work when there is no context (make a paragraph)\
+DONE: Escape Code Block\
+DONE: Make Conditional blocks work when there is no context (make a paragraph)\
 MANUAL: More explanation on coding before getting to conditional text.\
 TODO: Make methods to create parts of story hash instead of writing them out over again\
 TODO: Inline styles (bold, italic, etc.).\
@@ -28,7 +27,7 @@ For some time in the future
 > Inline links?
 > Fall through if button has no link
 > Refresh from file but retain current location in story IF feasible.
-
+TODO: Escape more things (code blocks done)
 
 
 [Future Todo List Part 2](#future-2)

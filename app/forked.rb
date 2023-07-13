@@ -2,6 +2,7 @@ $gtk.reset
 $story = nil
 
 module Forked
+  # manages the story data
   class Story
     attr_gtk
 
@@ -12,7 +13,7 @@ module Forked
       @display.args = args
       @display.tick
 
-      present args 
+      present args
     end
 
     def defaults
@@ -26,8 +27,8 @@ module Forked
       args.state.forked.defaults_set = true
     end
 
-    def follow args, option = nil
-      if option && option.action && !option.action.start_with?("#")
+    def follow(args, option = nil)
+      if option&.action && !option.action.start_with?("#")
         evaluate(args, option.action.to_s)
         return
       end
@@ -59,7 +60,7 @@ Check that the chunk_id you are linking to exists and is typed correctly.
 Tell Akz to write a better error message."
       end
       if args.state.forked.current_lines.empty?
-        raise "No lines were found in the current story chunk. Current chunk is #{args.state.current_chunk}" 
+        raise "No lines were found in the current story chunk. Current chunk is #{args.state.current_chunk}"
       end
     end
 
@@ -70,18 +71,20 @@ Tell Akz to write a better error message."
             if atom[:condition]
               if atom[:condition].class == String
               result = evaluate(args, atom[:condition])
-              element[:atoms][j][:text] = result + ' '
+                if result.class == String
+                  element[:atoms][j][:text] = result + ' '
+                end
               end
             end
-          end 
+          end
         end
       end
-      @display.update(args.state.forked.current_lines) 
+      @display.update(args.state.forked.current_lines)
     end
 
     def fetch_story args
       story_text = args.gtk.read_file STORY_FILE
-      
+
       if story_text.nil?
         raise "The file #{STORY_FILE} failed to load. Please check it."
       end
