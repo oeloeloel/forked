@@ -302,8 +302,8 @@ module Forked
     def wrap_lines_code_block str, font, size_px, width
       wrapped_text = []
       str.lines.map do |l|
+        l += ' ' # <== It's a hack :)
         fixed_width_line = ''
-
         frag = ''
         sp = 0 # index of first space
         while sp

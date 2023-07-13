@@ -11,6 +11,8 @@ MANUAL: More explanation on coding before getting to conditional text.\
 TODO: Make methods to create parts of story hash instead of writing them out over again\
 TODO: Inline styles (bold, italic, etc.).\
 Helpers: Background image, timer, wallet, memo\
+TODO: Conditional block should not extend paragraph if there is a blank line between. (Use context)
+DONE: Line wrap fail in manual: Adding Text
 
 Exceptions need adding:
 > User enters a ID link that does not correspond with an ID

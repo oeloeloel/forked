@@ -284,7 +284,8 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 ^^^
 args.state.countdown_timer = 11.seconds
 ^^^
-Warning: space suit rupture detected.
+Warning: space suit rupture detected.\
+
 <^^^
   message = "Oxygen remaining "
   message += args.state.countdown_timer.idiv(60).to_s
