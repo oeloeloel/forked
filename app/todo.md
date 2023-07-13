@@ -1,7 +1,12 @@
 # TODO LISTS
 
 ## Todo list (next release) {#todo}
+
+^^^
+$gtk.notify_extended! message: "wake up!", duration: 300, env: :prod
+^^^
 For the next release
+> TODO: Escapes
 > BUG: Make Conditional blocks work when there is no context (make a paragraph)
 > MANUAL: More explanation on coding before getting to conditional text.
 > MANUAL: Section on formatting (code block, blockquote)
@@ -27,6 +32,7 @@ For some time in the future
 > \ at end of line is hard wrap
 > Images
 > Images in blockquotes (left or right)
+> Blank line between buttons leaves a bigger gap between them
 [Allow multiple files and switch between them](#multi-files)
 [Add commands](#commands)
 

@@ -87,7 +87,7 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           ### CODE BLOCK
-          result = parse_code_block(line, context, story)
+          result = parse_code_block(line, context, story, line_no)
           next if result
 
           ### ACTION BLOCK
@@ -229,8 +229,9 @@ Please add a heading line after the title and before any other content. Example:
       # Code blocks format code for display
       # They begin with three ticks ``` on a blank line
       # and end with three ticks on a blank line
-      def parse_code_block(line, context, story)
-        if line.include? '```'
+      def parse_code_block(line, context, story, line_no)
+        if line.include?('```') & !line.include?('\```')
+          putz "Found real backticks on #{line_no + 1}" if line_no < 16
           if context.include?(:code_block)
             context.delete(:code_block)
           else
@@ -242,6 +243,7 @@ Please add a heading line after the title and before any other content. Example:
           end
           true
         elsif context.include?(:code_block)
+          line.delete_prefix!('\\') if line.strip.start_with?('\```')
           story[:chunks][-1][:content][-1].text += line
           true
         end

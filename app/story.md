@@ -20,6 +20,7 @@ With Forked, you can learn how to write a simple interactive story in a few minu
 [Heading Lines](#heading_line)
 [Adding Text](#adding_text)
 [Triggers](#triggers)
+[Formatting](#formatting)
 [Actions](#actions)
 [Using Actions with Triggers](#actions_with_triggers)
 [Conditional Text](#blocks)
@@ -141,9 +142,66 @@ As well as navigating to other chunks, trigger actions can run Ruby code. We'll 
 If the trigger action is empty, Forked will display a non-clickable button like the next button below:
 [This matter is now closed]()
 
+[Next: Formatting](#formatting)
+[Back: Adding Text](#adding_text)
+[Contents](#contents)
+
+## Formatting {#formatting}
+
+Now that you know how to write a story, we can do a few things about the way it looks.
+
+Simple formatting:
+[Blockquotes](#blockquotes)
+[Code Blocks]()
+
+For more advanced presentations:
+[Themes]()
+
+Expect to see more formatting options added in future.
+
 [Next: Actions](#actions)
 [Back: Adding Text](#adding_text)
 [Contents](#contents)
+
+## Blockquotes {#blockquotes}
+Blockquotes put your text in a box:
+> The Maharajah's Star is a diamond of great reknown.
+
+To make a blockquote, start the line with a right angle bracket >
+```
+> The Maharajah's Star is a diamond of great reknown.
+```
+
+If you put several blockquotes one after the other, they appear as a single blockquote:
+```
+> Many people have tried to steal it over the centuries.
+> All of them perished.
+> Horribly.
+```
+
+> Many people have tried to steal it over the centuries.
+> All of them perished.
+> Horribly.
+
+[Back to Formatting](#formatting)
+
+## Code Blocks {#code-blocks}
+Code blocks, as you have already seen in this manual, are used to show code:
+```
+inventory_add "The Maharajah's Star"
+```
+
+Code blocks start and end with three backticks `
+```
+```
+```
+```
+
+Code blocks present code 'as-is', without any formatting changes except for wrapping long lines.
+
+
+
+## Themes {#themes}
 
 ## Actions {#actions}
 Actions get things done. You can drop an action into a chunk like this:
