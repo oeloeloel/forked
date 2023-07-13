@@ -20,7 +20,7 @@ module Forked
 
         # Elements understood by the parser:
         # [x] :blockquote (physical div)
-        # :condition block (logical div)
+        # [x]:condition block (logical div)
         # :action (single line code)
         # [x] :action_block (multiline code)
         # :code (present with code format < 1 line)
@@ -33,7 +33,7 @@ module Forked
         # [x] :title (story title)
         # [x] :heading text (chunk heading)
         # [x] :chunk_id (chunk identifier)
-        # :paragraph (plain text)
+        # [x] :paragraph (plain text)
         # [x] preserved line (do not parse line and present as text)
         # [x] comments (stripped and ignored)
         

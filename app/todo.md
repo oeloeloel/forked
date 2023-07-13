@@ -2,7 +2,6 @@
 
 ## Todo list (next release) {#todo}
 For the next release
-> BUG: Blockquote inside a code block has incorrect result
 > BUG: Make Conditional blocks work when there is no context (make a paragraph)
 > MANUAL: More explanation on coding before getting to conditional text.
 > MANUAL: Section on formatting (code block, blockquote)

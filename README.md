@@ -71,6 +71,20 @@ Comment:
 // this line is a comment
 ```
 
+## Formatting
+Blockquotes:
+```
+> This text is inside a blockquote
+> This text is inside the same blockquote
+```
+
+Code Blocks (not executable):
+````
+```
+This text looks like code
+```
+````
+
 ## Available Actions
 |Inventory Management| (experimental) |
 |-|-|
