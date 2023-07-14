@@ -68,7 +68,7 @@ jump("#foyer2")
 
 ## The Darkness Ahead {#foyer2}
 
-Yes, you think that was their name.
+Yes, you think that was the name.
 <^^^
 (memo_check "friend") + "."
 ^^^>
