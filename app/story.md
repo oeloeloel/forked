@@ -260,8 +260,8 @@ When you drop an action into a chunk like this, it will run once, each time this
 Sometimes you will want a trigger to perform some kind of action instead of navigating to another chunk.
 
 ```
-Drop the weapon](^^^
-bag_remove "dueling pistol"
+[Drop the weapon](^^^
+  bag_remove "dueling pistol"
 ^^^)
 ```
 
