@@ -98,7 +98,7 @@ This text looks like code
 |`memo_add "memo name", "memo value"`| Creates a new memo using the supplied name and storing the supplied value |
 |`memo_del "memo name"`| Deletes the named memo |
 |`memo_exists? "memo name"`| Returns true if the named memo exists |
-|`memo_clear "memo name"`| Deletes all memos |
+|`memo_clear`| Deletes all memos |
 |`memo_check "memo name"`| Returns the value of the named memo |
 
 |Wallet: Financial Management| (experimental) |
