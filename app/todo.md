@@ -7,10 +7,13 @@ Todo now/next
 MANUAL: More explanation on coding before getting to conditional text.\
 TODO: Make methods to create parts of story hash instead of writing them out over again\
 TODO: Inline styles (bold, italic, etc.).\
-Helpers: Background image, timer, wallet, memo\
+Helpers: √Background image, timer, √wallet, √memo\
 TODO: Conditional block should not extend paragraph if there is a blank line between. (Use context)
-DONE: Line wrap fail in manual: Adding Text
-DONE: \ at end of line is hard wrap
+TODO: Put forked in its own folder.
+MANUAL: Open DragonRuby, hooking up Forked.
+
+DONE: Line wrap fail in manual: Adding Text\
+DONE: \ at end of line is hard wrap\
 DONE: Escape Code Block\
 DONE: Make Conditional blocks work when there is no context (make a paragraph)\
 

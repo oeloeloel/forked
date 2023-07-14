@@ -47,6 +47,7 @@ def jump label
 end
 
 ### Background
+# Sets the background image to a 1280x720 png file (run from a condition)
 def background_image(path)
   $args.outputs.sprites << {
     x: 0,
@@ -55,6 +56,87 @@ def background_image(path)
     h: 720,
     path: path
   }
+end
+
+### Memos
+# stores information that can be checked later
+def memo
+  $args.state.forked_memo ||= {}
+end
+
+# adds a memo
+def memo_add name, value
+  memo[name] = value
+end
+
+# deletes a memo
+def memo_del name
+  memo.delete(name)
+end
+
+# clears all memos
+def memo_clear
+  $args.state.forked_memo = {}
+end
+
+# returns true if a memo exists
+def memo_exists? name
+  memo[name] != nil
+end
+
+# returns the value of a memo
+def memo_check name
+  memo[name]
+end
+
+### Wallet
+# Keeps track of the player's finances (gold coins, dollars, anything you like)
+def wallet
+  args.state.forked_wallet ||= 0
+end
+
+# adds money to the wallet
+def wallet_plus num
+  wallet = wallet + num
+end
+
+# removes money from the wallet
+def wallet_minus num
+  wallet = wallet - num
+end
+
+# removes all money from the wallet
+def wallet_clear num
+  wallet = 0
+end
+
+### Timers
+# lets you create timers
+def timer
+  args.state.forked_timer ||= {}
+end
+
+# creates a new, named timer with the provided duration
+def timer_add name, duration
+  timer[name] = {
+    start_time: $args.tick_count,
+    duration: duration
+  }
+end
+
+# removes a named timer
+def timer_del name
+  timer.delete(name)
+end
+
+# checks how much time is left for a timer (will be negative when duration is up)
+def timer_check name
+  timer[name][:duration] - ($args.tick_count - timer[name][:start_time])
+end
+
+# returns true if the named timer is complete
+def timer_done name
+  timer_check(name) <= 0
 end
 
 def tick args
@@ -73,6 +155,7 @@ def tick args
       r: 255, g: 0, b: 0, alignment_enum: 1, vertical_alignment_enum: 1 }
     args.outputs.primitives << args.gtk.current_framerate_primitives
   end
+
   reset if args.inputs.keyboard.key_down.backspace
 end
 

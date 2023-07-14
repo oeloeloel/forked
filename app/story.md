@@ -3,7 +3,7 @@
 ## Welcome to Forked {#welcome}
 Forked is a scripting system for DragonRuby that lets you write interactive stories, branching dialogues or anything else that requires writing and choices like, for example, this manual.
 
-Forked is intended to be simple to pick up and easy for non-programmers to work with. For people who code, it offers a space for writing with fewer distractions combined with the ability to call on the full power of Ruby.
+Forked is intended to be simple to pick up and easy for non-programmers to work with. For people who like to write code, it lets you focus on story-writing while giving you access to the full power of Ruby.
 
 With Forked, you can learn how to write a simple interactive story in a few minutes.
 
@@ -15,11 +15,12 @@ With Forked, you can learn how to write a simple interactive story in a few minu
 
 [Welcome to Forked](#welcome)
 [Getting Started](#getting_started)
-[The Story Title](#story_title)
-[Story Chunks](#story_chunk)
-[Heading Lines](#heading_line)
-[Adding Text](#adding_text)
-[Triggers](#triggers)
+[Essentials](#essentials)
+//[The Story Title](#story_title)
+//[Story Chunks](#story_chunk)
+//[Heading Lines](#heading_line)
+//[Adding Text](#adding_text)
+//[Triggers](#triggers)
 [Formatting](#formatting)
 [Actions](#actions)
 [Using Actions with Triggers](#actions_with_triggers)
@@ -28,25 +29,29 @@ With Forked, you can learn how to write a simple interactive story in a few minu
 
 ## Getting Started {#getting_started}
 
-First things first: You need DragonRuby Game Toolkit to use Forked.
+First things first. You need DragonRuby Game Toolkit to use Forked:
 
 [DragonRuby](#dragonruby)
 
-Open up the story.md file in any text editor and you'll see the contents of this manual. When you look at the examples, you'll also be able to see the code that created them.
+Then you can install Forked:
 
-When you want to start a new story, create a new file in the 'app' folder and call it whatever you want.
+[Forked Installation](#installation)
 
-Open the tick.rb file and look for a line near the top that says
+Open up the `story.md`` file in any text editor and you'll see the contents of this manual. When you look at the examples, you'll also be able to see the code that created them.
+
+When you want to start a new story, create a new file in the `app`` folder and call it whatever you want.
+
+Open the `tick.rb`` file and look for a line near the top that says
 
 ```
 STORY_FILE = 'app/story.md'
 ```
 
-Change 'story.md' to whatever you named your file.
+Change `story.md`` to whatever you named your file.
 
 Then you can start writing your story.
 
-[Next: The Story Title](#story_title)  
+[Next: Essentials](#essentials)  
 [Back: Welcome to Forked](#welcome)  
 [Contents](#contents)
 
@@ -60,6 +65,35 @@ Be sure to visit the DragonRuby Discord for help or just to hang out with the su
 
 [Back: Getting Started](#getting_started)
 
+## Installation {#installation}
+To install Forked, you should start with a freshly unzipped DragonRuby project.
+
+Download the Forked project from GitHub and move the files into your DragonRuby project.
+
+The Forked files should be placed in the folder `mygame/app`. Be sure to overwrite the file `main.rb` with the Forked file with the same name.
+
+Now run DragonRuby - double-click on the DragonRuby executable (`dragonruby.exe` on windows, `dragonruby` on macOS or Linux).
+
+By default, Forked will open this manual to help youy get started. Since you're already reading this manual, congratulations on a job well done.
+
+[Back: Getting Started](#getting_started)
+
+## Essentials {#essentials}
+
+There are only a few things you really need to know to write a branching story with Forked.
+
+[Set The Story Title](#story_title)
+[Divide the Story into Chunks](#story_chunk)
+[Give Each Chunk a Heading](#heading_line)
+[Add Some Text](#adding_text)
+[Link Chunks to Each Other with Triggers](#triggers)
+
+Once you've covered that, you can write a simple branching story and share it with the world.
+
+[Next: Formatting](#formatting)
+[Back: Getting Started](#getting_started)
+[Contents](#contents)
+
 ## The Story Title {#story_title}
 Every story needs a title and, in Forked, they are written like this:
 
@@ -67,15 +101,14 @@ Every story needs a title and, in Forked, they are written like this:
 # Gentleman, Adventurer, Amphibian: A Memoir
 ```
 
-The title begins with a hash or pound symbol # followed by the text of the title.
+The title begins with a hash (also know as a pound) symbol `#` followed by the text of the title.
 
 You can have only one title in your story file and it should be at the top.
 
 That's all for titles.
 
 [Next: Story Chunks](#story_chunk)
-[Back: Getting Started](#getting_started)
-[Contents](#contents)
+[Back to Essentials](#essentials)
 
 ## Story Chunks {#story_chunk}
 In Forked, stories are divided into sections called chunks. All the text you can see in this window is one chunk of the story.
@@ -86,7 +119,7 @@ And you'll see it happen again when you click one of the buttons below.
 
 [Next: The Heading Line](#heading_line)
 [Back: The Story Title](#story_title)
-[Contents](#contents)
+[Back to Essentials](#essentials)
 
 ## Heading Lines {#heading_line}
 The first line of a chunk is the heading line. It's what lets Forked know that a new chunk is beginning.
@@ -103,7 +136,7 @@ Finally, there is the Chunk ID {#birth}. This identifies the chunk so Forked kno
 
 [Next: Adding Text](#adding_text)
 [Back: Story Chunks](#story_chunk)
-[Contents](#contents)
+[Back to Essentials](#essentials)
 
 ## Adding Text {#adding_text}
 
@@ -121,7 +154,7 @@ In Forked, you write text in paragraphs separated by a blank line.
 
 [Next: Triggers](#triggers)
 [Back: Heading Lines](#heading_line)
-[Contents](#contents)
+[Back to Essentials](#essentials)
 
 ## Triggers {#triggers}
 To allow the player to move from one chunk to another, we can use Triggers.
@@ -142,9 +175,8 @@ As well as navigating to other chunks, trigger actions can run Ruby code. We'll 
 If the trigger action is empty, Forked will display a non-clickable button like the next button below:
 [This matter is now closed]()
 
-[Next: Formatting](#formatting)
 [Back: Adding Text](#adding_text)
-[Contents](#contents)
+[Back to Essentials](#essentials)
 
 ## Formatting {#formatting}
 
@@ -154,13 +186,13 @@ Simple formatting:
 [Blockquotes](#blockquotes)
 [Code Blocks](#code-blocks)
 
-For more advanced presentations:
+For more advanced formatting:
 [Themes]()
 
 Expect to see more formatting options added in future.
 
 [Next: Actions](#actions)
-[Back: Adding Text](#adding_text)
+[Back: Essentials](#essentials)
 [Contents](#contents)
 
 ## Blockquotes {#blockquotes}
@@ -188,13 +220,13 @@ If you put several blockquotes one after the other, they appear as a single bloc
 ## Code Blocks {#code-blocks}
 Code blocks, as you have already seen in this manual, are used to show code:
 ```
-inventory_add "The Maharajah's Star"
+bag_add "The Maharajah's Star"
 ```
 
 Code blocks start and end with three backticks `
 ```
 \```
-  inventory_add "The Maharajah's Star"
+  bag_add "The Maharajah's Star"
 \```
 ```
 
@@ -211,14 +243,14 @@ Actions get things done. You can drop an action into a chunk like this:
 
 ```
 ^^^
-inventory_add "pith helmet"
+bag_add "pith helmet"
 ^^^
 ```
 Actions begin and end with three caret ^ symbols on the line above and another three carets on the line below. On the lines in-between, you can issue commands.
 
-In this case, we are telling Forked to add a sturdy, yet attractive, "pith helmet" to the player's inventory. Forked comes with some useful commands added, including the ability to store and retrieve items from an inventory. More about custom commands later.
+In this case, we are telling Forked to add a sturdy, yet attractive, "pith helmet" to the player's "bag" or inventory. Forked comes with some useful commands added, including the ability to store and retrieve items from an inventory. More about custom commands later.
 
-When you drop an action into a chunk like this, it will run once, each time this chunk is loaded. That's the perfect time to add or remove an item to your inventory.
+When you drop an action into a chunk like this, it will run once, each time this chunk is loaded. That's the perfect time to add an item to, or remove an item from, your bag.
 
 [Next: Using Actions with Triggers](#actions_with_triggers)
 [Back: Triggers](#triggers)
@@ -229,13 +261,13 @@ Sometimes you will want a trigger to perform some kind of action instead of navi
 
 ```
 Drop the weapon](^^^
-inventory_remove "dueling pistol"
+bag_remove "dueling pistol"
 ^^^)
 ```
 
 You can combine an action with a trigger by replacing the chunk id with a command wrapped in carets as in the example above. The carets must be on the line above and the line below the action.
 
-In this case, the item "dueling pistol" will be removed from the player's inventory when the button is clicked.
+In this case, the item "dueling pistol" will be removed from the player's bag when the button is clicked.
 
 [Next: Conditional Text](#conditions)
 [Back: Actions](#actions)
@@ -245,10 +277,10 @@ In this case, the item "dueling pistol" will be removed from the player's invent
 Sometimes you may want to show, hide or change text depending on the situation.
 ```
 The crew of the submarine threw themselves into the sea and proceeded to <^^^
-    inventory_has? "dinghy" ? "row for shore." : "drown."
+    bag_has? "dinghy" ? "row for shore." : "drown."
 ^^^>
 ```
-In this example, if the player's inventory contains a "dinghy", the result will be:
+In this example, if the player's bag contains a "dinghy", the result will be:
 > The crew of the submarine threw themselves into the sea and proceeded to row for shore.
 
 If the player does not have a "dinghy" by this time, let us bow our heads and say a prayer for those poor, brave submariners.
@@ -274,7 +306,7 @@ change_theme DARK_MODE
 [Turn the lights fun and stupid](^^^
 change_theme KIFASS_THEME
 ^^^)
-%
+
 You can edit the display theme to change the colour scheme. Open the file `app/themes/dark-mode-theme.rb` and you can see how it's done.
 
 [Back to Examples](#examples)

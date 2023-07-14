@@ -431,7 +431,6 @@ module Forked
 
     def render
       outputs.background_color = data.config.display.background_color.values
-
       args.outputs.primitives << data.primitives
     end
   end
