@@ -64,19 +64,17 @@ Tell Akz to write a better error message."
       end
     end
 
-    def present args
-      args.state.forked.current_lines.each_with_index do |element, i|
-        if element[:atoms]
-          element[:atoms].each_with_index do |atom, j|
-            if atom[:condition]
-              if atom[:condition].class == String
-              result = evaluate(args, atom[:condition])
-                if result.class == String
-                  element[:atoms][j][:text] = result + ' '
-                end
-              end
-            end
-          end
+    def present(args)
+      args.state.forked.current_lines.each do |element|
+        next unless element[:atoms]
+
+        element[:atoms].each_with_index do |atom, j|
+          next unless atom[:condition] && atom[:condition].class == String
+
+          result = evaluate(args, atom[:condition])
+          next unless result.class == String
+
+          element[:atoms][j][:text] = "#{result} "
         end
       end
       @display.update(args.state.forked.current_lines)
