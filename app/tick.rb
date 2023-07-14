@@ -1,7 +1,7 @@
 # STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
-# STORY_FILE = 'app/threshold.md'
-STORY_FILE = 'app/tests.md'
+STORY_FILE = 'app/threshold.md'
+# STORY_FILE = 'app/tests.md'
 # STORY_FILE = 'app/todo.md'
 
 # THEME = LIGHT_MODE
@@ -138,6 +138,15 @@ end
 def timer_done name
   timer_check(name) <= 0
 end
+
+### Dice Roll
+def roll dice
+  result = 0
+  num_dice, num_sides = dice.split('d', 2)
+  num_dice.to_i.times { result += rand(num_sides.to_i) + 1 }
+  result
+end
+
 
 def tick args
   args.outputs.background_color = [51, 51, 51]
