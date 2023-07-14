@@ -106,7 +106,7 @@ def wallet_minus num
 end
 
 # removes all money from the wallet
-def wallet_clear num
+def wallet_clear
   wallet = 0
 end
 
