@@ -1,5 +1,5 @@
 $gtk.reset
-$story = nil
+# $story = nil
 
 module Forked
   # manages the story data
@@ -65,26 +65,44 @@ Tell Akz to write a better error message."
     end
 
     def present(args)
-      args.state.forked.current_lines.each do |element|
-        next unless element[:atoms]
+      display_lines = args.state.forked.current_lines.copy
 
-        element[:atoms].each_with_index do |atom, j|
-          next unless atom[:condition] && atom[:condition].class == String
+      display_lines.each do |element|
 
-          result = evaluate(args, atom[:condition])
-          next unless result.class == String
+        # deal first with content that contains atoms
+        if element[:atoms]
 
-          element[:atoms][j][:text] = "#{result} "
+          element[:atoms].each_with_index do |atom, j|
+            next unless atom[:condition] &&
+                        atom[:condition].class == String &&
+                        !atom[:condition].empty?
+            result = evaluate(args, atom[:condition])
+            if result.class == String
+              element[:atoms][j][:text] = "#{result} "
+            elsif result.nil? || result == false
+              element[:atoms][j][:text] = ''
+            end
+          end
+        else
+          # the element does not contain atoms
+          next unless element && element[:condition]
+
+          result = evaluate(args, element[:condition])
+
+          if result.nil? || result == false
+            element[:type] = :blank
+          end
         end
       end
-      @display.update(args.state.forked.current_lines)
+
+      @display.update(display_lines)
     end
 
     def fetch_story args
       story_text = args.gtk.read_file STORY_FILE
 
       if story_text.nil?
-        raise "The file #{STORY_FILE} failed to load. Please check it."
+        raise "The file #{STORY_FILE} failed to load. Please check the filename and path."
       end
 
       story_text

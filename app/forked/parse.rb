@@ -34,13 +34,14 @@ module Forked
         # [x] :paragraph (plain text)
         # [x] preserved line (do not parse line and present as text)
         # [x] comments (stripped and ignored)
+        # [ ] :rule (horizontal rule)
 
         story_file.each_line.with_index do |line, line_no|
           # "#{line_no}: #{line.strip}"
 
           ### PRESERVE LINE (^%) and stop parsing it
-          result = parse_preserve_line(line, context, story, line_no)
-          next if result
+          # result = parse_preserve_line(line, context, story, line_no)
+          # next if result
 
           ### STRIP COMMENT (//) and continue parsing line
           result = parse_comment(line, context)
@@ -75,6 +76,10 @@ Please add a heading line after the title and before any other content. Example:
 "
           end
 
+          ### RULE
+          result = parse_rule(line, context, story, line_no)
+          next if result
+
           ### TRIGGER
 
           result = parse_trigger(line, context, story, line_no)
@@ -84,6 +89,7 @@ Please add a heading line after the title and before any other content. Example:
           # Condition block can start mid-line so it needs to
           # come after blockquote, which always starts at the
           # beginning of a line
+
           result = parse_condition_block(line, context, story, line_no)
           next if result
 
@@ -92,7 +98,7 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           ### ACTION BLOCK
-          result = parse_action_block(line, context, story)
+          result = parse_action_block(line, context, story, line_no)
           next if result
 
           # PARAGRAPH
@@ -120,6 +126,28 @@ Please add a heading line after the title and before any other content. Example:
         arr1.intersection(arr2).any?
       end
 
+      # draws a horizontal line
+      def parse_rule(line, context, story, line_no)
+        return unless line.strip.start_with?('---')
+
+        prohibited_contexts = [:title, :code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        story[:chunks][-1][:content] << {
+          type: :rule,
+          weight: 1
+        }
+
+        # if this content is conditional, add the condition to the current element
+        if context.include?(:condition_block)
+          condition = story[:chunks][-1][:conditions][-1]
+          story[:chunks][-1][:content][-1][:condition] = condition
+        end
+
+        true
+      end
+
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
       def parse_preserve_line(line, context, story, _line_no)
@@ -143,7 +171,7 @@ Please add a heading line after the title and before any other content. Example:
         true
       end
 
-      def parse_paragraph(line, context, story, _line_no)
+      def parse_paragraph(line, context, story, line_no)
         prohibited_contexts = [:title, :codeblock, :heading]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -160,6 +188,8 @@ Please add a heading line after the title and before any other content. Example:
           ## OR! the previous element is anything other than paragraph
           ### (it may have changed and we don't want to append to some other element)
           if !context.include?(:paragraph) || story[:chunks][-1][:content][-1][:type] != :paragraph
+            # if there is no open paragraph or the previous element it not a paragraph
+            # create a new empty paragraph (paragraph may have been interrupted?)
             context << (:paragraph)
 
             story[:chunks][-1][:content] << {
@@ -172,26 +202,44 @@ Please add a heading line after the title and before any other content. Example:
             }
           end
 
+          # if the previous atom was a condition, add a new empty atom.
+          # TODO: Refactor this code
+
           cond =  story[:chunks][-1][:content][-1][:atoms][-1][:condition]
-          if cond && cond.class == String
+
+          if cond&.class == String
             story[:chunks][-1][:content][-1][:atoms] << {
               text: line + ' ',
               styles: [],
             }
+
           else
+            
+            # deal with newlines
             if line.strip[-1] == '\\'
               line = line.delete_suffix('\\') + "\n"
             else
               line += ' '
             end
+
+            # if the atom ends with a newline, start a new atom
+            # the newline is a result of a backslash hard wrap
             prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
             if prev && prev[-1] == "\n"
               story[:chunks][-1][:content][-1][:atoms] << {
                 text: line,
                 styles: [],
+                condition: []
               }
             else
+              # otherwise, append to the current atom
               story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
+            end
+
+            # if this content is conditional, add the condition to the current atom
+            if context.include?(:condition_block)
+              condition = story[:chunks][-1][:conditions][-1]
+              story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
             end
           end
         end
@@ -234,16 +282,52 @@ Please add a heading line after the title and before any other content. Example:
             }
           end
 
+          # if this content is conditional, add the condition to the current element
+          if context.include?(:condition_block)
+            condition = story[:chunks][-1][:conditions][-1]
+            story[:chunks][-1][:content][-1][:condition] = condition
+          end
+
           return true
+        end
+      end
+
+
+      # Code blocks format code for display
+      # They begin with three ticks ``` on a blank line
+      # and end with three ticks on a blank line
+      def parse_code_block(line, context, story, line_no)
+        if line.include?('~~~') & !line.include?('\~~~')
+          if context.include?(:code_block)
+            context.delete(:code_block)
+          else
+            context << (:code_block)
+            story[:chunks][-1][:content] << {
+              type: :code_block,
+              text: ''
+            }
+
+            # if this content is conditional, add the condition to the current element
+            if context.include?(:condition_block)
+              condition = story[:chunks][-1][:conditions][-1]
+              story[:chunks][-1][:content][-1][:condition] = condition
+            end
+
+          end
+          true
+        elsif context.include?(:code_block)
+          # if the line contains escaped fencing, strip the backslash and present it as-is
+          line.delete_prefix!('\\') if line.strip.start_with?('\~~~')
+          story[:chunks][-1][:content][-1].text += line
+          true
         end
       end
 
       # Code blocks format code for display
       # They begin with three ticks ``` on a blank line
       # and end with three ticks on a blank line
-      def parse_code_block(line, context, story, line_no)
+      def parse_code_block_old_1(line, context, story, line_no)
         if line.include?('```') & !line.include?('\```')
-          putz "Found real backticks on #{line_no + 1}" if line_no < 16
           if context.include?(:code_block)
             context.delete(:code_block)
           else
@@ -255,6 +339,7 @@ Please add a heading line after the title and before any other content. Example:
           end
           true
         elsif context.include?(:code_block)
+          # if the line contains escaped fencing, strip the backslash and present it as-is
           line.delete_prefix!('\\') if line.strip.start_with?('\```')
           story[:chunks][-1][:content][-1].text += line
           true
@@ -262,9 +347,37 @@ Please add a heading line after the title and before any other content. Example:
       end
 
       # action blocks contain executable code
+      # They begin with three backticks ``` on a blank line
+      # and end with three carets on a blank line
+      def parse_action_block(line, context, story, line_no)
+        prohibited_contexts = [:code_block, :trigger_action, :condition_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        if line.include? '```'
+          if context.include?(:action_block)
+            context.delete(:action_block)
+          else
+            context << (:action_block)
+            story[:chunks][-1][:actions] << ''
+          end
+          true
+        elsif context.include?(:action_block)
+          destination = story[:chunks][-1][:actions][-1]
+          if destination.nil?
+            raise "FORKED: An action block is open but no action exists in the current chunk.\n"\
+                  "Check for an unterminated action block (```) around or before line #{line_no + 1}."
+          end
+          story[:chunks][-1][:actions][-1] += line
+          true
+        end
+      end
+
+
+      # action blocks contain executable code
       # They begin with three carets ^^^ on a blank line
       # and end with three carets on a blank line
-      def parse_action_block(line, context, story)
+      def parse_action_block_old_1(line, context, story)
         prohibited_contexts = [:code_block, :trigger_action]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -283,13 +396,101 @@ Please add a heading line after the title and before any other content. Example:
         end
       end
 
-      # condition blocks allow for conditional text
+          # condition blocks allow for conditional text
       # CURRENTLY
       # They begin with a left angle bracket followed by 3 carets <^^^
       # and end with 3 carets followed by a right angle bracket ^^^>
       # The current functionality is to conditionally include text
       # returned from the block as a string
       def parse_condition_block(line, context, story, line_no)
+        # problem: condition block appends to paragraph.
+        # If there is no paragraph context open, it breaks.
+        # If no paragraph context is open,
+        # get out and let the paragraph (or other element)
+        # code take over.
+
+        # paragraph (or other element) must be responsible for
+        # the condition being applied to the element/atom.
+
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        # opening condition block context and condition code context
+        if line.strip.end_with?('<%```')
+          context << :condition_block
+          context << :condition_code_block
+          story[:chunks][-1][:conditions] << ''
+          return true
+        end
+
+        # closing both condition code context and condition block context
+        if line.strip.start_with?('```%>')
+          context.delete(:condition_block)
+          context.delete(:condition_code_block)
+          if story[:chunks][-1][:content][-1].type == :paragraph
+            story[:chunks][-1][:content][-1][:atoms] << {
+              text: '',
+              styles: [],
+              condition: story[:chunks][-1][:conditions][-1]
+            }
+            story[:chunks][-1][:content][-1][:atoms]
+          else
+            context << (:paragraph)
+            story[:chunks][-1][:content] << {
+              type: :paragraph,
+              atoms: [
+                text: '',
+                condition: story[:chunks][-1][:conditions][-1],
+                styles: []
+              ]
+            }
+          end
+          return true
+        end
+
+        # NOTE: The above code appends an atom to the previous paragraph
+        # if it is the last added element, or creates a new paragraph for the atom.
+        # The atom contains only a condition and if the result of the condition
+        # is a string, Forked will add the string to the atom text at runtime.
+
+        # If the condition contains content between the closing code fence
+        # and the closing condition, that doesn't happen. The following code runs
+        # instead.
+
+        # This is important because it's not decided if Forked should display a
+        # returned string AND the following conditional content. Right now,
+        # it won't do both but only because that's how it happens to be.
+
+        # closing only condition code block context
+        if line.strip == '```' && context.include?(:condition_code_block)
+          context.delete(:condition_code_block)
+          return true
+        end
+
+        # closing only condition block context
+        if line.strip == '%>'
+          context.delete(:condition_block)
+          return true
+        end
+
+        # capture contents of condition code block
+        if context.include?(:condition_code_block)
+          story[:chunks][-1][:conditions][-1] += line
+          return true
+        end
+
+        # nil return allows conditional content to be handled by other parsers
+      end
+
+
+      # condition blocks allow for conditional text
+      # CURRENTLY
+      # They begin with a left angle bracket followed by 3 carets <^^^
+      # and end with 3 carets followed by a right angle bracket ^^^>
+      # The current functionality is to conditionally include text
+      # returned from the block as a string
+      def parse_condition_block_old_1(line, context, story, line_no)
         # problem: condition block appends to paragraph.
         # If there is no paragraph context open, it breaks.
         # If no paragraph context is open,
@@ -412,10 +613,72 @@ Please add a title to the top of the Story File. Example:
             true
       end
 
-      # triggers are represented as buttons that perform actions
+            # triggers are represented as buttons that perform actions
       # [Trigger Text](Trigger Action)
       # Trigger action may be chunk id or an action block
       def parse_trigger(line, context, story, line_no)
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        # identify trigger and catch text (keep parsing)
+        if line.strip.start_with?('[') && line.include?('](')
+          line = line.strip.delete_prefix!('[')
+          line.split(']', 2).then do |trigger, action|
+            trigger.strip!
+            action.strip!
+            story[:chunks][-1][:content] << {
+              type: :button,
+              text: trigger,
+              action: ''
+            }
+
+            # if this content is conditional, add the condition to the current element
+
+            if context.include?(:condition_block)
+              condition = story[:chunks][-1][:conditions][-1]
+              story[:chunks][-1][:content][-1][:condition] = condition
+            end
+
+            ### identify and catch chunk id action (return)
+            if action.end_with?(')')
+              action.delete_prefix!('(')
+              action.delete_suffix!(')')
+
+              if action.start_with?('#') || action.strip.empty?
+                story[:chunks][-1][:content][-1].action = action
+                return true
+              else
+                raise("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
+              end
+
+            # identify action block and open context (keep parsing)
+            elsif action.end_with?('(```')
+              context << :trigger_action
+            end
+          end
+ 
+
+        # identfy action block close and close context, if open (return)
+        elsif line.strip.start_with?('```)') && context.include?(:trigger_action)
+          context.delete(:trigger_action)
+          return true
+
+        # if context is open, add line to trigger action (return)
+        elsif context.include?(:trigger_action)
+          story[:chunks][-1][:content][-1].action += line
+          return true
+        end
+
+
+        
+      end
+      
+
+      # triggers are represented as buttons that perform actions
+      # [Trigger Text](Trigger Action)
+      # Trigger action may be chunk id or an action block
+      def parse_trigger_old_1(line, context, story, line_no)
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)

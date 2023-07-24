@@ -1,6 +1,6 @@
 
 def config_defaults
-  {
+  { 
     display: default_display,
     heading: default_heading,
     rule: default_rule,

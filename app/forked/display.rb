@@ -93,11 +93,14 @@ module Forked
           y_pos -= heading.size_px * heading.spacing_after
 
         when :rule
+          weight = rule.weight
+          weight = item.weight if item.weight
+          
           data.primitives << {
             x: display.margin_left,
             y: y_pos,
             w: display.w,
-            h: rule.weight
+            h: weight
           }.sprite!(rule)
 
           y_pos -= rule.spacing_after
@@ -190,6 +193,8 @@ module Forked
           y_pos -= code_block.size_px * code_block.spacing_after
 
         when :blockquote
+
+          next if item[:text].empty?
 
           # if previous element is also a blockquote, use spacing_between instead of spacing_after
           if content[i - 1].type == :blockquote
@@ -324,7 +329,6 @@ module Forked
 
                 # empty the line and add the non-fitting frag to it
                 fixed_width_line = frag.delete_prefix!(' ')
-                # putz [frag]
                 # empty the frag but add a space
                 frag = ' '
               end

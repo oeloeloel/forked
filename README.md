@@ -38,33 +38,54 @@ Trigger and target:
 [Trigger text](#target_id)
 ```
 
+Blockquote:
+```
+> This text is displayed as a blockquote.
+```
+
+Code Block:
+```
+~~~
+# This text is displayed as code, in a monospace font with lines wrapped for length but otherwise without any changes.
+~~~
+```
+
+Horizontal Rule:
+```
+---
+```
+
 Chunk action:
+````
 ```
-^^^
 action
-^^^
 ```
+````
 
 Trigger action:
-```
-[Trigger text](^^^
+````
+[Trigger text](```
 action
-^^^)
-```
+```)
+````
 
 Conditional text (string interpolation):
-```
-<^^^
+````
+<%```
 condition
-^^^>
-```
+```%>
+````
 
 Conditional text (show/hide text) [note: to be improved]:
+````
+<%```
+condition
 ```
-<^^^
-condition ? "text displayed if true" : "text displayed if false"
-^^^>
-```
+This text is displayed if the condition is true.
+```%>
+````
+
+
 
 Comment:
 ```
@@ -89,15 +110,14 @@ This text looks like code
 |Bag: Inventory Management| (experimental) |
 |-|-|
 |`bag_add item` | adds an item to the player's inventory |
-|`bag_del item` | removes an item from the player's inventory |
+|`bag_remove item` | removes an item from the player's inventory |
 |`bag_has? item` | `true` if the item is in the player's inventory or `false` if not |
 |`bag_clear` | clear all items from the inventory |
 
 |Memo: Storing Information| (experimental) |
 |--|--
 |`memo_add "memo name", "memo value"`| Creates a new memo using the supplied name and storing the supplied value |
-|`memo_del "memo name"`| Deletes the named memo |
-|`memo_exists? "memo name"`| Returns true if the named memo exists |
+|`memo_remove "memo name"` | Deletes the named memo |
 |`memo_clear`| Deletes all memos |
 |`memo_check "memo name"`| Returns the value of the named memo |
 
@@ -110,11 +130,24 @@ This text looks like code
 
 |Timer: Time Management| (experimental) |
 |-|-|
-|`timer_add "timer name", 10.seconds`| Creates a new timer with the provided name and the provided duration. The duration can be given in `ticks` (1/60 seconds) or in seconds as shown here.|
-|`timer_del "timer name"`| Deletes the timer with the provided name |
+|`timer_add "timer name", 10.seconds`| Creates a new timer with the provided name and the provided duration. The duration can be given in `ticks` (1/60 seconds) or in seconds as shown here.  |
+|`timer_remove "timer name"` | Deletes the timer with the provided name |
 |`timer_check "timer name"`| Returns the time remaining for the named timer|
-|`timer_done "timer name"` | Returns true if the timer is complete |
+|`timer_done? "timer name"` | Returns true if the timer is complete |
+
+| Counter: Number Tracking         | (experimental)                                                                                   |
+|-|-|
+| `counter_add "counter name", 5` | Creates a new counter with the provided name and the (optional) provided duration                |
+| `counter_remove "counter name"`  | Deletes the named counter                                                                        |
+| `counter_up "counter name", 1`   | Increases the value of the named counter by the provided value (or by 1 if no value is provided) |
+| `counter_down "counter name", 1` | Decreases the value of the named counter by the provided value (or by 1 if no value is provided) |
+| `counter_check "counter name"`   | Returns the value of the named counter                                                           |
+| `counter_clear`                  | Deletes all stored counters                                                                      |
 
 |Background Image|(experimental)|
 |-|-|
 |`background_image "sprites/bg_image.png"` | Sets the story background to the provided image. It is recommended to put images in `mygame/sprites`. This action should only be used with `conditional blocks` (see manual).|
+
+| Roll Dice | (experimental) |
+|-|-|
+| `roll "2d6"` | Returns the result of a dice roll with two, six sided dice. Any other numbers may be substitutes: The first number represents the number of dice. The second number represents the number of sides for all rolled dice. |

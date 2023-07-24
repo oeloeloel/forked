@@ -1,8 +1,6 @@
-# STORY_FILE = 'app/story.md'
+STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
-STORY_FILE = 'app/threshold.md'
-# STORY_FILE = 'app/tests.md'
-# STORY_FILE = 'app/todo.md'
+# STORY_FILE = 'app/threshold.md'
 
 # THEME = LIGHT_MODE
 THEME = DARK_MODE
@@ -20,7 +18,7 @@ def bag_add item
 end
 
 # removes an item from the player inventory
-def bag_del item
+def bag_remove item
   bag.delete item
 end
 
@@ -58,6 +56,36 @@ def background_image(path)
   }
 end
 
+### Counters
+
+def counter
+  $args.state.forked_counter ||= {}
+end
+
+def counter_up name, value = 1
+  counter[name] += value
+end
+
+def counter_down name, value = 1
+  counter[name] -= value
+end
+
+def counter_add name, value = 0
+  counter[name] = value
+end
+
+def counter_remove name
+  counter.delete(name)
+end
+
+def counter_check name
+  counter[name]
+end
+
+def counter_clear
+  $args.state.forked_counter = {}
+end
+
 ### Memos
 # stores information that can be checked later
 def memo
@@ -70,7 +98,7 @@ def memo_add name, value
 end
 
 # deletes a memo
-def memo_del name
+def memo_remove name
   memo.delete(name)
 end
 
@@ -125,7 +153,7 @@ def timer_add name, duration
 end
 
 # removes a named timer
-def timer_del name
+def timer_remove name
   timer.delete(name)
 end
 
@@ -135,7 +163,7 @@ def timer_check name
 end
 
 # returns true if the named timer is complete
-def timer_done name
+def timer_done? name
   timer_check(name) <= 0
 end
 
@@ -147,11 +175,10 @@ def roll dice
   result
 end
 
-
 def tick args
+  $story ||= Forked::Story.new
   args.outputs.background_color = [51, 51, 51]
-
-  $story = Forked::Story.new
+  
   $story.args = args
   $story.tick
 
@@ -169,8 +196,12 @@ def tick args
 end
 
 def reset
-  $story = nil
+  # $story = nil
   $args.gtk.reset
 end
 
 reset
+
+
+
+

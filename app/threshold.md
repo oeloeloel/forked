@@ -1,6 +1,5 @@
 # The Threshold
 
-
 ## The Threshold {#threshold}
 
 You have never been here before. You have never seen this house. But you feel like it knows you.
@@ -40,46 +39,56 @@ It would be fine to be somewhere else. Somewhere not here. There is a face, a ch
 
 The room is too dark to see anything at all. Did you imagine it? You can only have imagined it. You remember the face from your past. Years ago. Back at school. It was the face of your friend. What was their name?
 
-[Viv](^^^
+[Viv](```
 memo_add "friend", "Viv"
 memo_add "friend_pronoun", "they"
 jump("#foyer2")
-^^^)
-[Ignatz](^^^
+```)
+
+[Ignatz](```
 memo_add "friend", "Ignatz"
 memo_add "friend_pronoun", "he"
 jump("#foyer2")
-^^^)
-[Rebekah](^^^
+```)
+
+[Rebekah](```
 memo_add "friend", "Rebekah"
 memo_add "friend_pronoun", "she"
 jump("#foyer2")
-^^^)
-[Constance](^^^
+```)
+
+[Constance](```
 memo_add "friend", "Constance"
 memo_add "friend_pronoun", "she"
 jump("#foyer2")
-^^^)
-[Jules](^^^
+```)
+
+[Jules](```
 memo_add "friend", "Jules"
 memo_add "friend_pronoun", "they"
 jump("#foyer2")
-^^^)
+```)
+
+[Jaswinder](```
+memo_add "friend", "Jaswinder"
+memo_add "friend_pronoun", "he"
+jump("#foyer2")
+```)
 
 ## The Darkness Ahead {#foyer2}
 
 Yes, you think that was the name.
-<^^^
+<%```
 (memo_check "friend") + "."
-^^^>
+```%>
 It was so long ago. How can
-<^^^
+<%```
 memo_check "friend"
-^^^>
+```%>
 be here now? How can
-<^^^
+<%```
 memo_check "friend_pronoun"
-^^^>
+```%>
 be so young?
 
 [Your fate is sealed. This story is over. Begin again](#threshold)
