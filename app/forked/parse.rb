@@ -5,8 +5,8 @@ module Forked
 
     class << self
       def parse(story_file)
-        raise 'The story file is missing.' if story_file.nil?
-        raise 'The story file is empty.' if story_file.empty?
+        raise 'FORKED: The story file is missing.' if story_file.nil?
+        raise 'FORKED: The story file is empty.' if story_file.empty?
 
         # Empty story
         story = {
@@ -574,7 +574,6 @@ Please add a title to the top of the Story File. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         context.delete(:heading)
-        # raise "CONTEXT ERROR. Context should be empty but context is #{context}" unless context.empty?
 
         line.strip!
         line.delete_prefix!('##').strip!
@@ -591,7 +590,7 @@ Please add a title to the top of the Story File. Example:
               raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
             end
 
-            heading = story.title if heading.empty?
+            heading = story.title.delete_prefix!("#").strip! if heading.empty?
 
             story[:chunks] << {
               id: chunk_id,
