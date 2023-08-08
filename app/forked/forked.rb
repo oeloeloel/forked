@@ -113,7 +113,7 @@ Tell Akz to write a better error message."
     #####################
 
     def evaluate(args, command)
-      # putz "Evaluating: #{command}"
+      putz "Evaluating: #{command}" if args.state.forked.forked_show_eval
       eval command
     end
 
