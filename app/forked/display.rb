@@ -108,13 +108,14 @@ module Forked
         when :paragraph
           zero_height = true # paragraph could have no text, in which case it will have no height
           x_pos = 0
+
           item.atoms.each do |atom|
             next if atom[:text].empty?
 
             zero_height = false
             # defaults
             paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
-
+            
             # font style can change
             font_style = get_font_style(atom.styles)
 
@@ -124,10 +125,8 @@ module Forked
 
             until words.empty?
               word = words[0]
-
               new_frag = line_frag + word
-              new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.enum, font_style.font)[0]
-
+              new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
               if new_x_pos > display.w
                 loc = { x: x_pos + display.margin_left, y: y_pos }
                 lab = loc.merge(make_paragraph_label(line_frag, font_style))
