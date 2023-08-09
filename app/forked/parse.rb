@@ -9,23 +9,15 @@ module Forked
         raise 'FORKED: The story file is empty.' if story_file.empty?
 
         # Empty story
-        story = {
-          title: DEFAULT_TITLE,
-          chunks: []
-        }
+        story = make_story_hash
 
         context = [:title] # if we're in the middle of something
 
         # Elements understood by the parser:
         # [x] :blockquote (physical div)
-        # [x]:condition block (logical div)
-        # :action (single line code)
+        # [x] :condition block (logical div)
         # [x] :action_block (multiline code)
-        # :code (present with code format < 1 line)
         # [x] :code_block (present code style, multiline)
-        # :bold (inline strong style)
-        # :italic (inline emphasis style)
-        # :bold italic (inline strong + emphasis style)
         # [x] :trigger text (button display text)
         # [x] :trigger action (button action)
         # [x] :title (story title)
@@ -34,14 +26,19 @@ module Forked
         # [x] :paragraph (plain text)
         # [x] preserved line (do not parse line and present as text)
         # [x] comments (stripped and ignored)
-        # [ ] :rule (horizontal rule)
+        # [x] :rule (horizontal rule)
+        # :action (single line code)
+        # :code (present with code format < 1 line)
+        # :bold (inline strong style)
+        # :italic (inline emphasis style)
+        # :bold italic (inline strong + emphasis style)
 
         story_file.each_line.with_index do |line, line_no|
           # "#{line_no}: #{line.strip}"
 
-          ### PRESERVE LINE (^%) and stop parsing it
-          # result = parse_preserve_line(line, context, story, line_no)
-          # next if result
+          ### PRESERVE LINE (^$$) and stop parsing it
+          result = parse_preserve_line(line, context, story, line_no)
+          next if result
 
           ### STRIP COMMENT (//) and continue parsing line
           result = parse_comment(line, context)
@@ -134,10 +131,7 @@ Please add a heading line after the title and before any other content. Example:
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        story[:chunks][-1][:content] << {
-          type: :rule,
-          weight: 1
-        }
+        story[:chunks][-1][:content] << make_rule_hash
 
         # if this content is conditional, add the condition to the current element
         if context.include?(:condition_block)
@@ -151,13 +145,13 @@ Please add a heading line after the title and before any other content. Example:
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
       def parse_preserve_line(line, context, story, _line_no)
-        return unless line.strip.start_with?('%')
+        return unless line.strip.start_with?('$$')
 
         prohibited_contexts = [:title, :code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        line.delete_prefix!('%')
+        line.delete_prefix!('$$')
 
         story[:chunks][-1][:content] << {
           type: :paragraph,
@@ -168,6 +162,7 @@ Please add a heading line after the title and before any other content. Example:
             }
           ]
         }
+
         true
       end
 
@@ -191,28 +186,19 @@ Please add a heading line after the title and before any other content. Example:
             # if there is no open paragraph or the previous element it not a paragraph
             # create a new empty paragraph (paragraph may have been interrupted?)
             context << (:paragraph)
-
-            story[:chunks][-1][:content] << {
-              type: :paragraph,
-              atoms: [
-                text: '',
-                condition: [],
-                styles: []
-              ]
-            }
+            para = make_paragraph_hash
+            para[:atoms] << make_atom_hash
+            story[:chunks][-1][:content] << para
           end
 
           # if the previous atom was a condition, add a new empty atom.
-          # TODO: Refactor this code
 
-          cond =  story[:chunks][-1][:content][-1][:atoms][-1][:condition]
+          cond = story[:chunks][-1][:content][-1][:atoms][-1][:condition]
 
           if cond&.class == String
-            story[:chunks][-1][:content][-1][:atoms] << {
-              text: line + ' ',
-              styles: [],
-            }
-
+            atm = make_atom_hash
+            atm[:text] = line + ' '
+            story[:chunks][-1][:content][-1][:atoms] << atm
           else
             
             # deal with newlines
@@ -226,11 +212,9 @@ Please add a heading line after the title and before any other content. Example:
             # the newline is a result of a backslash hard wrap
             prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
             if prev && prev[-1] == "\n"
-              story[:chunks][-1][:content][-1][:atoms] << {
-                text: line,
-                styles: [],
-                condition: []
-              }
+              atm = make_atom_hash
+              atm[:text] = line
+              story[:chunks][-1][:content][-1][:atoms] << atm
             else
               # otherwise, append to the current atom
               story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
@@ -253,11 +237,11 @@ Please add a heading line after the title and before any other content. Example:
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        if line.include?(' //')
+        if line.strip.start_with?('//')
+          return ''
+        elsif line.include?(' //')
           index = line.index(' //')
           return line[0...index]
-        elsif line.strip.start_with?('//')
-          return ''
         end
 
         nil
@@ -276,10 +260,9 @@ Please add a heading line after the title and before any other content. Example:
           line.delete_prefix!('>')
 
           unless line.empty?
-            story[:chunks][-1][:content] << {
-              type: :blockquote,
-              text: line,
-            }
+            blq = make_blockquote_hash
+            blq[:text] = line
+            story[:chunks][-1][:content] << blq
           end
 
           # if this content is conditional, add the condition to the current element
@@ -302,10 +285,7 @@ Please add a heading line after the title and before any other content. Example:
             context.delete(:code_block)
           else
             context << (:code_block)
-            story[:chunks][-1][:content] << {
-              type: :code_block,
-              text: ''
-            }
+            story[:chunks][-1][:content] << make_code_block_hash
 
             # if this content is conditional, add the condition to the current element
             if context.include?(:condition_block)
@@ -332,10 +312,7 @@ Please add a heading line after the title and before any other content. Example:
             context.delete(:code_block)
           else
             context << (:code_block)
-            story[:chunks][-1][:content] << {
-              type: :code_block,
-              text: ''
-            }
+            story[:chunks][-1][:content] << make_code_block_hash
           end
           true
         elsif context.include?(:code_block)
@@ -429,22 +406,17 @@ Please add a heading line after the title and before any other content. Example:
           context.delete(:condition_block)
           context.delete(:condition_code_block)
           if story[:chunks][-1][:content][-1].type == :paragraph
-            story[:chunks][-1][:content][-1][:atoms] << {
-              text: '',
-              styles: [],
-              condition: story[:chunks][-1][:conditions][-1]
-            }
+            atm = make_atom_hash
+            atm[:condition] = story[:chunks][-1][:conditions][-1] 
+            story[:chunks][-1][:content][-1][:atoms] << atm
             story[:chunks][-1][:content][-1][:atoms]
           else
             context << (:paragraph)
-            story[:chunks][-1][:content] << {
-              type: :paragraph,
-              atoms: [
-                text: '',
-                condition: story[:chunks][-1][:conditions][-1],
-                styles: []
-              ]
-            }
+            para = make_paragraph_hash
+            atm = make_atom_hash
+            atm[:condition] = story[:chunks][-1][:conditions][-1]
+            para[:atoms] << atm 
+            story[:chunks][-1][:content] << para
           end
           return true
         end
@@ -483,63 +455,6 @@ Please add a heading line after the title and before any other content. Example:
         # nil return allows conditional content to be handled by other parsers
       end
 
-
-      # condition blocks allow for conditional text
-      # CURRENTLY
-      # They begin with a left angle bracket followed by 3 carets <^^^
-      # and end with 3 carets followed by a right angle bracket ^^^>
-      # The current functionality is to conditionally include text
-      # returned from the block as a string
-      def parse_condition_block_old_1(line, context, story, line_no)
-        # problem: condition block appends to paragraph.
-        # If there is no paragraph context open, it breaks.
-        # If no paragraph context is open,
-        # get out and let the paragraph (or other element)
-        # code take over.
-
-        # paragraph (or other element) must be responsible for
-        # the condition being applied to the element/atom.
-
-        prohibited_contexts = [:code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        if line.strip.end_with?('<^^^')
-          context << :condition_block
-          story[:chunks][-1][:conditions] << ''
-          return true
-        end
-
-        if line.strip.start_with?('^^^>')
-          context.delete(:condition_block)
-          if story[:chunks][-1][:content][-1].type == :paragraph
-            story[:chunks][-1][:content][-1][:atoms] << {
-              text: 'some default text',
-              styles: [],
-              condition: story[:chunks][-1][:conditions][-1]
-            }
-            story[:chunks][-1][:content][-1][:atoms]
-          else
-            context << (:paragraph)
-            story[:chunks][-1][:content] << {
-              type: :paragraph,
-              atoms: [
-                text: '',
-                condition: story[:chunks][-1][:conditions][-1],
-                styles: []
-              ]
-            }
-          end
-          return true
-        end
-
-        if context.include?(:condition_block)
-          story[:chunks][-1][:conditions][-1] += line
-          return true
-        end
-
-      end
-
       # The title is required. No content can come before it.
       # The Title line starts with a single #
       def parse_title(line, context, story, _line_no)
@@ -561,7 +476,7 @@ Please add a title to the top of the Story File. Example:
 
         story[:title] = line
         context.delete(:title) # title is found
-        context << :heading  # second element must be a heading
+        context << :heading # second element must be a heading
       end
 
       # The heading line starts a new chunk
@@ -590,25 +505,21 @@ Please add a title to the top of the Story File. Example:
               raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
             end
 
-            heading = story.title.delete_prefix!("#").strip! if heading.empty?
+            heading = story.title.delete_prefix("#").strip if heading.empty?
+            
+            chk = make_chunk_hash
+            chk[:id] = chunk_id
 
-            story[:chunks] << {
-              id: chunk_id,
-              actions: [],
-              conditions: [],
-              content: [
-                {
-                  type: :heading,
-                  text: heading
-                },
-                {
-                  # TODO: This should be in the story file
-                  # or the display and not here.
-                  type: :rule
-                }
-              ]
-            }
+            hdg = make_heading_hash
+            hdg[:text] = heading
 
+            rul = make_rule_hash
+            rul[:weight] = 3
+
+            chk[:content] << hdg
+            chk[:content] << rul
+
+            story[:chunks] << chk
             true
       end
 
@@ -626,11 +537,9 @@ Please add a title to the top of the Story File. Example:
           line.split(']', 2).then do |trigger, action|
             trigger.strip!
             action.strip!
-            story[:chunks][-1][:content] << {
-              type: :button,
-              text: trigger,
-              action: ''
-            }
+            trg = make_trigger_hash
+            trg[:text] = trigger
+            story[:chunks][-1][:content] << trg
 
             # if this content is conditional, add the condition to the current element
 
@@ -668,60 +577,73 @@ Please add a title to the top of the Story File. Example:
           story[:chunks][-1][:content][-1].action += line
           return true
         end
-
-
-        
       end
-      
 
-      # triggers are represented as buttons that perform actions
-      # [Trigger Text](Trigger Action)
-      # Trigger action may be chunk id or an action block
-      def parse_trigger_old_1(line, context, story, line_no)
-        prohibited_contexts = [:code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+      def make_story_hash
+        {
+          title: DEFAULT_TITLE,
+          chunks: []
+        }
+      end
 
-        # identify trigger and catch text (keep parsing)
-        if line.strip.start_with?('[') && line.include?('](')
-          line = line.strip.delete_prefix!('[')
-          line.split(']', 2).then do |trigger, action|
-            trigger.strip!
-            action.strip!
-            story[:chunks][-1][:content] << {
-              type: :button,
-              text: trigger,
-              action: ''
-            }
+      def make_chunk_hash
+        {
+          id: '',
+          actions: [],
+          conditions: [],
+          content: []
+        }
+      end
 
-            ### identify and catch chunk id action (return)
-            if action.end_with?(')')
-              action.delete_prefix!('(')
-              action.delete_suffix!(')')
+      def make_rule_hash
+        {
+          type: :rule,
+          weight: 1
+        }
+      end
 
-              if action.start_with?('#') || action.strip.empty?
-                story[:chunks][-1][:content][-1].action = action
-                return true
-              else
-                raise("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
-              end
+      def make_paragraph_hash
+        {
+          type: :paragraph,
+          atoms: []
+        }
+      end
 
-            # identify action block and open context (keep parsing)
-            elsif action.end_with?('(^^^')
-              context << :trigger_action
-            end
-          end
+      def make_atom_hash
+        {
+          text: '',
+          styles: [],
+          condition: [],
+        }
+      end
 
-        # identfy action block close and close context, if open (return)
-        elsif line.strip.start_with?('^^^)') && context.include?(:trigger_action)
-          context.delete(:trigger_action)
-          return true
+      def make_blockquote_hash
+        {
+          type: :blockquote,
+          text: '',
+        }
+      end
 
-        # if context is open, add line to trigger action (return)
-        elsif context.include?(:trigger_action)
-          story[:chunks][-1][:content][-1].action += line
-          return true
-        end
+      def make_code_block_hash
+        {
+          type: :code_block,
+          text: ''
+        }
+      end
+
+      def make_heading_hash
+        {
+          type: :heading,
+          text: ''
+        }
+      end
+
+      def make_trigger_hash
+        {
+          type: :button,
+          text: '',
+          action: ''
+        }
       end
 
       def pull_out left, right, str
