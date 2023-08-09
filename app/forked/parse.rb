@@ -581,6 +581,11 @@ Please add a title to the top of the Story File. Example:
 
         # if context is open, add line to trigger action (return)
         elsif context.include?(:trigger_action)
+          if story[:chunks][-1][:content][-1].action.size.zero?
+            # a kludge that identifies a Ruby trigger action from a normal action 
+            # so actions that begin with '#' are not mistaken for navigational actions
+            line = '@@@@' + line
+          end
           story[:chunks][-1][:content][-1].action += line
           return true
         end

@@ -29,6 +29,10 @@ module Forked
 
     def follow(args, option = nil)
       if option&.action && !option.action.start_with?("#")
+        # @@@@ was added to code to prevent it being confused with a #navigational_action.
+        # The @@@@ part needs to be removed now.
+        # Seems to work but I don't trust it
+        option.action.delete_prefix!('@@@@')
         evaluate(args, option.action.to_s)
         return
       end
