@@ -389,19 +389,30 @@ Please add a heading line after the title and before any other content. Example:
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
+        # DETECT OPENING CONDITION BLOCK
         # opening condition block context and condition code context
         if line.strip.end_with?('<%```')
+          # open condition block context
           context << :condition_block
+          # open condition code block context
           context << :condition_code_block
+          # add a new condition to the chunk
           story[:chunks][-1][:conditions] << ''
+          # stop processing this line (ignore any following text)
           return true
         end
 
+        # DETECT CLOSING CONDITION BLOCK & CONDITION CODE BLOCK
+        # (IF ON SAME LINE - INDICATES STRING INTERPOLATION)
         # closing both condition code context and condition block context
         if line.strip.start_with?('```%>')
+          # close conditon block and condition code block contexts
           context.delete(:condition_block)
           context.delete(:condition_code_block)
-          if story[:chunks][-1][:content][-1].type == :paragraph
+          # if the last element is a paragraph and
+          # if the paragraph context is open, add to it
+          
+          if story[:chunks][-1][:content][-1].type == :paragraph && context.include?(:paragraph)
             atm = make_atom_hash
             atm[:condition] = story[:chunks][-1][:conditions][-1] 
             story[:chunks][-1][:content][-1][:atoms] << atm
