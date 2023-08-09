@@ -153,15 +153,11 @@ Please add a heading line after the title and before any other content. Example:
 
         line.delete_prefix!('$$')
 
-        story[:chunks][-1][:content] << {
-          type: :paragraph,
-          atoms: [
-            {
-              text: line,
-              styles: []
-            }
-          ]
-        }
+        para = make_paragraph_hash
+        atm = make_atom_hash
+        atm[:text] = line
+        para[:atoms] << atm
+        story[:chunks][-1][:content] << para
 
         true
       end
