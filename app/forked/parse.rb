@@ -335,8 +335,7 @@ Please add a heading line after the title and before any other content. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         if line.include? '::'
-
-          # capture single line action
+           # capture single line action
           if line.strip.start_with?(':: ') && line.strip.end_with?(' ::') && line.length > 3
             line.strip!
             line.delete_prefix!(':: ')
@@ -414,6 +413,34 @@ Please add a heading line after the title and before any other content. Example:
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+      
+        # DETECT SINGLE LINE CONDITION BLOCK
+        if line.strip.start_with?('<: ') && line.strip.end_with?(' :>')
+          line.strip!
+          line.delete_prefix!('<: ')
+          line.delete_suffix!(' :>')
+          line.strip!
+          line_parts = line.split('::')
+          condition = line_parts[0].strip || line
+          story[:chunks][-1][:conditions] << condition
+            if story[:chunks][-1][:content][-1].type == :paragraph && context.include?(:paragraph)
+              atm = make_atom_hash
+              atm[:condition] = story[:chunks][-1][:conditions][-1]
+              atm[:text] = line_parts[1]&.strip || ''
+              story[:chunks][-1][:content][-1][:atoms] << atm
+              story[:chunks][-1][:content][-1][:atoms]
+            else
+              context << (:paragraph)
+              para = make_paragraph_hash
+              atm = make_atom_hash
+              atm[:condition] = story[:chunks][-1][:conditions][-1]
+              atm[:text] = line_parts[1].strip || ''
+              para[:atoms] << atm 
+              story[:chunks][-1][:content] << para
+            end
+
+          return true
+        end
 
         # DETECT OPENING CONDITION BLOCK
         # opening condition block context and condition code context
@@ -444,8 +471,6 @@ Please add a heading line after the title and before any other content. Example:
             story[:chunks][-1][:content][-1][:atoms] << atm
 
             story[:chunks][-1][:content][-1][:atoms]
-
-            
           else
             context << (:paragraph)
             para = make_paragraph_hash
