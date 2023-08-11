@@ -681,9 +681,17 @@ Please add a title to the top of the Story File. Example:
               action.delete_suffix!(')')
 
               if action.start_with?('#') || action.strip.empty?
+                # capture simple navigation
+                story[:chunks][-1][:content][-1].action = action
+                return true
+              elsif action.start_with?(': ') && action.end_with?(' :')
+                # capture single line trigger action
+                action.delete_prefix!(': ')
+                action.delete_suffix!(' :')
                 story[:chunks][-1][:content][-1].action = action
                 return true
               else
+                # not navigation, not a single line action, not a multiline action
                 raise("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
               end
 
@@ -726,6 +734,7 @@ Please add a title to the top of the Story File. Example:
 
         # identify trigger and catch text (keep parsing)
         if line.strip.start_with?('[') && line.include?('](')
+          
           line = line.strip.delete_prefix!('[')
           line.split(']', 2).then do |trigger, action|
             trigger.strip!
