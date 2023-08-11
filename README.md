@@ -23,60 +23,92 @@ The default project is the user manual.
 
 ## Quick Reference
 
-Story title:
+#### Story title:
 ```
 # Title
 ```
 
-Chunk heading and ID:
+#### Chunk heading and ID:
 ```
 ## Heading Name {#chunk_id}`
 ```
 
-Trigger and target:
+#### Trigger and target:
 ```
 [Trigger text](#target_id)
 ```
 
-Blockquote:
+#### Blockquote:
 ```
 > This text is displayed as a blockquote.
 ```
 
-Code Block:
+#### Code Block:
 ```
 ~~~
 # This text is displayed as code, in a monospace font with lines wrapped for length but otherwise without any changes.
 ~~~
 ```
 
-Horizontal Rule:
+#### Horizontal Rule:
 ```
 ---
 ```
 
-Chunk action:
+#### Chunk action:
+
+New syntax:
+```
+::
+action
+::
+```
+
+Old syntax:
 ````
 ```
 action
 ```
 ````
 
-Trigger action:
+#### Trigger action:
+New syntax:
+```
+[Trigger text](:
+action
+:)
+```
+Old syntax:
 ````
 [Trigger text](```
 action
 ```)
 ````
 
-Conditional text (string interpolation):
+#### Conditional text (string interpolation):
+New syntax:
+```
+<:
+condition
+:>
+```
+Old syntax:
 ````
 <%```
 condition
 ```%>
 ````
 
-Conditional text (show/hide text) [note: to be improved]:
+#### Conditional text (show/hide text):
+New syntax:
+```
+<:
+condition
+::
+This text is displayed if the condition is true.
+:>
+```
+Old syntax:
 ````
 <%```
 condition
@@ -84,7 +116,6 @@ condition
 This text is displayed if the condition is true.
 ```%>
 ````
-
 
 
 Comment:
@@ -101,9 +132,9 @@ Blockquotes:
 
 Code Blocks (not executable):
 ````
-```
+~~~
 This text looks like code
-```
+~~~
 ````
 
 ## Available Actions
