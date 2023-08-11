@@ -335,14 +335,27 @@ Please add a heading line after the title and before any other content. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         if line.include? '::'
-          putz "#{line_no + 1} #{line}"
+
+          # capture single line action
+          if line.strip.start_with?(':: ') && line.strip.end_with?(' ::') && line.length > 3
+            line.strip!
+            line.delete_prefix!(':: ')
+            line.delete_suffix!(' ::')
+            line.strip!
+            story[:chunks][-1][:actions] << line
+            return true
+          end
+
+          # capture action block end/start (close/open context)
           if context.include?(:action_block_1)
             context.delete(:action_block_1)
           else
             context << (:action_block_1)
             story[:chunks][-1][:actions] << ''
           end
-          true
+          return true
+
+        # capture action block content
         elsif context.include?(:action_block_1)
           destination = story[:chunks][-1][:actions][-1]
           if destination.nil?
@@ -350,7 +363,7 @@ Please add a heading line after the title and before any other content. Example:
                   "Check for an unterminated action block (::) around or before line #{line_no + 1}."
           end
           story[:chunks][-1][:actions][-1] += line
-          true
+          return true
         end
       end
 
