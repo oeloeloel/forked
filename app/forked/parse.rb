@@ -38,11 +38,7 @@ module Forked
 
         while(line = story_lines.shift)
           line_no += 1
-          # putz "#{line_no + 1} #{line}"
-        # end
-
-        # story_file.each_line.with_index do |line, line_no|
-          # "#{line_no}: #{line.strip}"
+          # putz "#{line_no + 1}: #{line.strip}"
 
           ### PRESERVE LINE (^$$) and stop parsing it
           result = parse_preserve_line(line, context, story, line_no)
@@ -96,7 +92,7 @@ Please add a heading line after the title and before any other content. Example:
           # come after blockquote, which always starts at the
           # beginning of a line
 
-          result = parse_condition_block_1(line, context, story, line_no)
+          result = parse_condition_block_1(line, context, story, line_no, story_lines)
           next if result
 
           result = parse_condition_block(line, context, story, line_no)
@@ -408,7 +404,7 @@ Please add a heading line after the title and before any other content. Example:
       # and end with a colon followed by a right angle bracket
       # The current functionality is to conditionally include text
       # returned from the block as a string
-      def parse_condition_block_1(line, context, story, line_no)
+      def parse_condition_block_1(line, context, story, line_no, story_lines)
 
         # inline conditions
         # now is the <: ["winter", "spring", "summer", "autumn"].sample :> of our discontent.
@@ -422,51 +418,15 @@ Please add a heading line after the title and before any other content. Example:
         # or start a new paragraph. Append the three atoms. Last two
         # atoms have conditions applied.
 
-        # problem. This works OK. 
-        # <:
-        # code
-        # ::
-        # [button]()
-        # but this breaks:
-        # <: code :: [button]() :>
-        # because the conditional content is not parsed, it
-        # is only appended to a paragraph.
-        # This could all be fixed by a pre-pass that breaks down
-        # inline elements to line elements so the parser can handle
-        # them properly.
-
-
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-      
-        # DETECT SINGLE LINE CONDITION BLOCK
-        if line.strip.start_with?('<: ') && line.strip.end_with?(' :>')
-          line.strip!
-          line.delete_prefix!('<: ')
-          line.delete_suffix!(' :>')
-          line.strip!
-          line_parts = line.split('::')
-          condition = line_parts[0].strip || line
-          story[:chunks][-1][:conditions] << condition
-            if story[:chunks][-1][:content][-1].type == :paragraph && context.include?(:paragraph)
-              atm = make_atom_hash
-              atm[:condition] = story[:chunks][-1][:conditions][-1]
-              atm[:text] = line_parts[1]&.strip || ''
-              story[:chunks][-1][:content][-1][:atoms] << atm
-              story[:chunks][-1][:content][-1][:atoms]
-            else
-              context << (:paragraph)
-              para = make_paragraph_hash
-              atm = make_atom_hash
-              atm[:condition] = story[:chunks][-1][:conditions][-1]
-              atm[:text] = line_parts[1].strip || ''
-              para[:atoms] << atm 
-              story[:chunks][-1][:content] << para
-            end
 
-          return true
-        end
+        # todo: detect and split *inline* condition into multi-line
+
+        # detect and split single line condition into multi-line
+        result = expand_single_line_condition(line, context, story, line_no, story_lines)
+        line = story_lines.shift if result
 
         # DETECT OPENING CONDITION BLOCK
         # opening condition block context and condition code context
@@ -540,6 +500,23 @@ Please add a heading line after the title and before any other content. Example:
         end
 
         # nil return allows conditional content to be handled by other parsers
+      end
+
+      def expand_single_line_condition(line, context, story, line_no, story_lines)
+        if line.strip.start_with?('<: ') && line.strip.end_with?(' :>')
+          line.strip!
+          line.delete_prefix!('<: ').delete_suffix!(' :>').strip!
+          arr = ['<:']
+          line_split = line.split(' :: ')
+          line_split.each_with_index do |seg, i|
+            next_element = i < line_split.size - 1 ? "::\n" : ":>\n"
+            arr += [seg + "\n", next_element]
+          end
+
+          story_lines.insert(0, *arr)
+
+          return true
+        end
       end
 
       # condition blocks allow for conditional text
