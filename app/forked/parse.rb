@@ -33,7 +33,15 @@ module Forked
         # :italic (inline emphasis style)
         # :bold italic (inline strong + emphasis style)
 
-        story_file.each_line.with_index do |line, line_no|
+        story_lines = story_file.lines
+        line_no = -1
+
+        while(line = story_lines.shift)
+          line_no += 1
+          # putz "#{line_no + 1} #{line}"
+        # end
+
+        # story_file.each_line.with_index do |line, line_no|
           # "#{line_no}: #{line.strip}"
 
           ### PRESERVE LINE (^$$) and stop parsing it
@@ -106,7 +114,7 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           # PARAGRAPH
-          parse_paragraph(line, context, story,  line_no)
+          parse_paragraph(line, context, story, line_no)
 
           # line.each_char.with_index do |char, char_no|
             # parse inline elements
@@ -401,14 +409,32 @@ Please add a heading line after the title and before any other content. Example:
       # The current functionality is to conditionally include text
       # returned from the block as a string
       def parse_condition_block_1(line, context, story, line_no)
-        # problem: condition block appends to paragraph.
-        # If there is no paragraph context open, it breaks.
-        # If no paragraph context is open,
-        # get out and let the paragraph (or other element)
-        # code take over.
 
-        # paragraph (or other element) must be responsible for
-        # the condition being applied to the element/atom.
+        # inline conditions
+        # now is the <: ["winter", "spring", "summer", "autumn"].sample :> of our discontent.
+        # we know it's inline because it doesn't start the line.
+        # ... extract the condition
+        # add the string to text, add the condition to condition.
+
+        # conditional text
+        # Where are you <: brother? :: my brother :: my friend :>?
+        # sentence has 3 atoms. Either append to previous paragraph...
+        # or start a new paragraph. Append the three atoms. Last two
+        # atoms have conditions applied.
+
+        # problem. This works OK. 
+        # <:
+        # code
+        # ::
+        # [button]()
+        # but this breaks:
+        # <: code :: [button]() :>
+        # because the conditional content is not parsed, it
+        # is only appended to a paragraph.
+        # This could all be fixed by a pre-pass that breaks down
+        # inline elements to line elements so the parser can handle
+        # them properly.
+
 
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
