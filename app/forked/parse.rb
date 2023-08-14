@@ -400,7 +400,7 @@ Please add a heading line after the title and before any other content. Example:
           if story[:chunks][-1][:content][-1].type == :paragraph && context.include?(:paragraph)
             atm = make_atom_hash
             atm[:condition] = story[:chunks][-1][:conditions][-1]
-            # story[:chunks][-1][:content][-1][:atoms] << atm
+            story[:chunks][-1][:content][-1][:atoms] << atm
 
             story[:chunks][-1][:content][-1][:atoms]
           else

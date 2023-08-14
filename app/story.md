@@ -301,16 +301,21 @@ Related: Forked includes a number of useful commands you can use with actions.
 You can drop an action into a chunk like this:
 
 ~~~
-```
-bag_add "pith helmet"
-```
+:: bag_add "pith helmet" ::
 ~~~
-Chunk Actions begin and end with three backtick ` symbols on the line above and another three backticks on the line below. On the lines in-between, you can issue commands.
+Chunk Actions begin and end with a pair of colon `:` symbols. Between the symbols, you can issue commands.
 
 In this case, we are telling Forked to add a sturdy, yet attractive, "pith helmet" to the player's "bag" or inventory. Forked comes with some useful commands included, including the ability to store and retrieve items from an inventory. More about custom commands later.
 
 When you drop an action into a chunk like this, it will run once, each time this chunk is loaded. That's the perfect time to add an item to, or remove an item from, your bag.
 
+You can put commands on multiple lines, like this:
+~~~
+::
+  bag_add "pith helmet"
+  bag_remove "top hat"
+::
+~~~
 ---
 [Next: Trigger Actions](#trigger-actions)
 [Back to Actions](#actions)
@@ -320,23 +325,21 @@ When you drop an action into a chunk like this, it will run once, each time this
 Sometimes you will want a trigger to perform some kind of action instead of navigating to another chunk.
 
 ~~~
-[Drop the weapon](```
-  bag_remove "dueling pistol"
-```)
+[Drop the weapon](: bag_remove "dueling pistol" :)
 ~~~
 
-You can combine an action with a trigger by replacing the chunk id with a command wrapped in backticks as in the example above. The backticks must be on the line above and the line below the action.
+You can combine an action with a trigger by adding the colons above and replacing the chunk id with a command.
 
 In this case, the item "dueling pistol" will be removed from the player's bag when the button is clicked.
 
-If you want the button click to perform and action AND navigate to another chunk, use the `jump` command.
+You can put commands on multiple lines:
 ~~~
-[Drop the weapon](```
+[Drop the weapon](:
   bag_remove "dueling pistol"
   jump "#surrender"
-```)
+:)
 ~~~
-
+The `jump` command lets you navigate to another chunk from a trigger action.
 ---
 [Next: Conditional Text](#conditions-1)
 [Back: Chunk Actions](#chunk-actions)
@@ -346,9 +349,9 @@ If you want the button click to perform and action AND navigate to another chunk
 Sometimes you may want to show, hide or change text depending on the situation. Forked gives you a couple of ways to do this. The first lets you insert words or short pieces of text into the story.
 ~~~
 Any fool knows that 
-<%```
-memo_check "dauphine_fave_color"
-```%> 
+<:
+  memo_check "dauphine_fave_color"
+:> 
 is the Dauphine's favourite colour!
 ~~~
 
@@ -367,14 +370,14 @@ We'll learn more about `memo` and other included commands later.
 In the previous chunk, we saw how short text can be inserted into the story. For longer texts as well as triggers and blockquotes, we can write them out and use conditions to decide if they should be displayed.
 
 ~~~
-But however would I travel to Europe?
-<%```
-bag_has? "submarine"
-```
-The Maharajah's gift of course! I could travel to Europe by submarine.
+But how would I travel to Europe?
+<:
+  bag_has? "submarine"
+::
+  Of course! The Maharajah's gift! I could travel to Europe by submarine.
 
-[Travel to Europe by Submarine](#submarine)
-%>
+  [Travel to Europe by Submarine](#submarine)
+:>
 ~~~
 
 In the example above, if the player does not have a submarine in their bag, they will see only the line:
@@ -519,7 +522,7 @@ counter_check "number of rugs"
 ## Examples {#examples}
 
 [Setting the Display Theme](#theme)
-[Countdown Timer](#timer)
+[Countdown Timer](#example-timer)
 
 ---
 [Back: Built-in Commands](#commands)
@@ -529,15 +532,9 @@ counter_check "number of rugs"
 
 Change the presentation of the story.
 
-[Turn the lights on](```
-change_theme nil
-```)
-[Turn the lights off](```
-change_theme DARK_MODE
-```)
-[Turn the lights fun and stupid](```
-change_theme KIFASS_THEME
-```)
+[Turn the lights on](: change_theme nil :)
+[Turn the lights off](: change_theme DARK_MODE :)
+[Turn the lights fun and stupid](: change_theme KIFASS_THEME :)
 
 You can edit the display theme to change the colour scheme. Open the file `app/themes/dark-mode-theme.rb` and you can see how it's done.
 
@@ -545,23 +542,22 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
-## Countdown Timer {#timer}
-```
-args.state.countdown_timer = 11.seconds
-```
-Warning: space suit rupture detected.\
+## Countdown Timer {#example-timer}
+::
+  timer_add "oxygen", 11.seconds
+::
 
-<%```
-  message = "Oxygen remaining "
-  message += args.state.countdown_timer.idiv(60).to_s
-  args.state.countdown_timer -= 1
-  
-  if args.state.countdown_timer <= 1
-    message = "You ran out of oxygen and you are feeling poorly."
-  end
+Warning: space suit rupture detected.
 
-  return message
-```%>
+<: 
+  "Oxygen remaining: #{timer_seconds "oxygen"}"
+:>
+
+<:
+  timer_done? "oxygen"
+::
+  You ran out of oxygen and you are feeling poorly.
+:>
 
 ---
 [Back to Examples](#examples)

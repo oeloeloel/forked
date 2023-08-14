@@ -56,51 +56,27 @@ The default project is the user manual.
 ```
 
 #### Chunk action:
-
-New syntax:
 ```
 ::
 action
 ::
 ```
-
-Old syntax:
-````
-```
-action
-```
-````
 
 #### Trigger action:
-New syntax:
 ```
 [Trigger text](:
 action
 :)
 ```
-Old syntax:
-````
-[Trigger text](```
-action
-```)
-````
 
 #### Conditional text (string interpolation):
-New syntax:
 ```
 <:
 condition
 :>
 ```
-Old syntax:
-````
-<%```
-condition
-```%>
-````
 
 #### Conditional text (show/hide text):
-New syntax:
 ```
 <:
 condition
@@ -108,34 +84,30 @@ condition
 This text is displayed if the condition is true.
 :>
 ```
-Old syntax:
-````
-<%```
-condition
-```
-This text is displayed if the condition is true.
-```%>
-````
 
-
-Comment:
+#### Comment:
 ```
 // this line is a comment
 ```
 
 ## Formatting
-Blockquotes:
+#### Blockquotes:
 ```
 > This text is inside a blockquote
 > This text is inside the same blockquote
 ```
 
-Code Blocks (not executable):
+#### Code Blocks (not executable):
 ````
 ~~~
 This text looks like code
 ~~~
 ````
+
+#### Preformat
+```
+@@ any formatting in this line is ignored
+```
 
 ## Available Actions
 |Bag: Inventory Management| (experimental) |
@@ -163,7 +135,8 @@ This text looks like code
 |-|-|
 |`timer_add "timer name", 10.seconds`| Creates a new timer with the provided name and the provided duration. The duration can be given in `ticks` (1/60 seconds) or in seconds as shown here.  |
 |`timer_remove "timer name"` | Deletes the timer with the provided name |
-|`timer_check "timer name"`| Returns the time remaining for the named timer|
+|`timer_check "timer name"`| Returns the time remaining for the named timer (will keep counting down after reaching zero) |
+|`timer_seconds "timer name"`| Returns the time remaining for the named timer in seconds (will stop counting down at zero) |
 |`timer_done? "timer name"` | Returns true if the timer is complete |
 
 | Counter: Number Tracking         | (experimental)                                                                                   |
