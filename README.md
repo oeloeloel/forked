@@ -23,88 +23,91 @@ The default project is the user manual.
 
 ## Quick Reference
 
-Story title:
+#### Story title:
 ```
 # Title
 ```
 
-Chunk heading and ID:
+#### Chunk heading and ID:
 ```
 ## Heading Name {#chunk_id}`
 ```
 
-Trigger and target:
+#### Trigger and target:
 ```
 [Trigger text](#target_id)
 ```
 
-Blockquote:
+#### Blockquote:
 ```
 > This text is displayed as a blockquote.
 ```
 
-Code Block:
+#### Code Block:
 ```
 ~~~
 # This text is displayed as code, in a monospace font with lines wrapped for length but otherwise without any changes.
 ~~~
 ```
 
-Horizontal Rule:
+#### Horizontal Rule:
 ```
 ---
 ```
 
-Chunk action:
-````
+#### Chunk action:
 ```
+::
 action
+::
 ```
-````
 
-Trigger action:
-````
-[Trigger text](```
+#### Trigger action:
+```
+[Trigger text](:
 action
-```)
-````
-
-Conditional text (string interpolation):
-````
-<%```
-condition
-```%>
-````
-
-Conditional text (show/hide text) [note: to be improved]:
-````
-<%```
-condition
+:)
 ```
+
+#### Conditional text (string interpolation):
+```
+<:
+condition
+:>
+```
+
+#### Conditional text (show/hide text):
+```
+<:
+condition
+::
 This text is displayed if the condition is true.
-```%>
-````
+:>
+```
 
-
-
-Comment:
+#### Comment:
 ```
 // this line is a comment
 ```
 
 ## Formatting
-Blockquotes:
+#### Blockquotes:
 ```
 > This text is inside a blockquote
 > This text is inside the same blockquote
 ```
 
-Code Blocks (not executable):
+#### Code Blocks (not executable):
 ````
-```
+~~~
 This text looks like code
-```
+~~~
 ````
+
+#### Preformat
+```
+@@ any formatting in this line is ignored
+```
 
 ## Available Actions
 |Bag: Inventory Management| (experimental) |
@@ -132,7 +135,8 @@ This text looks like code
 |-|-|
 |`timer_add "timer name", 10.seconds`| Creates a new timer with the provided name and the provided duration. The duration can be given in `ticks` (1/60 seconds) or in seconds as shown here.  |
 |`timer_remove "timer name"` | Deletes the timer with the provided name |
-|`timer_check "timer name"`| Returns the time remaining for the named timer|
+|`timer_check "timer name"`| Returns the time remaining for the named timer (will keep counting down after reaching zero) |
+|`timer_seconds "timer name"`| Returns the time remaining for the named timer in seconds (will stop counting down at zero) |
 |`timer_done? "timer name"` | Returns true if the timer is complete |
 
 | Counter: Number Tracking         | (experimental)                                                                                   |
