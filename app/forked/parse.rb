@@ -24,7 +24,7 @@ module Forked
         # [x] :heading text (chunk heading)
         # [x] :chunk_id (chunk identifier)
         # [x] :paragraph (plain text)
-        # [x] preserved line (do not parse line and present as text)
+        # [x] preformatted line (do not parse line and present as text)
         # [x] comments (stripped and ignored)
         # [x] :rule (horizontal rule)
         # :action (single line code)
@@ -40,8 +40,8 @@ module Forked
           line_no += 1
           # putz "#{line_no + 1}: #{line.strip}"
 
-          ### PRESERVE LINE (^$$) and stop parsing it
-          result = parse_preserve_line(line, context, story, line_no)
+          ### PREFORMATTED LINE (^@@) and stop parsing it
+          result = parse_preformatted_line(line, context, story, line_no)
           next if result
 
           ### STRIP COMMENT (//) and continue parsing line
@@ -84,37 +84,24 @@ Please add a heading line after the title and before any other content. Example:
           ### TRIGGER
 
           # currently works for newstyle colon and old-style backtick trigger actions
-          result = parse_trigger_next(line, context, story, line_no)
+          result = parse_trigger(line, context, story, line_no)
           next if result
 
           ### CONDITION BLOCK
-          # Condition block can start mid-line so it needs to
-          # come after blockquote, which always starts at the
-          # beginning of a line
 
-          result = parse_condition_block_1(line, context, story, line_no, story_lines)
+          result = parse_condition_block(line, context, story, line_no, story_lines)
           next if result
-
-          # result = parse_condition_block(line, context, story, line_no)
-          # next if result
 
           ### CODE BLOCK
           result = parse_code_block(line, context, story, line_no)
           next if result
 
           ### ACTION BLOCK
-          result = parse_action_block_1(line, context, story, line_no)
+          result = parse_action_block(line, context, story, line_no)
           next if result
-
-          # result = parse_action_block_2(line, context, story, line_no)
-          # next if result
 
           # PARAGRAPH
           parse_paragraph(line, context, story, line_no)
-
-          # line.each_char.with_index do |char, char_no|
-            # parse inline elements
-          # end
         end
 
         story
@@ -145,7 +132,7 @@ Please add a heading line after the title and before any other content. Example:
         story[:chunks][-1][:content] << make_rule_hash
 
         # if this content is conditional, add the condition to the current element
-        if context.include?(:condition_block)  || context.include?(:condition_block_1)
+        if context.include?(:condition_block)  || context.include?(:condition_block)
           condition = story[:chunks][-1][:conditions][-1]
           story[:chunks][-1][:content][-1][:condition] = condition
         end
@@ -155,14 +142,14 @@ Please add a heading line after the title and before any other content. Example:
 
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
-      def parse_preserve_line(line, context, story, _line_no)
-        return unless line.strip.start_with?('$$')
+      def parse_preformatted_line(line, context, story, _line_no)
+        return unless line.strip.start_with?('@@')
 
         prohibited_contexts = [:title, :code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        line.delete_prefix!('$$')
+        line.delete_prefix!('@@')
 
         para = make_paragraph_hash
         atm = make_atom_hash
@@ -228,7 +215,7 @@ Please add a heading line after the title and before any other content. Example:
             end
           end
           # if this content is conditional, add the condition to the current atom
-          if context.include?(:condition_block)  || context.include?(:condition_block_1)
+          if context.include?(:condition_block)  || context.include?(:condition_block)
             condition = story[:chunks][-1][:conditions][-1]
             story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
           end
@@ -272,7 +259,7 @@ Please add a heading line after the title and before any other content. Example:
           end
 
           # if this content is conditional, add the condition to the current element
-          if context.include?(:condition_block) || context.include?(:condition_block_1)
+          if context.include?(:condition_block) || context.include?(:condition_block)
             condition = story[:chunks][-1][:conditions][-1]
             story[:chunks][-1][:content][-1][:condition] = condition
           end
@@ -283,7 +270,7 @@ Please add a heading line after the title and before any other content. Example:
 
 
       # Code blocks format code for display
-      # They begin with three ticks ``` on a blank line
+      # They begin with three tildes (~~~) on a blank line
       # and end with three ticks on a blank line
       def parse_code_block(line, context, story, line_no)
         if line.include?('~~~') & !line.include?('\~~~')
@@ -294,7 +281,7 @@ Please add a heading line after the title and before any other content. Example:
             story[:chunks][-1][:content] << make_code_block_hash
 
             # if this content is conditional, add the condition to the current element
-            if context.include?(:condition_block) || context.include?(:condition_block_1)
+            if context.include?(:condition_block) || context.include?(:condition_block)
               condition = story[:chunks][-1][:conditions][-1]
               story[:chunks][-1][:content][-1][:condition] = condition
             end
@@ -332,8 +319,8 @@ Please add a heading line after the title and before any other content. Example:
       # ::
       # no!() ::
 
-      def parse_action_block_1(line, context, story, line_no)
-        prohibited_contexts = [:code_block, :trigger_action, :condition_block, :condition_block_1]
+      def parse_action_block(line, context, story, line_no)
+        prohibited_contexts = [:code_block, :trigger_action, :condition_block, :condition_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -349,16 +336,16 @@ Please add a heading line after the title and before any other content. Example:
           end
 
           # capture action block end/start (close/open context)
-          if context.include?(:action_block_1)
-            context.delete(:action_block_1)
+          if context.include?(:action_block)
+            context.delete(:action_block)
           else
-            context << (:action_block_1)
+            context << (:action_block)
             story[:chunks][-1][:actions] << ''
           end
           return true
 
         # capture action block content
-        elsif context.include?(:action_block_1)
+        elsif context.include?(:action_block)
           destination = story[:chunks][-1][:actions][-1]
           if destination.nil?
             raise "FORKED: An action block is open but no action exists in the current chunk.\n"\
@@ -369,53 +356,13 @@ Please add a heading line after the title and before any other content. Example:
         end
       end
 
-      # this is the original action block parsing code
-      # the idea is to let this catch any old code that falls
-      # through from the new action block syntax
-      # It should eventually be removed.
-      def parse_action_block_2(line, context, story, line_no)
-        prohibited_contexts = [:code_block, :trigger_action, :condition_block, :condition_block_1]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        if line.include? '```'
-          if context.include?(:action_block)
-            context.delete(:action_block)
-          else
-            context << (:action_block)
-            story[:chunks][-1][:actions] << ''
-          end
-          true
-        elsif context.include?(:action_block)
-          destination = story[:chunks][-1][:actions][-1]
-          if destination.nil?
-            raise "FORKED: An action block is open but no action exists in the current chunk.\n"\
-                  "Check for an unterminated action block (```) around or before line #{line_no + 1}."
-          end
-          story[:chunks][-1][:actions][-1] += line
-          true
-        end
-      end
-
       # condition blocks allow for conditional text
       # NEW SYNTAX
       # They begin with a left angle bracket followed by a colon
       # and end with a colon followed by a right angle bracket
       # The current functionality is to conditionally include text
       # returned from the block as a string
-      def parse_condition_block_1(line, context, story, line_no, story_lines)
-
-        # inline conditions
-        # now is the <: ["winter", "spring", "summer", "autumn"].sample :> of our discontent.
-        # we know it's inline because it doesn't start the line.
-        # ... extract the condition
-        # add the string to text, add the condition to condition.
-
-        # conditional text
-        # Where are you <: brother? :: my brother :: my friend :>?
-        # sentence has 3 atoms. Either append to previous paragraph...
-        # or start a new paragraph. Append the three atoms. Last two
-        # atoms have conditions applied.
+      def parse_condition_block(line, context, story, line_no, story_lines)
 
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
@@ -431,9 +378,9 @@ Please add a heading line after the title and before any other content. Example:
         # opening condition block context and condition code context
         if line.strip.end_with?('<:')
           # open condition block context
-          context << :condition_block_1
+          context << :condition_block
           # open condition code block context
-          context << :condition_code_block_1
+          context << :condition_code_block
           # add a new condition to the chunk
           story[:chunks][-1][:conditions] << ''
           # stop processing this line (ignore any following text)
@@ -445,8 +392,8 @@ Please add a heading line after the title and before any other content. Example:
         # closing both condition code context and condition block context
         if line.strip.start_with?(':>')
           # close conditon block and condition code block contexts
-          context.delete(:condition_block_1)
-          context.delete(:condition_code_block_1)
+          context.delete(:condition_block)
+          context.delete(:condition_code_block)
           # if the last element is a paragraph and
           # if the paragraph context is open, add to it
           
@@ -481,20 +428,13 @@ Please add a heading line after the title and before any other content. Example:
         # it won't do both but only because that's how it happens to be.
 
         # closing only condition code block context
-        if line.strip == '::' && context.include?(:condition_code_block_1)
-          context.delete(:condition_code_block_1)
-          return true
-        end
-
-        # closing only condition block context
-        # TODO: CAN THIS BE REACHED NOW???
-        if line.strip == ':>'
-          context.delete(:condition_block_1)
+        if line.strip == '::' && context.include?(:condition_code_block)
+          context.delete(:condition_code_block)
           return true
         end
 
         # capture contents of condition code block
-        if context.include?(:condition_code_block_1)
+        if context.include?(:condition_code_block)
           story[:chunks][-1][:conditions][-1] += line
           return true
         end
@@ -518,99 +458,6 @@ Please add a heading line after the title and before any other content. Example:
           return true
         end
       end
-
-      # condition blocks allow for conditional text
-      # CURRENTLY
-      # They begin with a left angle bracket followed by 3 carets <^^^
-      # and end with 3 carets followed by a right angle bracket ^^^>
-      # The current functionality is to conditionally include text
-      # returned from the block as a string
-      # def parse_condition_block(line, context, story, line_no)
-      #   # problem: condition block appends to paragraph.
-      #   # If there is no paragraph context open, it breaks.
-      #   # If no paragraph context is open,
-      #   # get out and let the paragraph (or other element)
-      #   # code take over.
-
-      #   # paragraph (or other element) must be responsible for
-      #   # the condition being applied to the element/atom.
-
-      #   prohibited_contexts = [:code_block]
-      #   mandatory_contexts = []
-      #   return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-      #   # DETECT OPENING CONDITION BLOCK
-      #   # opening condition block context and condition code context
-      #   if line.strip.end_with?('<%```')
-      #     # open condition block context
-      #     context << :condition_block
-      #     # open condition code block context
-      #     context << :condition_code_block
-      #     # add a new condition to the chunk
-      #     story[:chunks][-1][:conditions] << ''
-      #     # stop processing this line (ignore any following text)
-      #     return true
-      #   end
-
-      #   # DETECT CLOSING CONDITION BLOCK & CONDITION CODE BLOCK
-      #   # (IF ON SAME LINE - INDICATES STRING INTERPOLATION)
-      #   # closing both condition code context and condition block context
-      #   if line.strip.start_with?('```%>')
-      #     # close conditon block and condition code block contexts
-      #     context.delete(:condition_block)
-      #     context.delete(:condition_code_block)
-      #     # if the last element is a paragraph and
-      #     # if the paragraph context is open, add to it
-          
-      #     if story[:chunks][-1][:content][-1].type == :paragraph && context.include?(:paragraph)
-      #       atm = make_atom_hash
-      #       atm[:condition] = story[:chunks][-1][:conditions][-1] 
-      #       story[:chunks][-1][:content][-1][:atoms] << atm
-      #       story[:chunks][-1][:content][-1][:atoms]
-      #     else
-      #       context << (:paragraph)
-      #       para = make_paragraph_hash
-      #       atm = make_atom_hash
-      #       atm[:condition] = story[:chunks][-1][:conditions][-1]
-      #       para[:atoms] << atm 
-      #       story[:chunks][-1][:content] << para
-      #     end
-      #     return true
-      #   end
-
-      #   # NOTE: The above code appends an atom to the previous paragraph
-      #   # if it is the last added element, or creates a new paragraph for the atom.
-      #   # The atom contains only a condition and if the result of the condition
-      #   # is a string, Forked will add the string to the atom text at runtime.
-
-      #   # If the condition contains content between the closing code fence
-      #   # and the closing condition, that doesn't happen. The following code runs
-      #   # instead.
-
-      #   # This is important because it's not decided if Forked should display a
-      #   # returned string AND the following conditional content. Right now,
-      #   # it won't do both but only because that's how it happens to be.
-
-      #   # closing only condition code block context
-      #   if line.strip == '```' && context.include?(:condition_code_block)
-      #     context.delete(:condition_code_block)
-      #     return true
-      #   end
-
-      #   # closing only condition block context
-      #   if line.strip == '%>'
-      #     context.delete(:condition_block)
-      #     return true
-      #   end
-
-      #   # capture contents of condition code block
-      #   if context.include?(:condition_code_block)
-      #     story[:chunks][-1][:conditions][-1] += line
-      #     return true
-      #   end
-
-      #   # nil return allows conditional content to be handled by other parsers
-      # end
 
       # The title is required. No content can come before it.
       # The Title line starts with a single #
@@ -680,7 +527,7 @@ Please add a title to the top of the Story File. Example:
             true
       end
 
-      def parse_trigger_next(line, context, story, line_no)
+      def parse_trigger(line, context, story, line_no)
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -698,7 +545,7 @@ Please add a title to the top of the Story File. Example:
 
             # if this content is conditional, add the condition to the current element
 
-            if context.include?(:condition_block) || context.include?(:condition_block_1)
+            if context.include?(:condition_block) || context.include?(:condition_block)
               condition = story[:chunks][-1][:conditions][-1]
               story[:chunks][-1][:content][-1][:condition] = condition
             end
@@ -725,147 +572,23 @@ Please add a title to the top of the Story File. Example:
 
             # identify action block and open context (keep parsing)
             elsif action.end_with?('(:')
-              context << :trigger_action_1
+              context << :trigger_action
             elsif action.end_with?('(```')
-              context << :trigger_action_2
+              context << :trigger_action
             end
           end
  
 
         # identfy action block close and close context, if open (return)
-        elsif line.strip.start_with?(':)') && context.include?(:trigger_action_1)
-          context.delete(:trigger_action_1)
+        elsif line.strip.start_with?(':)') && context.include?(:trigger_action)
+          context.delete(:trigger_action)
           return true
-        elsif line.strip.start_with?('```)') && context.include?(:trigger_action_2)
-          context.delete(:trigger_action_2)
-          return true
-
-        # if context is open, add line to trigger action (return)
-        elsif context.include?(:trigger_action_1) || context.include?(:trigger_action_2)
-          if story[:chunks][-1][:content][-1].action.size.zero?
-            # a kludge that identifies a Ruby trigger action from a normal action 
-            # so actions that begin with '#' are not mistaken for navigational actions
-            line = '@@@@' + line
-          end
-          story[:chunks][-1][:content][-1].action += line
-          return true
-        end
-      end
-
-      # New style trigger action with (: ... :)      # triggers are represented as buttons that perform actions
-      # [Trigger Text](Trigger Action)
-      # Trigger action may be chunk id or an action block
-      def parse_trigger_1(line, context, story, line_no)
-        prohibited_contexts = [:code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        # identify trigger and catch text (keep parsing)
-        if line.strip.start_with?('[') && line.include?('](')
-          
-          line = line.strip.delete_prefix!('[')
-          line.split(']', 2).then do |trigger, action|
-            trigger.strip!
-            action.strip!
-            trg = make_trigger_hash
-            trg[:text] = trigger
-            story[:chunks][-1][:content] << trg
-
-            # if this content is conditional, add the condition to the current element
-
-            if context.include?(:condition_block) || context.include?(:condition_block_1)
-              condition = story[:chunks][-1][:conditions][-1]
-              story[:chunks][-1][:content][-1][:condition] = condition
-            end
-
-            ### identify and catch chunk id action (return)
-            if action.end_with?(')')
-              action.delete_prefix!('(')
-              action.delete_suffix!(')')
-
-              if action.start_with?('#') || action.strip.empty?
-                story[:chunks][-1][:content][-1].action = action
-                return true
-              else
-                raise("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
-              end
-
-            # identify action block and open context (keep parsing)
-            elsif action.end_with?('(:')
-              context << :trigger_action_1
-            end
-          end
- 
-
-        # identfy action block close and close context, if open (return)
-        elsif line.strip.start_with?(':)') && context.include?(:trigger_action_1)
-          context.delete(:trigger_action_1)
+        elsif line.strip.start_with?('```)') && context.include?(:trigger_action)
+          context.delete(:trigger_action)
           return true
 
         # if context is open, add line to trigger action (return)
-        elsif context.include?(:trigger_action_1)
-          if story[:chunks][-1][:content][-1].action.size.zero?
-            # a kludge that identifies a Ruby trigger action from a normal action 
-            # so actions that begin with '#' are not mistaken for navigational actions
-            line = '@@@@' + line
-          end
-          story[:chunks][-1][:content][-1].action += line
-          return true
-        end
-      end
-
-      # Old style trigger with <% ... % .. >. 
-      # triggers are represented as buttons that perform actions
-      # [Trigger Text](Trigger Action)
-      # Trigger action may be chunk id or an action block
-      def parse_trigger_2(line, context, story, line_no)
-        prohibited_contexts = [:code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        # identify trigger and catch text (keep parsing)
-        if line.strip.start_with?('[') && line.include?('](')
-          line = line.strip.delete_prefix!('[')
-          line.split(']', 2).then do |trigger, action|
-            trigger.strip!
-            action.strip!
-            trg = make_trigger_hash
-            trg[:text] = trigger
-            story[:chunks][-1][:content] << trg
-
-            # if this content is conditional, add the condition to the current element
-
-            if context.include?(:condition_block) || context.include?(:condition_block_1)
-              condition = story[:chunks][-1][:conditions][-1]
-              story[:chunks][-1][:content][-1][:condition] = condition
-            end
-
-            ### identify and catch chunk id action (return)
-            if action.end_with?(')')
-              action.delete_prefix!('(')
-              action.delete_suffix!(')')
-
-              if action.start_with?('#') || action.strip.empty?
-                story[:chunks][-1][:content][-1].action = action
-                return true
-              else
-                raise("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
-              end
-
-            # identify action block and open context (keep parsing)
-            elsif action.end_with?('(```')
-              context << :trigger_action_2
-            end
-          end
- 
-
-        # identfy action block close and close context, if open (return)
-        elsif line.strip.start_with?('```)') && context.include?(:trigger_action_2)
-          context.delete(:trigger_action_2)
-          return true
-
-        # if context is open, add line to trigger action (return)
-        elsif context.include?(:trigger_action_2)
+        elsif context.include?(:trigger_action) || context.include?(:trigger_action)
           if story[:chunks][-1][:content][-1].action.size.zero?
             # a kludge that identifies a Ruby trigger action from a normal action 
             # so actions that begin with '#' are not mistaken for navigational actions
