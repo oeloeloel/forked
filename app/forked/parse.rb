@@ -88,8 +88,11 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           ### CONDITION BLOCK
-
           result = parse_condition_block(line, context, story, line_no, story_lines)
+          next if result
+
+          ### CODE FENCE
+          result = parse_code_fence(line, context, story, line_no)
           next if result
 
           ### CODE BLOCK
@@ -268,6 +271,16 @@ Please add a heading line after the title and before any other content. Example:
         end
       end
 
+      def parse_code_fence(line, context, story, line_no)
+        return unless line.include?('```') 
+
+        if line.include?('\```')
+          line.gsub!('\```', '```')
+          return false
+        end
+
+        return true
+      end
 
       # Code blocks format code for display
       # They begin with three tildes (~~~) on a blank line
