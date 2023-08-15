@@ -41,8 +41,9 @@ def default_paragraph
     size_enum: 0,
     line_spacing: 1, # 1.0 is the height of the font.
     r: 51, g: 51, b: 51,
-    spacing_after: 0.7,
-    spacing_between: 0.7
+    spacing_between: 0.6,
+    spacing_after: 0.9,
+
   }
 end
 
@@ -100,7 +101,8 @@ end
 def default_blockquote # defaults for block quote text
   default_paragraph.merge(
     r: 102, g: 76, b: 51,
-    spacing_between: 0
+    spacing_between: 0,
+    spacing_after: 0.7,
   )
 end
 

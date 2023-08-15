@@ -109,6 +109,11 @@ module Forked
           zero_height = true # paragraph could have no text, in which case it will have no height
           x_pos = 0
 
+          if content[i - 1][:type] == :paragraph
+            y_pos += paragraph.size_px * paragraph.spacing_after
+            y_pos -= paragraph.size_px * paragraph.spacing_between
+          end
+
           item.atoms.each do |atom|
             next if atom[:text].empty?
 
@@ -196,7 +201,7 @@ module Forked
           next if item[:text].empty?
 
           # if previous element is also a blockquote, use spacing_between instead of spacing_after
-          if content[i - 1].type == :blockquote
+          if content[i - 1][:type] == :blockquote
             y_pos += blockquote.spacing_after * blockquote.size_px
             y_pos -= blockquote.spacing_between * blockquote.size_px
           end

@@ -155,3 +155,14 @@ This text looks like code
 | Roll Dice | (experimental) |
 |-|-|
 | `roll "2d6"` | Returns the result of a dice roll with two, six sided dice. Any other numbers may be substitutes: The first number represents the number of dice. The second number represents the number of sides for all rolled dice. |
+
+| Headings | (experimental) |
+|-|-|
+| `heading` | Gets the text of the current heading |
+| `heading_set` | Sets the text of the current heading |
+
+| Navigation | (experimental) |
+|-|-|
+| `jump "#chunk_id"` | navigates to the chunk specified by `#chunk_id` |
+| `history[-1]` | Gets the chunk_id for the current chunk |
+| `history[-2]` | Gets the chunk_id for the last visited chunk |

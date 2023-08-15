@@ -27,6 +27,36 @@ module Forked
       args.state.forked.defaults_set = true
     end
 
+    ### Chunk content
+
+    def heading
+      args.state.forked.current_chunk[:content][0][:text]
+    end
+
+    def heading_set new_heading
+      args.state.forked.current_chunk[:content][0][:text] = new_heading
+    end
+
+    ### Navigation
+
+    # Jump to a specified label
+    def jump label
+      # TODO: Check that label exists
+      $story.follow $args, { action: label }
+    end
+
+    def history_add(target)
+      args.state.forked.forked_history ||= [] 
+      args.state.forked.forked_history << target
+    end
+
+    def history(idx = nil)
+      history = args.state.forked.forked_history
+      return history unless idx
+
+      history[idx]
+    end
+
     def follow(args, option = nil)
       if option&.action && !option.action.start_with?("#")
         # @@@@ was added to code to prevent it being confused with a #navigational_action.
@@ -49,6 +79,10 @@ module Forked
         else
           args.state.forked.root_chunk
         end
+      
+      history_add(args.state.forked.current_chunk[:id])
+      @heading = args.state.forked.current_chunk[:content][0][:text] 
+      
       args.state.forked.current_lines = args.state.forked.current_chunk[:content]
       args.state.forked.options = []
       args.state.forked.current_heading = args.state.forked.current_chunk[:heading] || ''

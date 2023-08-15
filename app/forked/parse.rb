@@ -199,10 +199,15 @@ Please add a heading line after the title and before any other content. Example:
           else
             
             # deal with newlines
+            # if the line ends with `\`, hard wrap
             if line.strip[-1] == '\\'
-              line = line.delete_suffix('\\') + "\n"
+              # end the line with a newline
+              # add an nbsp to prevent empty lines from collapsing
+              line = line.delete_suffix('\\') + " \n"
             else
-              line += ' '
+              # add a space to the end of the line so it's safe
+              # for lazy continuation
+              line += " "
             end
 
             # if the atom ends with a newline, start a new atom
