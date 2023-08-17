@@ -133,7 +133,7 @@ module Forked
               new_frag = line_frag + word
               new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
               if new_x_pos > display.w
-                loc = { x: x_pos + display.margin_left, y: y_pos }
+                loc = { x: x_pos.to_i + display.margin_left, y: y_pos.to_i }
                 lab = loc.merge(make_paragraph_label(line_frag, font_style))
                 data.primitives << lab
                 line_frag = ''
@@ -146,7 +146,7 @@ module Forked
 
               next unless words.empty?
 
-              loc = { x: x_pos + display.margin_left, y: y_pos }
+              loc = { x: x_pos.to_i + display.margin_left, y: y_pos.to_i }
               lab = loc.merge(make_paragraph_label(line_frag, font_style))
               data.primitives << lab
               x_pos = new_x_pos + default_space_w
@@ -248,6 +248,7 @@ module Forked
           button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
 
           text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
+          text_w = text_w.to_i
           button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
 
 

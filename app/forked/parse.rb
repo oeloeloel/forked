@@ -81,18 +81,17 @@ Please add a heading line after the title and before any other content. Example:
           result = parse_rule(line, context, story, line_no)
           next if result
 
-          ### TRIGGER
+          ### CODE FENCE
+          result = parse_code_fence(line, context, story, line_no)
+          next if result
 
+          ### TRIGGER
           # currently works for newstyle colon and old-style backtick trigger actions
           result = parse_trigger(line, context, story, line_no)
           next if result
 
           ### CONDITION BLOCK
           result = parse_condition_block(line, context, story, line_no, story_lines)
-          next if result
-
-          ### CODE FENCE
-          result = parse_code_fence(line, context, story, line_no)
           next if result
 
           ### CODE BLOCK
@@ -257,9 +256,10 @@ Please add a heading line after the title and before any other content. Example:
         # The blockquote will continue until there
         # is a line that does not begin with >
         if line.strip.start_with?('>')
-
+          line.strip!
           line.delete_prefix!('>')
-
+          line.strip!
+          
           unless line.empty?
             blq = make_blockquote_hash
             blq[:text] = line
@@ -591,8 +591,8 @@ Please add a title to the top of the Story File. Example:
             # identify action block and open context (keep parsing)
             elsif action.end_with?('(:')
               context << :trigger_action
-            elsif action.end_with?('(```')
-              context << :trigger_action
+            # elsif action.end_with?('(```')
+            #   context << :trigger_action
             end
           end
  
@@ -601,9 +601,9 @@ Please add a title to the top of the Story File. Example:
         elsif line.strip.start_with?(':)') && context.include?(:trigger_action)
           context.delete(:trigger_action)
           return true
-        elsif line.strip.start_with?('```)') && context.include?(:trigger_action)
-          context.delete(:trigger_action)
-          return true
+        # elsif line.strip.start_with?('```)') && context.include?(:trigger_action)
+        #   context.delete(:trigger_action)
+        #   return true
 
         # if context is open, add line to trigger action (return)
         elsif context.include?(:trigger_action) || context.include?(:trigger_action)
