@@ -167,6 +167,7 @@ def timer_done? name
   timer_check(name) <= 0
 end
 
+# returns timer value as seconds, minimum 0
 def timer_seconds(name)
   timer_check(name).idiv(60).greater(0)
 end
