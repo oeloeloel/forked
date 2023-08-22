@@ -18,7 +18,7 @@ module Forked
 
       present args
 
-      @author ||= Author.new
+      @author ||= Author.new(self)
       @author.args = args
       @author.tick
     end
