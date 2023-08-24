@@ -38,7 +38,7 @@ module Forked
 
         while(line = story_lines.shift)
           line_no += 1
-          # putz "#{line_no + 1}: #{line.strip}"
+          # puts "#{line_no + 1}: #{line.strip}"
 
           ### PREFORMATTED LINE (^@@) and stop parsing it
           result = parse_preformatted_line(line, context, story, line_no)
@@ -409,19 +409,27 @@ Please add a heading line after the title and before any other content. Example:
         # (IF ON SAME LINE - INDICATES STRING INTERPOLATION)
         # closing both condition code context and condition block context
         if line.strip.start_with?(':>')
-          # close conditon block and condition code block contexts
-          context.delete(:condition_block)
-          context.delete(:condition_code_block)
+
           # if the last element is a paragraph and
           # if the paragraph context is open, add to it
           
-          if story[:chunks][-1][:content][-1].type == :paragraph && context.include?(:paragraph)
+          if  story[:chunks][-1][:content][-1].type == :paragraph && 
+              context.include?(:paragraph) &&
+              context.include?(:condition_code_block)
+            # most recent element is a paragraph and the paragraph context is open
+            # FIXME: this is creating a bogus extra entry.
+            # It's supposed to be able to continue a paragraph but it's
+            # getting triggered for new paragraphs in addition to the
+            # correct code.
+
             atm = make_atom_hash
             atm[:condition] = story[:chunks][-1][:conditions][-1]
+            
             story[:chunks][-1][:content][-1][:atoms] << atm
 
-            story[:chunks][-1][:content][-1][:atoms]
+            # story[:chunks][-1][:content][-1][:atoms]
           else
+            # most recent element is not a paragraph and paragraph context is closed
             context << (:paragraph)
             para = make_paragraph_hash
             atm = make_atom_hash
@@ -429,6 +437,11 @@ Please add a heading line after the title and before any other content. Example:
             para[:atoms] << atm 
             story[:chunks][-1][:content] << para
           end
+
+          # close conditon block and condition code block contexts
+          context.delete(:condition_block)
+          context.delete(:condition_code_block)
+
           return true
         end
 

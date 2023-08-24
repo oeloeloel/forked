@@ -129,10 +129,6 @@ module Forked
     ### Actions
 
     def process_action(args, action)
-
-      # if action.class == Integer
-      #   putz "navigate by relative index"
-      #   navigate_relative(action)
       if action.class == String
         if action == '#'
           navigate_relative(1)

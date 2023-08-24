@@ -1,5 +1,14 @@
 # Navigation Tests
 
+## a
+
+No text no id 1
+[next](#)
+
+## {}
+
+No text no id 2
+
 ## Begin on first chunk
 
 The first chunk must always load first
