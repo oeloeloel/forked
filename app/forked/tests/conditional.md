@@ -1,5 +1,71 @@
 # Conditional Elements
 
+## Test 1: Interpolation:
+
+<:
+"1 During"
+:>
+
+## Test 2: Interpolation after text
+
+2 Before
+<:
+"2 During"
+:>
+
+## Test 3: Interpolation before text
+
+<:
+"3 During"
+:>
+3 After
+
+## Test 4: Interpolation after and before text
+
+4 Before
+<:
+"4 During"
+:>
+4 After
+
+## Test 5: Conditional
+
+<:
+true
+::
+5 During
+:>
+
+## Test 6: Conditional after text
+
+6 Before
+<:
+true
+::
+6 During
+:>
+
+## Test 7: Conditional before text
+
+<:
+true
+::
+7 During
+:>
+7 After
+
+##Test 8: Conditional after and before text
+
+8 Before
+<:
+true
+::
+8 During
+:>
+8 After
+
+End
+
 ## Single line string interpolation
 
 Single line string interpolation is wrapped in `<:` and `:>` symbols.
@@ -83,34 +149,36 @@ This line follows the condition
 
 [Next](#)
 
-## Conditional content within a parapraph {#conditional-content-in-paragraph}
+## Conditional content within a paragraph {#conditional-content-in-paragraph}
 
 Conditional content can be inserted into an existing paragraph.
 
-Example:
+Visible Example:
 
 This is the first part.
 <:
-  false
+  true
 ::
   "This is the second part."
 :>
 This is the third part.
 
-## a
+Invisible Example
 
-//<: 1 :>
-//<: true :>
-//<: Time :>
+One.
+<:
+false
+::
+Two.
+:>
+Three.
 
-Nothing should appear between this line and the first line in this chunk (spacing between lines should be normal).
+Interpolation.
 
-Normal paragraph spacing for reference.
-
-Test\
-test\
-test
-
-<: true :>
+One part, 
+<:
+  "two part,"
+:>
+three part.
 
 [Next]()

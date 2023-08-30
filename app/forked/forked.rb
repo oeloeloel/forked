@@ -161,68 +161,68 @@ Tell Akz to write a better error message."
     end
 
     def follow(args, option = nil)
-      process_action(args, option.action) if option.action
+      process_action(args, option.action) if option&.action
     end
 
-    def follownnnnn(args, option = nil)
-      # todo: move to display and remove this method
-      if option.action
-        process_action(args, option.action)
-      end
+#     def follownnnnn(args, option = nil)
+#       # todo: move to display and remove this method
+#       if option.action
+#         process_action(args, option.action)
+#       end
 
-      return
+#       return
 
-      # if action is not a chunk ID
-      if option&.action && !option.action.start_with?("#")
-        # @@@@ was added to code to prevent it being confused with a #navigational_action.
-        # The @@@@ part needs to be removed now.
-        # Seems to work but I don't trust it
-        option.action.delete_prefix!('@@@@')
-        evaluate(args, option.action.to_s)
-        return
-      end
+#       # if action is not a chunk ID
+#       if option&.action && !option.action.start_with?("#")
+#         # @@@@ was added to code to prevent it being confused with a #navigational_action.
+#         # The @@@@ part needs to be removed now.
+#         # Seems to work but I don't trust it
+#         option.action.delete_prefix!('@@@@')
+#         evaluate(args, option.action.to_s)
+#         return
+#       end
 
-      if option&.action&.size == 1
-        # given ID is just a `#`, fall through
-        fall
-        return
-      end
+#       if option&.action&.size == 1
+#         # given ID is just a `#`, fall through
+#         fall
+#         return
+#       end
 
-      # navigate (set the current chunk to the desired chunk)
-      if option
-        chunk = args.state.forked.story.chunks.select { |k| k[:id] == option.action }[0]
-        if chunk.nil?
-          raise "FORKED: TARGET NOT FOUND. "\
-          "Attempting to navigate to `#{option.action}` but the a chunk_id with that name was not found. "\
-          "Please check that the chunk_id exists."
-        end
-        args.state.forked.current_chunk = chunk
-      else
-        args.state.forked.current_chunk = args.state.forked.root_chunk
-      end
+#       # navigate (set the current chunk to the desired chunk)
+#       if option
+#         chunk = args.state.forked.story.chunks.select { |k| k[:id] == option.action }[0]
+#         if chunk.nil?
+#           raise "FORKED: TARGET NOT FOUND. "\
+#           "Attempting to navigate to `#{option.action}` but the a chunk_id with that name was not found. "\
+#           "Please check that the chunk_id exists."
+#         end
+#         args.state.forked.current_chunk = chunk
+#       else
+#         args.state.forked.current_chunk = args.state.forked.root_chunk
+#       end
 
-      print "!!!!"
-      # history_add(args.state.forked.current_chunk[:id])
-      @heading = args.state.forked.current_chunk[:content][0][:text] 
+#       print "!!!!"
+#       # history_add(args.state.forked.current_chunk[:id])
+#       @heading = args.state.forked.current_chunk[:content][0][:text] 
       
-      args.state.forked.current_lines = args.state.forked.current_chunk[:content]
-      args.state.forked.options = []
-      args.state.forked.current_heading = args.state.forked.current_chunk[:heading] || ''
+#       args.state.forked.current_lines = args.state.forked.current_chunk[:content]
+#       args.state.forked.options = []
+#       args.state.forked.current_heading = args.state.forked.current_chunk[:heading] || ''
 
-      unless args.state.forked.current_chunk.actions.empty?
-        args.state.forked.current_chunk.actions.each do |a|
-          evaluate args, a
-        end
-      end
-      if args.state.forked.current_lines.nil?
-        raise "FORKED Display: The story chunk does not exist.
-Check that the chunk_id you are linking to exists and is typed correctly.
-Tell Akz to write a better error message."
-      end
-      if args.state.forked.current_lines.empty?
-        raise "No lines were found in the current story chunk. Current chunk is #{args.state.current_chunk}"
-      end
-    end
+#       unless args.state.forked.current_chunk.actions.empty?
+#         args.state.forked.current_chunk.actions.each do |a|
+#           evaluate args, a
+#         end
+#       end
+#       if args.state.forked.current_lines.nil?
+#         raise "FORKED Display: The story chunk does not exist.
+# Check that the chunk_id you are linking to exists and is typed correctly.
+# Tell Akz to write a better error message."
+#       end
+#       if args.state.forked.current_lines.empty?
+#         raise "No lines were found in the current story chunk. Current chunk is #{args.state.current_chunk}"
+#       end
+#     end
  
     def fall
       navigate_relative(1)

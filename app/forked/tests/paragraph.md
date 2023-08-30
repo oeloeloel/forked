@@ -1,6 +1,7 @@
 # Paragraph Tests
 
 ## Paragraph - Creation {#creation}
+
 Paragraphs are created by default when there is a non-blank line that cannot be interpreted as any other element. This is an example of a paragraph.
 [Next](#single-newline)
 
@@ -73,7 +74,7 @@ Leading (and trailing) spaces are removed from paragraph lines.
 
     This example shows spaces being removed.    
 
-[Next](#10)
+[Next](#)
 
 <: 
   ```rb

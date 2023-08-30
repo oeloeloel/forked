@@ -326,7 +326,7 @@ module Forked
 
       empty_paragraph = true
       item.atoms.each_with_index do |atom, i|
-        
+
         # if we're at the end of the paragraph and no atoms have had any text
         # mark it as empty so we know not to remove added 'spacing after'
         empty_paragraph = false if atom[:text] != ''
@@ -382,6 +382,16 @@ module Forked
             new_y_pos -= paragraph.size_px * paragraph.line_spacing
             new_y_pos -= paragraph.size_px * paragraph.spacing_after
           end
+        end
+
+        # if this is the last atom and it's empty but the paragraph is not empty
+        # (interpolation will do this), apply paragraph spacing now because
+        # we won't get there otherwise
+        if  atom[:text] == '' &&
+            !empty_paragraph &&
+            i == item.atoms.size - 1
+          new_y_pos -= paragraph.size_px * paragraph.line_spacing
+          new_y_pos -= paragraph.size_px * paragraph.spacing_after
         end
       end
 
