@@ -39,6 +39,9 @@ module Forked
         while(line = story_lines.shift)
           line_no += 1
           # puts "#{line_no + 1}: #{line.strip}"
+          # $putzit = (line_no + 1).between?(0, 70)
+          # putz "-----" if $putzit
+          # putz "#{line_no + 1} #{line}" if $putzit
 
           ### PREFORMATTED LINE (^@@) and stop parsing it
           result = parse_preformatted_line(line, context, story, line_no)
@@ -91,8 +94,12 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           ### CONDITION BLOCK
-          result = parse_condition_block(line, context, story, line_no, story_lines)
-          next if result
+          result = parse_condition_block_2(line, context, story, line_no, story_lines)
+          if result == :interpolation
+            line = '@#$%INTERPOLATION@#$%'
+          elsif result
+            next
+          end
 
           ### CODE BLOCK
           result = parse_code_block(line, context, story, line_no)
@@ -103,7 +110,7 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           # PARAGRAPH
-          parse_paragraph(line, context, story, line_no)
+          parse_paragraph_2(line, context, story, line_no)
         end
 
         story
@@ -162,6 +169,107 @@ Please add a heading line after the title and before any other content. Example:
         true
       end
 
+      def parse_paragraph_2(line, context, story, line_no) 
+
+        # check credentials
+        prohibited_contexts = [:title, :codeblock, :heading]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        conditional = false
+
+        # strip
+        line.strip!
+
+        # anything that comes here is either a paragraph or a blank line.
+        # handle context open/opening/closing
+        context_state = handle_paragraph_context(line, context)
+
+        # if the line ends with `\`, hard wrap
+        if line.strip[-1] == '\\'
+          # end the line with a newline
+          # add an nbsp to prevent empty lines from collapsing
+          line = line.delete_suffix('\\') + " \n"
+        # else
+          # This part doesn't work with new interpolation rules
+          # Don't know if it's still needed
+          # add a space to the end of the line so it's safe
+          # for lazy continuation
+          # line += " "
+        end
+        # prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
+        
+        # putz     story[:chunks][-1][:content][-1]
+            #         # if the atom ends with a newline, start a new atom
+            # # the newline is a result of a backslash hard wrap
+            # prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
+            # if prev && prev[-1] == "\n"
+            #   # putz "para adding atom for newline" if $putzit
+            #   atm = make_atom_hash
+            #   atm[:text] = line
+            #   story[:chunks][-1][:content][-1][:atoms] << atm
+            # else
+            #   # otherwise, append to the current atom
+            #   # putz "para appending to current atom" if $putzit
+            #   # atm = make_atom_hash
+            #   # atm[:text] = line
+            #   # story[:chunks][-1][:content][-1][:atoms] << atm
+            #   story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
+            # end
+
+        # new paragraph condition:
+        # context was closed, now open
+        if context_state == :opening
+          story[:chunks][-1][:content] << make_paragraph_hash
+          context_state = :open
+        end
+
+        
+
+        # new atom condition
+        # context is open
+        if context_state == :open
+          # if text is a placeholder for interpolation, blank it
+
+          if line == '@#$%INTERPOLATION@#$%'
+            conditional = true
+            line = '' 
+          end
+
+          atom = make_atom_hash
+          atom[:text] = line
+          story[:chunks][-1][:content][-1][:atoms] << atom
+        end
+
+
+
+        # add condition
+        # conditional context is open
+        if context.include?(:condition_block) || conditional
+          condition = story[:chunks][-1][:conditions][-1]
+          story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
+        end
+      end
+
+      def handle_paragraph_context(line, context)
+        if line.empty? && context.include?(:paragraph)
+          # capture context closing
+          # putz "para context closing" if $putzit
+          context.delete(:paragraph) if context.include?(:paragraph)
+          context_state = :closing
+        elsif !line.empty? && !context.include?(:paragraph)
+          # capture context opening
+          # putz "para context opening" if $putzit
+          context << :paragraph
+          context_state = :opening
+        elsif context.include?(:paragraph)
+          # putz "para context is open" if $putzit
+          context_state = :open
+        end
+
+        return context_state
+      end
+
       def parse_paragraph(line, context, story, line_no)
         prohibited_contexts = [:title, :codeblock, :heading]
         mandatory_contexts = []
@@ -181,6 +289,8 @@ Please add a heading line after the title and before any other content. Example:
           if !context.include?(:paragraph) || story[:chunks][-1][:content][-1][:type] != :paragraph
             # if there is no open paragraph or the previous element it not a paragraph
             # create a new empty paragraph (paragraph may have been interrupted?)
+            
+            # putz "Paragraph making new empty paragraph" if $putzit
             context << (:paragraph)
             para = make_paragraph_hash
             para[:atoms] << make_atom_hash
@@ -192,6 +302,7 @@ Please add a heading line after the title and before any other content. Example:
           cond = story[:chunks][-1][:content][-1][:atoms][-1][:condition]
 
           if cond&.class == String
+            # putz "para adding atom #{line}" if $putzit
             atm = make_atom_hash
             atm[:text] = line + ' '
             story[:chunks][-1][:content][-1][:atoms] << atm
@@ -213,16 +324,21 @@ Please add a heading line after the title and before any other content. Example:
             # the newline is a result of a backslash hard wrap
             prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
             if prev && prev[-1] == "\n"
+              # putz "para adding atom for newline" if $putzit
               atm = make_atom_hash
               atm[:text] = line
               story[:chunks][-1][:content][-1][:atoms] << atm
             else
               # otherwise, append to the current atom
+              # putz "para appending to current atom" if $putzit
+              # atm = make_atom_hash
+              # atm[:text] = line
+              # story[:chunks][-1][:content][-1][:atoms] << atm
               story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
             end
           end
           # if this content is conditional, add the condition to the current atom
-          if context.include?(:condition_block)  || context.include?(:condition_block)
+          if context.include?(:condition_block)
             condition = story[:chunks][-1][:conditions][-1]
             story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
           end
@@ -380,6 +496,106 @@ Please add a heading line after the title and before any other content. Example:
       # and end with a colon followed by a right angle bracket
       # The current functionality is to conditionally include text
       # returned from the block as a string
+      def parse_condition_block_2(line, context, story, line_no, story_lines)
+
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        # todo: detect and split *inline* condition into multi-line
+
+        # detect and split single line condition into multi-line
+        result = expand_single_line_condition(line, context, story, line_no, story_lines)
+        line = story_lines.shift if result
+
+        # DETECT OPENING CONDITION BLOCK
+        # opening condition block context and condition code context
+        if line.strip.end_with?('<:')
+          # open condition block context
+          context << :condition_block
+          # open condition code block context
+          context << :condition_code_block
+          # add a new condition to the chunk
+          story[:chunks][-1][:conditions] << ''
+          # stop processing this line (ignore any following text)
+          return true
+        end
+
+
+        # closing both condition code context and condition block context
+        if line.strip.start_with?(':>')
+          
+          # if the last element is a paragraph and
+          # if the paragraph context is open, add to it
+          # only for interpolation
+          if  story[:chunks][-1][:content][-1].type == :paragraph && 
+              context.include?(:paragraph) &&
+              context.include?(:condition_code_block)
+            # most recent element is a paragraph and the paragraph context is open
+            # FIXME: this is creating a bogus extra entry.
+            # It's supposed to be able to continue a paragraph but it's
+            # getting triggered for new paragraphs in addition to the
+            # correct code.
+
+          # putz "interpolation... appending to open paragraph." if $putzit
+            atm = make_atom_hash
+            atm[:condition] = story[:chunks][-1][:conditions][-1]
+            
+            # story[:chunks][-1][:content][-1][:atoms] << atm
+
+            # story[:chunks][-1][:content][-1][:atoms]
+if context.include?(:condition_code_block)
+# putz "closing cond AND THIS IS INTERPOLATION #{context}" if $putzit
+   
+            context.delete(:condition_block)
+          context.delete(:condition_code_block)
+          return :interpolation
+end
+          elsif context.include?(:condition_code_block)
+# putz "closing cond AND THIS IS INTERPOLATION #{context}" if $putzit
+   
+            context.delete(:condition_block)
+          context.delete(:condition_code_block)
+          return :interpolation
+            # return false
+            # story[:chunks][-1][:content] << para
+          end
+
+          # close conditon block and condition code block contexts
+          context.delete(:condition_block)
+          context.delete(:condition_code_block)
+          # putz "Closing Condition & Condition Code" if $putzit
+          return true
+        end
+
+        # NOTE: The above code appends an atom to the previous paragraph
+        # if it is the last added element, or creates a new paragraph for the atom.
+        # The atom contains only a condition and if the result of the condition
+        # is a string, Forked will add the string to the atom text at runtime.
+
+        # If the condition contains content between the closing code fence
+        # and the closing condition, that doesn't happen. The following code runs
+        # instead.
+
+        # This is important because it's not decided if Forked should display a
+        # returned string AND the following conditional content. Right now,
+        # it won't do both but only because that's how it happens to be.
+
+        # closing only condition code block context
+        if line.strip == '::' && context.include?(:condition_code_block)
+          context.delete(:condition_code_block)
+          return true
+        end
+
+        # capture contents of condition code block
+        if context.include?(:condition_code_block)
+          story[:chunks][-1][:conditions][-1] += line
+          return true
+        end
+
+        # nil return allows conditional content to be handled by other parsers
+      end
+
       def parse_condition_block(line, context, story, line_no, story_lines)
 
         prohibited_contexts = [:code_block]
@@ -412,7 +628,7 @@ Please add a heading line after the title and before any other content. Example:
 
           # if the last element is a paragraph and
           # if the paragraph context is open, add to it
-          
+          # only for interpolation
           if  story[:chunks][-1][:content][-1].type == :paragraph && 
               context.include?(:paragraph) &&
               context.include?(:condition_code_block)
@@ -422,6 +638,7 @@ Please add a heading line after the title and before any other content. Example:
             # getting triggered for new paragraphs in addition to the
             # correct code.
 
+          putz "interpolation... appending to open paragraph." if $putzit
             atm = make_atom_hash
             atm[:condition] = story[:chunks][-1][:conditions][-1]
             
@@ -430,6 +647,7 @@ Please add a heading line after the title and before any other content. Example:
             # story[:chunks][-1][:content][-1][:atoms]
           else
             # most recent element is not a paragraph and paragraph context is closed
+            putz "HERE: condition creating a new para" if $putzit
             context << (:paragraph)
             para = make_paragraph_hash
             atm = make_atom_hash
