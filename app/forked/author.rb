@@ -78,6 +78,8 @@ module Forked
     end
 
     def render
+      return unless args.state.forked.author_mode
+      
       args.outputs.primitives << args.state.forked.author_mode_primitives
     end
   end
