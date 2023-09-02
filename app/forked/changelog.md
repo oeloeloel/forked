@@ -1,6 +1,6 @@
 Current Version:
 
-0.0.3
+Version 0.0.3
 
 * Multiline actions/conditions allow optional code fence:
 ::

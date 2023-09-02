@@ -91,7 +91,7 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           ### CONDITION BLOCK
-          result = parse_condition_block_2(line, context, story, line_no, story_lines)
+          result = parse_condition_block(line, context, story, line_no, story_lines)
           if result == :interpolation
             line = '@#$%INTERPOLATION@#$%'
           elsif result
@@ -107,7 +107,7 @@ Please add a heading line after the title and before any other content. Example:
           next if result
 
           # PARAGRAPH
-          parse_paragraph_2(line, context, story, line_no)
+          parse_paragraph(line, context, story, line_no)
         end
 
         story
@@ -166,7 +166,7 @@ Please add a heading line after the title and before any other content. Example:
         true
       end
 
-      def parse_paragraph_2(line, context, story, line_no) 
+      def parse_paragraph(line, context, story, line_no) 
 
         # check credentials
         prohibited_contexts = [:title, :codeblock, :heading]
@@ -259,77 +259,6 @@ Please add a heading line after the title and before any other content. Example:
         end
 
         return context_state
-      end
-
-      def parse_paragraph(line, context, story, line_no)
-        prohibited_contexts = [:title, :codeblock, :heading]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        # at this point, we've been through all the other possible
-        # elements so we know it's OK to process paragraphs now.
-
-        line.strip!
-        if line.empty?
-          context.delete(:paragraph) if context.include?(:paragraph)
-        else
-
-          # check to see if the paragraph context is closed
-          ## OR! the previous element is anything other than paragraph
-          ### (it may have changed and we don't want to append to some other element)
-          if !context.include?(:paragraph) || story[:chunks][-1][:content][-1][:type] != :paragraph
-            # if there is no open paragraph or the previous element it not a paragraph
-            # create a new empty paragraph (paragraph may have been interrupted?)
-            
-            context << (:paragraph)
-            para = make_paragraph_hash
-            para[:atoms] << make_atom_hash
-            story[:chunks][-1][:content] << para
-          end
-
-          # if the previous atom was a condition, make a new atom and append to paragraph
-
-          cond = story[:chunks][-1][:content][-1][:atoms][-1][:condition]
-
-          if cond&.class == String
-            atm = make_atom_hash
-            atm[:text] = line + ' '
-            story[:chunks][-1][:content][-1][:atoms] << atm
-          else
-            
-            # deal with newlines
-            # if the line ends with `\`, hard wrap
-            if line.strip[-1] == '\\'
-              # end the line with a newline
-              # add an nbsp to prevent empty lines from collapsing
-              line = line.delete_suffix('\\') + " \n"
-            else
-              # add a space to the end of the line so it's safe
-              # for lazy continuation
-              line += " "
-            end
-
-            # if the atom ends with a newline, start a new atom
-            # the newline is a result of a backslash hard wrap
-            prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
-            if prev && prev[-1] == "\n"
-              atm = make_atom_hash
-              atm[:text] = line
-              story[:chunks][-1][:content][-1][:atoms] << atm
-            else
-              # otherwise, append to the current atom
-              # atm = make_atom_hash
-              # atm[:text] = line
-              # story[:chunks][-1][:content][-1][:atoms] << atm
-              story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
-            end
-          end
-          # if this content is conditional, add the condition to the current atom
-          if context.include?(:condition_block)
-            condition = story[:chunks][-1][:conditions][-1]
-            story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
-          end
-        end
       end
 
       # strip comments from line (comments begin with //)
@@ -483,7 +412,7 @@ Please add a heading line after the title and before any other content. Example:
       # and end with a colon followed by a right angle bracket
       # The current functionality is to conditionally include text
       # returned from the block as a string
-      def parse_condition_block_2(line, context, story, line_no, story_lines)
+      def parse_condition_block(line, context, story, line_no, story_lines)
 
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
@@ -548,99 +477,6 @@ end
           # close conditon block and condition code block contexts
           context.delete(:condition_block)
           context.delete(:condition_code_block)
-          return true
-        end
-
-        # NOTE: The above code appends an atom to the previous paragraph
-        # if it is the last added element, or creates a new paragraph for the atom.
-        # The atom contains only a condition and if the result of the condition
-        # is a string, Forked will add the string to the atom text at runtime.
-
-        # If the condition contains content between the closing code fence
-        # and the closing condition, that doesn't happen. The following code runs
-        # instead.
-
-        # This is important because it's not decided if Forked should display a
-        # returned string AND the following conditional content. Right now,
-        # it won't do both but only because that's how it happens to be.
-
-        # closing only condition code block context
-        if line.strip == '::' && context.include?(:condition_code_block)
-          context.delete(:condition_code_block)
-          return true
-        end
-
-        # capture contents of condition code block
-        if context.include?(:condition_code_block)
-          story[:chunks][-1][:conditions][-1] += line
-          return true
-        end
-
-        # nil return allows conditional content to be handled by other parsers
-      end
-
-      def parse_condition_block(line, context, story, line_no, story_lines)
-
-        prohibited_contexts = [:code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        # todo: detect and split *inline* condition into multi-line
-
-        # detect and split single line condition into multi-line
-        result = expand_single_line_condition(line, context, story, line_no, story_lines)
-        line = story_lines.shift if result
-
-        # DETECT OPENING CONDITION BLOCK
-        # opening condition block context and condition code context
-        if line.strip.end_with?('<:')
-          # open condition block context
-          context << :condition_block
-          # open condition code block context
-          context << :condition_code_block
-          # add a new condition to the chunk
-          story[:chunks][-1][:conditions] << ''
-          # stop processing this line (ignore any following text)
-          return true
-        end
-
-        # DETECT CLOSING CONDITION BLOCK & CONDITION CODE BLOCK
-        # (IF ON SAME LINE - INDICATES STRING INTERPOLATION)
-        # closing both condition code context and condition block context
-        if line.strip.start_with?(':>')
-
-          # if the last element is a paragraph and
-          # if the paragraph context is open, add to it
-          # only for interpolation
-          if  story[:chunks][-1][:content][-1].type == :paragraph && 
-              context.include?(:paragraph) &&
-              context.include?(:condition_code_block)
-            # most recent element is a paragraph and the paragraph context is open
-            # FIXME: this is creating a bogus extra entry.
-            # It's supposed to be able to continue a paragraph but it's
-            # getting triggered for new paragraphs in addition to the
-            # correct code.
-
-            atm = make_atom_hash
-            atm[:condition] = story[:chunks][-1][:conditions][-1]
-            
-            story[:chunks][-1][:content][-1][:atoms] << atm
-
-            # story[:chunks][-1][:content][-1][:atoms]
-          else
-            # most recent element is not a paragraph and paragraph context is closed
-            context << (:paragraph)
-            para = make_paragraph_hash
-            atm = make_atom_hash
-            atm[:condition] = story[:chunks][-1][:conditions][-1]
-            para[:atoms] << atm 
-            story[:chunks][-1][:content] << para
-          end
-
-          # close conditon block and condition code block contexts
-          context.delete(:condition_block)
-          context.delete(:condition_code_block)
-
           return true
         end
 
