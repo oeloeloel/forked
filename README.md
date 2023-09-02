@@ -34,8 +34,19 @@ The default project is the user manual.
 ```
 
 #### Trigger and target:
+Target a chunk by Chunk ID
 ```
 [Trigger text](#target_id)
+```
+
+Target the following chunk in the story file:
+```
+[Trigger text](#)
+```
+
+Display an inactive trigger:
+```
+[Trigger text]()
 ```
 
 #### Blockquote:
@@ -109,6 +120,13 @@ This text looks like code
 @@ any formatting in this line is ignored
 ```
 
+### Hard Wrap
+Add a backslash `\` at the end of a line to display the following line in the file to display as a new line in Forked (instead of continuing the same line).
+```
+This is the first line\
+This is the second line
+```
+
 ## Available Actions
 |Bag: Inventory Management| (experimental) |
 |-|-|
@@ -155,3 +173,27 @@ This text looks like code
 | Roll Dice | (experimental) |
 |-|-|
 | `roll "2d6"` | Returns the result of a dice roll with two, six sided dice. Any other numbers may be substitutes: The first number represents the number of dice. The second number represents the number of sides for all rolled dice. |
+
+| Headings | (experimental) |
+|-|-|
+| `heading` | Gets the text of the current heading |
+| `heading_set` | Sets the text of the current heading |
+
+| Navigation | (experimental) |
+|-|-|
+| `jump "#chunk_id"` | navigates to the chunk specified by `#chunk_id` |
+| `jump 3` | navigates chunks in the story file relative to the current chunk (e.g. 3 chunks below the current chunk)
+| `fall` | navigates to the next chunk in the story file
+| `jump` | navigates to the previous chunk in the story file
+| `history[-1]` | Gets the chunk_id for the current chunk |
+| `history[-2]` | Gets the chunk_id for the last visited chunk |
+
+## Author Mode
+Author mode provides some features that may be useful while writing your story. Note that the shortcut keys may change in the future.
+
+| Shortcuts | Action |
+|-|-|
+| Hold `f` and press `u` | Toggle Author Mode on or off. When author mode is active, a red square appears in the bottom left corner of the screen. The following shortcuts become available when Author Mode is on. |
+| `q` | Display information sidebar. This displays the current chunk ID and the text of the current chunk heading. |
+| `n` | Navigate to the following chunk in the story file until the last chunk is displayed. |
+| `h` | Navigate to the preceding chunk in the story file until the first chunk is displayed. |

@@ -38,7 +38,7 @@ module Forked
 
         while(line = story_lines.shift)
           line_no += 1
-          # putz "#{line_no + 1}: #{line.strip}"
+          # puts "#{line_no + 1}: #{line.strip}"
 
           ### PREFORMATTED LINE (^@@) and stop parsing it
           result = parse_preformatted_line(line, context, story, line_no)
@@ -81,16 +81,22 @@ Please add a heading line after the title and before any other content. Example:
           result = parse_rule(line, context, story, line_no)
           next if result
 
-          ### TRIGGER
+          ### CODE FENCE
+          result = parse_code_fence(line, context, story, line_no)
+          next if result
 
+          ### TRIGGER
           # currently works for newstyle colon and old-style backtick trigger actions
           result = parse_trigger(line, context, story, line_no)
           next if result
 
           ### CONDITION BLOCK
-
           result = parse_condition_block(line, context, story, line_no, story_lines)
-          next if result
+          if result == :interpolation
+            line = '@#$%INTERPOLATION@#$%'
+          elsif result
+            next
+          end
 
           ### CODE BLOCK
           result = parse_code_block(line, context, story, line_no)
@@ -160,66 +166,99 @@ Please add a heading line after the title and before any other content. Example:
         true
       end
 
-      def parse_paragraph(line, context, story, line_no)
+      def parse_paragraph(line, context, story, line_no) 
+
+        # check credentials
         prohibited_contexts = [:title, :codeblock, :heading]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+        
+        conditional = false
 
-        # at this point, we've been through all the other possible
-        # elements so we know it's OK to process paragraphs now.
-
+        # strip
         line.strip!
-        if line.empty?
-          context.delete(:paragraph) if context.include?(:paragraph)
-        else
 
-          # check to see if the paragraph context is closed
-          ## OR! the previous element is anything other than paragraph
-          ### (it may have changed and we don't want to append to some other element)
-          if !context.include?(:paragraph) || story[:chunks][-1][:content][-1][:type] != :paragraph
-            # if there is no open paragraph or the previous element it not a paragraph
-            # create a new empty paragraph (paragraph may have been interrupted?)
-            context << (:paragraph)
-            para = make_paragraph_hash
-            para[:atoms] << make_atom_hash
-            story[:chunks][-1][:content] << para
-          end
-
-          # if the previous atom was a condition, make a new atom and append to paragraph
-
-          cond = story[:chunks][-1][:content][-1][:atoms][-1][:condition]
-
-          if cond&.class == String
-            atm = make_atom_hash
-            atm[:text] = line + ' '
-            story[:chunks][-1][:content][-1][:atoms] << atm
-          else
-            
-            # deal with newlines
-            if line.strip[-1] == '\\'
-              line = line.delete_suffix('\\') + "\n"
-            else
-              line += ' '
-            end
-
-            # if the atom ends with a newline, start a new atom
-            # the newline is a result of a backslash hard wrap
-            prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
-            if prev && prev[-1] == "\n"
-              atm = make_atom_hash
-              atm[:text] = line
-              story[:chunks][-1][:content][-1][:atoms] << atm
-            else
-              # otherwise, append to the current atom
-              story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
-            end
-          end
-          # if this content is conditional, add the condition to the current atom
-          if context.include?(:condition_block)  || context.include?(:condition_block)
-            condition = story[:chunks][-1][:conditions][-1]
-            story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
-          end
+        # anything that comes here is either a paragraph or a blank line.
+        # handle context open/opening/closing
+        context_state = handle_paragraph_context(line, context)
+        # if the line ends with `\`, hard wrap
+        if line.strip[-1] == '\\'
+          # end the line with a newline
+          # add an nbsp to prevent empty lines from collapsing
+          line = line.delete_suffix('\\') + " \n"
+        # else
+          # This part doesn't work with new interpolation rules
+          # Don't know if it's still needed
+          # add a space to the end of the line so it's safe
+          # for lazy continuation
+          # line += " "
         end
+        # prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
+        
+            #         # if the atom ends with a newline, start a new atom
+            # # the newline is a result of a backslash hard wrap
+            # prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
+            # if prev && prev[-1] == "\n"
+            #   atm = make_atom_hash
+            #   atm[:text] = line
+            #   story[:chunks][-1][:content][-1][:atoms] << atm
+            # else
+            #   # otherwise, append to the current atom
+            #   # atm = make_atom_hash
+            #   # atm[:text] = line
+            #   # story[:chunks][-1][:content][-1][:atoms] << atm
+            #   story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
+            # end
+
+        # new paragraph condition:
+        # context was closed, now open
+        if context_state == :opening
+          story[:chunks][-1][:content] << make_paragraph_hash
+          context_state = :open
+        end
+
+        return if line.strip.empty?
+
+        # new atom condition
+        # context is open
+        if context_state == :open
+          # if text is a placeholder for interpolation, blank it
+
+          if line == '@#$%INTERPOLATION@#$%'
+            conditional = true
+            line = ''
+          end
+
+          atom = make_atom_hash
+          atom[:text] = line
+
+          story[:chunks][-1][:content][-1][:atoms] << atom
+        end
+
+        # add condition
+        # conditional context is open
+        if context.include?(:condition_block) || conditional
+          condition = story[:chunks][-1][:conditions][-1]
+          story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
+        end
+      end
+
+      def handle_paragraph_context(line, context)
+        if line.empty? && context.include?(:paragraph)
+          # capture context closing
+          context.delete(:paragraph) if context.include?(:paragraph)
+          context_state = :closing
+        elsif !context.include?(:paragraph) && !line.empty?
+          # capture context opening
+          context << :paragraph
+          context_state = :opening
+        elsif context.include?(:paragraph)
+          context_state = :open
+        else
+          # blank line probably 
+        end
+
+        return context_state
       end
 
       # strip comments from line (comments begin with //)
@@ -249,9 +288,10 @@ Please add a heading line after the title and before any other content. Example:
         # The blockquote will continue until there
         # is a line that does not begin with >
         if line.strip.start_with?('>')
-
+          line.strip!
           line.delete_prefix!('>')
-
+          line.strip!
+          
           unless line.empty?
             blq = make_blockquote_hash
             blq[:text] = line
@@ -268,6 +308,16 @@ Please add a heading line after the title and before any other content. Example:
         end
       end
 
+      def parse_code_fence(line, context, story, line_no)
+        return unless line.include?('```') 
+
+        if line.include?('\```')
+          line.gsub!('\```', '```')
+          return false
+        end
+
+        return true
+      end
 
       # Code blocks format code for display
       # They begin with three tildes (~~~) on a blank line
@@ -387,30 +437,46 @@ Please add a heading line after the title and before any other content. Example:
           return true
         end
 
-        # DETECT CLOSING CONDITION BLOCK & CONDITION CODE BLOCK
-        # (IF ON SAME LINE - INDICATES STRING INTERPOLATION)
+
         # closing both condition code context and condition block context
         if line.strip.start_with?(':>')
+          
+          # if the last element is a paragraph and
+          # if the paragraph context is open, add to it
+          # only for interpolation
+          if  story[:chunks][-1][:content][-1].type == :paragraph && 
+              context.include?(:paragraph) &&
+              context.include?(:condition_code_block)
+            # most recent element is a paragraph and the paragraph context is open
+            # FIXME: this is creating a bogus extra entry.
+            # It's supposed to be able to continue a paragraph but it's
+            # getting triggered for new paragraphs in addition to the
+            # correct code.
+
+            atm = make_atom_hash
+            atm[:condition] = story[:chunks][-1][:conditions][-1]
+            
+            # story[:chunks][-1][:content][-1][:atoms] << atm
+
+            # story[:chunks][-1][:content][-1][:atoms]
+if context.include?(:condition_code_block)
+   
+            context.delete(:condition_block)
+          context.delete(:condition_code_block)
+          return :interpolation
+end
+          elsif context.include?(:condition_code_block)
+   
+            context.delete(:condition_block)
+          context.delete(:condition_code_block)
+          return :interpolation
+            # return false
+            # story[:chunks][-1][:content] << para
+          end
+
           # close conditon block and condition code block contexts
           context.delete(:condition_block)
           context.delete(:condition_code_block)
-          # if the last element is a paragraph and
-          # if the paragraph context is open, add to it
-          
-          if story[:chunks][-1][:content][-1].type == :paragraph && context.include?(:paragraph)
-            atm = make_atom_hash
-            atm[:condition] = story[:chunks][-1][:conditions][-1]
-            story[:chunks][-1][:content][-1][:atoms] << atm
-
-            story[:chunks][-1][:content][-1][:atoms]
-          else
-            context << (:paragraph)
-            para = make_paragraph_hash
-            atm = make_atom_hash
-            atm[:condition] = story[:chunks][-1][:conditions][-1]
-            para[:atoms] << atm 
-            story[:chunks][-1][:content] << para
-          end
           return true
         end
 
@@ -493,6 +559,7 @@ Please add a title to the top of the Story File. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         context.delete(:heading)
+        context.clear
 
         line.strip!
         line.delete_prefix!('##').strip!
@@ -573,8 +640,8 @@ Please add a title to the top of the Story File. Example:
             # identify action block and open context (keep parsing)
             elsif action.end_with?('(:')
               context << :trigger_action
-            elsif action.end_with?('(```')
-              context << :trigger_action
+            # elsif action.end_with?('(```')
+            #   context << :trigger_action
             end
           end
  
@@ -583,9 +650,9 @@ Please add a title to the top of the Story File. Example:
         elsif line.strip.start_with?(':)') && context.include?(:trigger_action)
           context.delete(:trigger_action)
           return true
-        elsif line.strip.start_with?('```)') && context.include?(:trigger_action)
-          context.delete(:trigger_action)
-          return true
+        # elsif line.strip.start_with?('```)') && context.include?(:trigger_action)
+        #   context.delete(:trigger_action)
+        #   return true
 
         # if context is open, add line to trigger action (return)
         elsif context.include?(:trigger_action) || context.include?(:trigger_action)

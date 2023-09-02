@@ -80,6 +80,8 @@ module Forked
       y_pos = display.margin_top.from_top
 
       content.each_with_index do |item, i|
+        previous_element_type = content[i - 1][:type] 
+
         case item[:type]
         when :heading
           heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
@@ -106,19 +108,34 @@ module Forked
           y_pos -= rule.spacing_after
 
         when :paragraph
+          y_pos = display_paragraph(y_pos, item, previous_element_type)
+          next
+          new_y_pos = y_pos
+
           zero_height = true # paragraph could have no text, in which case it will have no height
           x_pos = 0
 
-          item.atoms.each do |atom|
-            next if atom[:text].empty?
+
+          if content[i - 1][:type] == :paragraph
+            new_y_pos += paragraph.size_px * paragraph.spacing_after
+            new_y_pos -= paragraph.size_px * paragraph.spacing_between
+          end
+
+          zero_height_paragraph = true
+          item.atoms.each_with_index do |atom, i|
+            # todo: move this somewhere else and do once
+            paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
+
+            if atom[:text].empty?
+              next
+            end
 
             zero_height = false
-            # defaults
-            paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
+            zero_height_paragraph = false
             
             # font style can change
             font_style = get_font_style(atom.styles)
-
+            
             default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
             words = atom.text.split(' ')
             line_frag = ''
@@ -128,12 +145,15 @@ module Forked
               new_frag = line_frag + word
               new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
               if new_x_pos > display.w
-                loc = { x: x_pos + display.margin_left, y: y_pos }
+                loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
                 lab = loc.merge(make_paragraph_label(line_frag, font_style))
                 data.primitives << lab
                 line_frag = ''
                 x_pos = 0
-                y_pos -= paragraph.size_px * paragraph.line_spacing
+
+                # line space after soft wrap
+                new_y_pos -= paragraph.size_px * paragraph.line_spacing
+                
               else
                 line_frag = new_frag + ' '
                 words.shift
@@ -141,19 +161,23 @@ module Forked
 
               next unless words.empty?
 
-              loc = { x: x_pos + display.margin_left, y: y_pos }
+              loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
               lab = loc.merge(make_paragraph_label(line_frag, font_style))
               data.primitives << lab
               x_pos = new_x_pos + default_space_w
               line_frag = ''
               if atom.text[-1] == "\n"
                 x_pos = 0
-                y_pos -= paragraph.size_px
+
+                # line space after hard wrap
+                new_y_pos -= paragraph.size_px * paragraph.line_spacing
               end
             end
           end
-          y_pos -= paragraph.size_px unless zero_height
-          y_pos -= paragraph.size_px * paragraph.spacing_after unless zero_height
+          # line space after paragraph end
+          new_y_pos -= paragraph.size_px * paragraph.line_spacing unless zero_height_paragraph
+          new_y_pos -= paragraph.size_px * paragraph.spacing_after unless zero_height_paragraph #if i == content.size - 1
+          y_pos = new_y_pos
 
         when :code_block
           text_array = wrap_lines_code_block(
@@ -196,7 +220,7 @@ module Forked
           next if item[:text].empty?
 
           # if previous element is also a blockquote, use spacing_between instead of spacing_after
-          if content[i - 1].type == :blockquote
+          if content[i - 1][:type] == :blockquote
             y_pos += blockquote.spacing_after * blockquote.size_px
             y_pos -= blockquote.spacing_between * blockquote.size_px
           end
@@ -243,6 +267,7 @@ module Forked
           button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
 
           text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
+          text_w = text_w.to_i
           button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
 
 
@@ -280,6 +305,98 @@ module Forked
           y_pos -= button.size_px * button.spacing_after
         end
       end
+    end
+
+    def display_paragraph(y_pos, item, previous_element_type)
+      paragraph = data.config.paragraph
+      display = data.config.display
+      paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
+
+      x_pos = 0
+      new_y_pos = y_pos
+
+      if previous_element_type == :paragraph
+        # paragraph follows paragraph, so undo the added 'spacing after'
+        new_y_pos += paragraph.size_px * paragraph.spacing_after
+        # paragraph follows paragraph, so add 'spacing between'
+        new_y_pos -= paragraph.size_px * paragraph.spacing_between
+      end
+      
+      args.state.forked.forked_display_last_element_empty = false
+
+      empty_paragraph = true
+      item.atoms.each_with_index do |atom, i|
+
+        # if we're at the end of the paragraph and no atoms have had any text
+        # mark it as empty so we know not to remove added 'spacing after'
+        empty_paragraph = false if atom[:text] != ''
+        if i == item.atoms.size - 1 && empty_paragraph
+          args.state.forked.forked_display_last_element_empty = true
+          # if previous element was a paragraph, remove the between spacing
+          new_y_pos += paragraph.size_px * paragraph.spacing_between
+          # add 'spacing after'. Next element might not be a paragraph.
+          new_y_pos -= paragraph.size_px * paragraph.spacing_after
+        end
+
+        font_style = get_font_style(atom.styles)
+        default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
+        words = atom.text.split(' ')
+        line_frag = ''
+
+        until words.empty?
+          word = words[0]
+          new_frag = line_frag + word
+          new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
+          if new_x_pos > display.w
+            loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
+            lab = loc.merge(make_paragraph_label(line_frag, font_style))
+            data.primitives << lab
+            line_frag = ''
+            x_pos = 0
+
+            # line space after soft wrap
+            new_y_pos -= paragraph.size_px * paragraph.line_spacing
+            
+          else
+            line_frag = new_frag + ' '
+            words.shift
+          end
+
+          next unless words.empty?
+
+          loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
+          lab = loc.merge(make_paragraph_label(line_frag, font_style))
+          data.primitives << lab
+          x_pos = new_x_pos + default_space_w
+          line_frag = ''
+          if atom.text[-1] == "\n"
+            x_pos = 0
+
+            # line space after hard wrap
+            new_y_pos -= paragraph.size_px * paragraph.line_spacing
+          end
+
+          # if we made it this far and this is the last atom, add
+          # line spacing and 'spacing after'
+          if i == item.atoms.size - 1
+            new_y_pos -= paragraph.size_px * paragraph.line_spacing
+            new_y_pos -= paragraph.size_px * paragraph.spacing_after
+          end
+        end
+
+        # if this is the last atom and it's empty but the paragraph is not empty
+        # (interpolation will do this), apply paragraph spacing now because
+        # we won't get there otherwise
+        if  atom[:text] == '' &&
+            !empty_paragraph &&
+            i == item.atoms.size - 1
+          new_y_pos -= paragraph.size_px * paragraph.line_spacing
+          new_y_pos -= paragraph.size_px * paragraph.spacing_after
+        end
+      end
+
+      # return the y_pos for the next element
+      new_y_pos
     end
 
     def get_font_style styles
