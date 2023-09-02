@@ -35,8 +35,6 @@ Version 0.0.3
 * Refactored conditions and paragraphs for better lazy continuation and correct spacing.
 * Parser: All open elements (e.g. paragraph, blockquote, etc.) are now closed when when the parser meets a new chunk heading.
 
-Older versions:
-
 Version 0.0.2
 * Added new syntax (colons) for action blocks, conditions and trigger actions. Mirrors existing syntax (hashes and ticks) which will continue working for the time being but will eventually be removed.
 * Added single line chunk actions
@@ -58,8 +56,6 @@ Version 0.0.1
 * Clean-up in parse.rb to use methods to create hashes so they can be consistently applied from anywhere.
 * Fixed bug: If there are two interpolated texts, they will now be displayed as two paragraphs if there is a blank line between them.
 * Fixed bug (possibly): trigger action code starting with `#` tries to navigate instead of executing code. This is fixed with a kludge so Forked can tell the difference at runtime. It seems to work.
-
-Previous versions:
 
 Version 0.0.0
 * Initial version
