@@ -723,6 +723,7 @@ Please add a title to the top of the Story File. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         context.delete(:heading)
+        context.clear
 
         line.strip!
         line.delete_prefix!('##').strip!
