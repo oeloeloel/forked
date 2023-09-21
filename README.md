@@ -19,7 +19,7 @@ What it lets you do:
 ## Getting started
 Download or clone the project and run it in DragonRuby.
 
-The default project is the user manual. [Click here to see how it's built!](https://github.com/oeloeloel/forked/blob/main/app/story.md)
+The default project is the user manual. [Click here to see how it's built!](https://github.com/oeloeloel/forked/blob/main/app/story.md?plain=1)
 
 ## Quick Reference
 
