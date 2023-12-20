@@ -5,6 +5,7 @@ STORY_FILE = 'app/story.md'
 # THEME = LIGHT_MODE
 THEME = DARK_MODE
 # THEME = KIFASS_THEME
+# THEME = TWENTY_SECOND_THEME
 
 #################
 # Custom commands

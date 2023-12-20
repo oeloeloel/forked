@@ -396,7 +396,7 @@ module Forked
       end
 
       # return the y_pos for the next element
-      new_y_pos
+      empty_paragraph ? y_pos : new_y_pos
     end
 
     def get_font_style styles

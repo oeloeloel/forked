@@ -1,6 +1,7 @@
 require 'app/forked/themes/light-mode-theme.rb'
 require 'app/forked/themes/dark-mode-theme.rb'
 require 'app/forked/themes/kifass-theme.rb'
+require 'app/forked/themes/20-second-theme.rb'
 require 'app/forked/parse.rb'
 require 'app/forked/display_defaults.rb'
 require 'app/forked/display.rb'
