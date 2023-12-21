@@ -19,7 +19,7 @@ What it lets you do:
 ## Getting started
 Download or clone the project and run it in DragonRuby.
 
-The default project is the user manual.
+The default project is the user manual. [Click here to see how it's built!](https://github.com/oeloeloel/forked/blob/main/app/story.md?plain=1)
 
 ## Quick Reference
 
@@ -172,7 +172,7 @@ This is the second line
 
 | Roll Dice | (experimental) |
 |-|-|
-| `roll "2d6"` | Returns the result of a dice roll with two, six sided dice. Any other numbers may be substitutes: The first number represents the number of dice. The second number represents the number of sides for all rolled dice. |
+| `roll "2d6"` | Returns the result of a dice roll with two, six sided dice. Any other numbers may be substituted. The first number represents the number of dice. The second number represents the number of sides for all rolled dice. |
 
 | Headings | (experimental) |
 |-|-|

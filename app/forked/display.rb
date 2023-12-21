@@ -42,6 +42,7 @@ module Forked
         next if option.action.empty?
 
         if option.intersect_rect?(inputs.mouse.point)
+          args.gtk.set_system_cursor(:hand)
           option.merge!(data.config.rollover_button_box)
 
           $story.follow(args, option) if args.inputs.mouse.up
