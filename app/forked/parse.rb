@@ -167,7 +167,7 @@ Please add a heading line after the title and before any other content. Example:
       end
 
       def parse_paragraph(line, context, story, line_no) 
-
+putz "#{line_no}: #{line}"
         # check credentials
         prohibited_contexts = [:title, :codeblock, :heading]
         mandatory_contexts = []
@@ -186,29 +186,7 @@ Please add a heading line after the title and before any other content. Example:
           # end the line with a newline
           # add an nbsp to prevent empty lines from collapsing
           line = line.delete_suffix('\\') + " \n"
-        # else
-          # This part doesn't work with new interpolation rules
-          # Don't know if it's still needed
-          # add a space to the end of the line so it's safe
-          # for lazy continuation
-          # line += " "
         end
-        # prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
-        
-            #         # if the atom ends with a newline, start a new atom
-            # # the newline is a result of a backslash hard wrap
-            # prev = story[:chunks][-1][:content][-1][:atoms][-1][:text]
-            # if prev && prev[-1] == "\n"
-            #   atm = make_atom_hash
-            #   atm[:text] = line
-            #   story[:chunks][-1][:content][-1][:atoms] << atm
-            # else
-            #   # otherwise, append to the current atom
-            #   # atm = make_atom_hash
-            #   # atm[:text] = line
-            #   # story[:chunks][-1][:content][-1][:atoms] << atm
-            #   story[:chunks][-1][:content][-1][:atoms][-1][:text] << line
-            # end
 
         # new paragraph condition:
         # context was closed, now open
@@ -239,7 +217,13 @@ Please add a heading line after the title and before any other content. Example:
         # conditional context is open
         if context.include?(:condition_block) || conditional
           condition = story[:chunks][-1][:conditions][-1]
-          story[:chunks][-1][:content][-1][:atoms][-1][:condition] = condition
+          # putz pretty_print story
+          prev_item = story[:chunks][-1][:content][-1]
+          if prev_item[:atoms]
+            prev_item[:atoms][-1][:condition] = condition
+          else
+            prev_item[:condition] = condition
+          end
         end
       end
 
