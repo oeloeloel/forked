@@ -12,7 +12,7 @@
 ```rb
     putz args.outputs.primitives[2...3]
     subject = args.outputs.primitives[2...3]
-    expect = [{:x=>200, :y=>604, :text=>"1 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"1 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
@@ -29,7 +29,7 @@
 <: 
 ```rb
     subject = args.outputs.primitives[2...4]
-    expect = [{:x=>200, :y=>604, :text=>"2 Before ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"2 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"2 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"2 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
@@ -46,7 +46,7 @@
 <: 
 ```rb
     subject = args.outputs.primitives[2...4]
-    expect = [{:x=>200, :y=>604, :text=>"3 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"3 After ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"3 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"3 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
@@ -64,7 +64,7 @@
 <: 
 ```rb
     subject = args.outputs.primitives[2...5]
-    expect = [{:x=>200, :y=>604, :text=>"4 Before ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"4 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>349, :y=>604, :text=>"4 After ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"4 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"4 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>349, :y=>604, :text=>"4 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
@@ -82,7 +82,7 @@ true
 <: 
 ```rb
     putz subject = args.outputs.primitives[2...3]
-    expect = [{:x=>200, :y=>604, :text=>"5 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"5 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
@@ -101,7 +101,7 @@ true
 <: 
 ```rb
     putz subject = args.outputs.primitives[2...4]
-    expect = [{:x=>200, :y=>604, :text=>"6 Before ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"6 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"6 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"6 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
@@ -120,12 +120,12 @@ true
 <: 
 ```rb
     putz subject = args.outputs.primitives[2...4]
-    expect = [{:x=>200, :y=>604, :text=>"7 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"7 After ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"7 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"7 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
 
-##Test 8: Conditional after and before text
+## Test 8: Conditional after and before text
 
 8 Before
 <:
@@ -140,7 +140,7 @@ true
 <: 
 ```rb
     putz subject = args.outputs.primitives[2...5]
-    expect = [{:x=>200, :y=>604, :text=>"8 Before ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"8 During ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>349, :y=>604, :text=>"8 After ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect = [{:x=>200, :y=>604, :text=>"8 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"8 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>349, :y=>604, :text=>"8 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
@@ -152,6 +152,16 @@ Single line string interpolation is wrapped in `<:` and `:>` symbols.
 <: "This text is conditional" :>
 
 [Next](#)
+
+<: 
+```rb
+    
+    subject = args.outputs.primitives[2...4]
+    putz subject
+    expect = [{:x=>200, :y=>604, :text=>"Single line string interpolation is wrapped in `<:` and `:>` symbols. ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>568, :text=>"This text is conditional ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect == subject ? "Test passed " : "Test failed"
+```
+:>
 
 ## Multi line string interpolation
 
@@ -304,4 +314,27 @@ insert a blank line before this one for a crash
   > TELL SWEETHEART "I LOVE YOU"
 
 insert a blank line before this one for a crash
+:>
+[Next](#)
+
+## Conditional paragraph\block\paragraph
+
+<:
+true
+::
+Test Paragraph 1
+[Test Block Element]()
+Test Paragraph 2
+:>
+
+[Next]()
+
+<: 
+```rb
+    
+    subject = args.outputs.primitives[2...6]
+    putz subject
+    expect = [{:x=>200, :y=>604, :text=>"Test Paragraph 1 ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>528.2, :w=>182, :h=>34.0, :primitive_marker=>:sprite, :padding_left=>10, :padding_right=>10, :padding_top=>6, :padding_bottom=>6, :margin_left=>0, :margin_right=>0, :margin_top=>0, :margin_bottom=>0, :min_height=>0, :r=>102, :g=>102, :b=>102}, {:x=>210, :y=>556.2, :text=>"Test Block Element", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-bold.ttf", :size_enum=>0, :line_spacing=>1, :r=>51, :g=>51, :b=>51, :spacing_between=>0.25, :spacing_after=>0.7, :size_px=>22.0}, {:x=>200, :y=>512, :text=>"Test Paragraph 2 ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect == subject ? "Test passed " : "Test failed"
+```
 :>

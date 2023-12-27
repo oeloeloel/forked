@@ -26,7 +26,7 @@ Paragraph two.
 <: 
 ```rb
     # putz args.outputs.primitives[4...6]
-    $expect = [{:x=>200, :y=>546, :text=>"Paragraph one. ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>511, :text=>"Paragraph two. ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    $expect = [{:x=>200, :y=>546, :text=>"Paragraph one. ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>511, :text=>"Paragraph two. ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
 ```
 :>
 
@@ -79,7 +79,7 @@ Leading (and trailing) spaces are removed from paragraph lines.
 <: 
   ```rb
     # putz args.outputs.primitives[3]
-    $expect = {:x=>200, :y=>568, :text=>"This example shows spaces being removed. ", :primitive_marker=>:label, :font=>"fonts/Roboto/Roboto-Regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}
+    $expect = {:x=>200, :y=>568, :text=>"This example shows spaces being removed. ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}
   ```
 :>
 

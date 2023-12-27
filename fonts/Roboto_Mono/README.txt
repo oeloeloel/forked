@@ -16,7 +16,7 @@ in those cases you can use the static font files for Roboto Mono:
   static/RobotoMono-Thin.ttf
   static/RobotoMono-ExtraLight.ttf
   static/RobotoMono-Light.ttf
-  static/RobotoMono-Regular.ttf
+  static/robotomono-regular.ttf
   static/RobotoMono-Medium.ttf
   static/RobotoMono-SemiBold.ttf
   static/RobotoMono-Bold.ttf

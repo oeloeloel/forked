@@ -37,7 +37,7 @@ end
 
 def default_paragraph
   {
-    font: 'fonts/Roboto/Roboto-Regular.ttf',
+    font: 'fonts/roboto/roboto-regular.ttf',
     size_enum: 0,
     line_spacing: 1, # 1.0 is the height of the font.
     r: 51, g: 51, b: 51,
@@ -65,7 +65,7 @@ def default_heading # defaults for heading text
   {
     r: 51, g: 51, b: 51,
     size_enum: 4,
-    font: 'fonts/Roboto/Roboto-Black.ttf',
+    font: 'fonts/roboto/roboto-black.ttf',
     spacing_after: 1.5
   }
 end
@@ -80,7 +80,7 @@ end
 
 def default_code_block # defaults for code block text
   {
-    font: 'fonts/Roboto_Mono/static/RobotoMono-Regular.ttf',
+    font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
     size_enum: 0,
     line_spacing: 0.85,
     r: 76, g: 51, b: 127,
@@ -130,7 +130,7 @@ end
 def default_button
   default_paragraph.merge(
     size_enum: 0,
-    font: 'fonts/Roboto/Roboto-Bold.ttf',
+    font: 'fonts/roboto/roboto-bold.ttf',
     r: 204, g: 204, b: 204,
     spacing_after: 0.7,
     spacing_between: 0.25
@@ -174,25 +174,25 @@ end
 # styles
 def default_bold_style
   default_paragraph.merge(
-    font: 'fonts/Roboto/Roboto-Bold.ttf',
+    font: 'fonts/roboto/roboto-bold.ttf',
   )
 end
 
 def default_italic_style
   default_paragraph.merge(
-    font: 'fonts/Roboto/Roboto-Italic.ttf',
+    font: 'fonts/roboto/boboto-italic.ttf',
   )
 end
 
 def default_bold_italic_style
   default_paragraph.merge(
-    font: 'fonts/Roboto/Roboto-BoldItalic.ttf',
+    font: 'fonts/roboto/roboto-boldItalic.ttf',
   )
 end
 
 def default_code_style # inline code
   default_paragraph.merge(
-    font: 'fonts/Roboto_Mono/static/RobotoMono-Regular.ttf',
+    font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
     r: 102, g: 51, b: 153,
   )
 end

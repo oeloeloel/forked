@@ -85,181 +85,28 @@ module Forked
 
         case item[:type]
         when :heading
-          heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
-
-          data.primitives << {
-            x: display.margin_left,
-            y: y_pos,
-            text: item.text,
-          }.label!(heading)
-
-          y_pos -= heading.size_px * heading.spacing_after
-
+          y_pos = display_heading(y_pos, item, previous_element_type)
         when :rule
-          weight = rule.weight
-          weight = item.weight if item.weight
-          
-          data.primitives << {
-            x: display.margin_left,
-            y: y_pos,
-            w: display.w,
-            h: weight
-          }.sprite!(rule)
-
-          y_pos -= rule.spacing_after
-
+          y_pos = display_rule(y_pos, item, previous_element_type)
         when :paragraph
           y_pos = display_paragraph(y_pos, item, previous_element_type)
-          next
-          new_y_pos = y_pos
-
-          zero_height = true # paragraph could have no text, in which case it will have no height
-          x_pos = 0
-
-
-          if content[i - 1][:type] == :paragraph
-            new_y_pos += paragraph.size_px * paragraph.spacing_after
-            new_y_pos -= paragraph.size_px * paragraph.spacing_between
-          end
-
-          zero_height_paragraph = true
-          item.atoms.each_with_index do |atom, i|
-            # todo: move this somewhere else and do once
-            paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
-
-            if atom[:text].empty?
-              next
-            end
-
-            zero_height = false
-            zero_height_paragraph = false
-            
-            # font style can change
-            font_style = get_font_style(atom.styles)
-            
-            default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
-            words = atom.text.split(' ')
-            line_frag = ''
-
-            until words.empty?
-              word = words[0]
-              new_frag = line_frag + word
-              new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
-              if new_x_pos > display.w
-                loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
-                lab = loc.merge(make_paragraph_label(line_frag, font_style))
-                data.primitives << lab
-                line_frag = ''
-                x_pos = 0
-
-                # line space after soft wrap
-                new_y_pos -= paragraph.size_px * paragraph.line_spacing
-                
-              else
-                line_frag = new_frag + ' '
-                words.shift
-              end
-
-              next unless words.empty?
-
-              loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
-              lab = loc.merge(make_paragraph_label(line_frag, font_style))
-              data.primitives << lab
-              x_pos = new_x_pos + default_space_w
-              line_frag = ''
-              if atom.text[-1] == "\n"
-                x_pos = 0
-
-                # line space after hard wrap
-                new_y_pos -= paragraph.size_px * paragraph.line_spacing
-              end
-            end
-          end
-          # line space after paragraph end
-          new_y_pos -= paragraph.size_px * paragraph.line_spacing unless zero_height_paragraph
-          new_y_pos -= paragraph.size_px * paragraph.spacing_after unless zero_height_paragraph #if i == content.size - 1
-          y_pos = new_y_pos
-
         when :code_block
-          text_array = wrap_lines_code_block(
-            item.text, code_block.font, code_block.size_enum,
-            display.w - (code_block_box.padding_left + code_block_box.padding_right)
-          )
-          code_block.size_px = args.gtk.calcstringbox('X', code_block.size_enum, code_block.font)[1]
-
-          box_height = text_array.count * (code_block.size_px * code_block.line_spacing) +
-                      code_block_box.padding_top + code_block_box.padding_bottom
-
-          temp_y_pos = y_pos
-
-          data.primitives << {
-            x: display.margin_left,
-            y: temp_y_pos - box_height,
-            w: display.w,
-            h: box_height,
-          }.sprite!(code_block_box)
-
-          temp_y_pos -= code_block_box.padding_top
-          data.primitives << text_array.map do |line|
-
-            label = {
-              x: display.margin_left + code_block_box.padding_left,
-              y: temp_y_pos,
-              text: line,
-            }.label!(code_block)
-
-            temp_y_pos -= code_block.size_px * code_block.line_spacing
-
-            label
-          end
-
-          y_pos -= box_height
-          y_pos -= code_block.size_px * code_block.spacing_after
-
+          y_pos = display_code_block(y_pos, item, previous_element_type)
         when :blockquote
-
-          next if item[:text].empty?
-
-          # if previous element is also a blockquote, use spacing_between instead of spacing_after
-          if content[i - 1][:type] == :blockquote
-            y_pos += blockquote.spacing_after * blockquote.size_px
-            y_pos -= blockquote.spacing_between * blockquote.size_px
-          end
-
-          text_array = wrap_lines(item.text, blockquote.font, blockquote.size_enum, display.w - (blockquote_box.padding_left + blockquote_box.padding_right))
-
-          blockquote.size_px = args.gtk.calcstringbox('X', blockquote.size_enum, blockquote.font)[1]
-
-          box_height = text_array.count * (blockquote.size_px * blockquote.line_spacing) +
-          blockquote_box.padding_top + blockquote_box.padding_bottom
-          box_height = box_height.greater(blockquote_box[:min_height])
-
-          data.primitives << {
-            x: display.margin_left,
-            y: y_pos - box_height,
-            w: display.w,
-            h: box_height,
-          }.sprite!(blockquote_box)
-
-          temp_y_pos = y_pos - blockquote_box.padding_top
-
-          data.primitives << text_array.map do |line|
-            label = {
-              x: display.margin_left + blockquote_box.padding_left,
-              y: temp_y_pos,
-              text: line,
-            }.label!(blockquote)
-
-            temp_y_pos -= blockquote.size_px * blockquote.line_spacing
-
-            label
-          end
-
-          y_pos -= box_height
-          y_pos -= blockquote.size_px * blockquote.spacing_after
-
+          y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
         when :button
-          # if previous element is also a button, use spacing_between instead of spacing_after
+          y_pos = display_button(y_pos, item, previous_element_type, content, i)
+        end
+      end
+    end
+
+      def display_button(y_pos, item, previous_element_type, content, i)
+        button = data.config.button  
+        display = data.config.display
+        button_box = data.config.button_box
+      inactive_button_box = data.config.inactive_button_box
+        
+        # if previous element is also a button, use spacing_between instead of spacing_after
           if content[i - 1].type == :button
             y_pos += button.spacing_after * button.size_px
             y_pos -= button.spacing_between * button.size_px
@@ -305,8 +152,6 @@ module Forked
           y_pos -= button.size_px + button_box.padding_bottom
           y_pos -= button.size_px * button.spacing_after
         end
-      end
-    end
 
     def display_paragraph(y_pos, item, previous_element_type)
       paragraph = data.config.paragraph
@@ -398,6 +243,124 @@ module Forked
 
       # return the y_pos for the next element
       empty_paragraph ? y_pos : new_y_pos
+    end
+
+    def display_heading(y_pos, item, previous_element_type)
+      heading = data.config.heading
+      display = data.config.display
+      heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
+
+      data.primitives << {
+        x: display.margin_left,
+        y: y_pos,
+        text: item.text,
+      }.label!(heading)
+
+      y_pos -= heading.size_px * heading.spacing_after
+    end
+
+    def display_rule(y_pos, item, previous_element_type)
+      rule = data.config.rule
+      display = data.config.display
+      weight = rule.weight
+      weight = item.weight if item.weight
+      
+      data.primitives << {
+        x: display.margin_left,
+        y: y_pos,
+        w: display.w,
+        h: weight
+      }.sprite!(rule)
+
+      y_pos -= rule.spacing_after
+    end
+
+    def display_code_block(y_pos, item, previous_element_type)
+      code_block = data.config.code_block
+      display = data.config.display
+      code_block_box = data.config.code_block_box
+
+      text_array = wrap_lines_code_block(
+        item.text, code_block.font, code_block.size_enum,
+        display.w - (code_block_box.padding_left + code_block_box.padding_right)
+      )
+      code_block.size_px = args.gtk.calcstringbox('X', code_block.size_enum, code_block.font)[1]
+
+      box_height = text_array.count * (code_block.size_px * code_block.line_spacing) +
+                  code_block_box.padding_top + code_block_box.padding_bottom
+
+      temp_y_pos = y_pos
+
+      data.primitives << {
+        x: display.margin_left,
+        y: temp_y_pos - box_height,
+        w: display.w,
+        h: box_height,
+      }.sprite!(code_block_box)
+
+      temp_y_pos -= code_block_box.padding_top
+      data.primitives << text_array.map do |line|
+
+        label = {
+          x: display.margin_left + code_block_box.padding_left,
+          y: temp_y_pos,
+          text: line,
+        }.label!(code_block)
+
+        temp_y_pos -= code_block.size_px * code_block.line_spacing
+
+        label
+      end
+
+      y_pos -= box_height
+      y_pos -= code_block.size_px * code_block.spacing_after
+    end
+
+    def display_blockquote(y_pos, item, previous_element_type, content, i)
+      next if item[:text].empty?
+
+      blockquote = data.config.blockquote
+      display = data.config.display
+      blockquote_box = data.config.blockquote_box
+
+      # if previous element is also a blockquote, use spacing_between instead of spacing_after
+      if content[i - 1][:type] == :blockquote
+        y_pos += blockquote.spacing_after * blockquote.size_px
+        y_pos -= blockquote.spacing_between * blockquote.size_px
+      end
+
+      text_array = wrap_lines(item.text, blockquote.font, blockquote.size_enum, display.w - (blockquote_box.padding_left + blockquote_box.padding_right))
+
+      blockquote.size_px = args.gtk.calcstringbox('X', blockquote.size_enum, blockquote.font)[1]
+
+      box_height = text_array.count * (blockquote.size_px * blockquote.line_spacing) +
+      blockquote_box.padding_top + blockquote_box.padding_bottom
+      box_height = box_height.greater(blockquote_box[:min_height])
+
+      data.primitives << {
+        x: display.margin_left,
+        y: y_pos - box_height,
+        w: display.w,
+        h: box_height,
+      }.sprite!(blockquote_box)
+
+      temp_y_pos = y_pos - blockquote_box.padding_top
+
+      data.primitives << text_array.map do |line|
+        label = {
+          x: display.margin_left + blockquote_box.padding_left,
+          y: temp_y_pos,
+          text: line,
+        }.label!(blockquote)
+
+        temp_y_pos -= blockquote.size_px * blockquote.line_spacing
+
+        label
+      end
+
+      y_pos -= box_height
+      y_pos -= blockquote.size_px * blockquote.spacing_after
+
     end
 
     def get_font_style styles
@@ -611,7 +574,7 @@ end
   #     type: :code_block,
   #     text: "def default_code_block # defaults for code block text
   #   {
-  #     font: 'fonts/Roboto_Mono/static/RobotoMono-Regular.ttf',
+  #     font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
   #     size_px: 22,
   #     line_spacing: 0.85,
   #     r: 76, g: 51, b: 127,

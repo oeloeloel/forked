@@ -167,7 +167,7 @@ Please add a heading line after the title and before any other content. Example:
       end
 
       def parse_paragraph(line, context, story, line_no) 
-putz "#{line_no}: #{line}"
+
         # check credentials
         prohibited_contexts = [:title, :codeblock, :heading]
         mandatory_contexts = []
@@ -209,15 +209,21 @@ putz "#{line_no}: #{line}"
 
           atom = make_atom_hash
           atom[:text] = line
-
+          
+          # if prev item is not a paragraph, make a new paragraph
+          prev_item = story[:chunks][-1][:content][-1]
+          unless prev_item[:type] == :paragraph
+            story[:chunks][-1][:content] << make_paragraph_hash
+          end
+            
           story[:chunks][-1][:content][-1][:atoms] << atom
         end
 
         # add condition
         # conditional context is open
+        
         if context.include?(:condition_block) || conditional
           condition = story[:chunks][-1][:conditions][-1]
-          # putz pretty_print story
           prev_item = story[:chunks][-1][:content][-1]
           if prev_item[:atoms]
             prev_item[:atoms][-1][:condition] = condition

@@ -3,8 +3,7 @@ module Forked
     attr_gtk
 
     AUTHOR_MODE_TEXT_STYLE = {
-      # font: 'fonts/Roboto/Roboto-Regular.ttf',
-      font: 'fonts/Roboto_Mono/static/RobotoMono-Regular.ttf',
+      font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
       r: 0, g: 0, b: 76,
       size_px: 18,
     }
