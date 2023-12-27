@@ -1,5 +1,11 @@
 Current Version:
 
+Version 0.0.4
+
+* Fixed display issue that caused elements to display with incorrect y location
+* Fixed parsing issue in conditional blocks if two paragraph texts are separated by a block level element without any line breaks between them.
+* Updated font paths to be all lower-case
+
 Version 0.0.3
 
 * Multiline actions/conditions allow optional code fence:
