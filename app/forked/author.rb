@@ -55,11 +55,18 @@ module Forked
 
         # labels
         am_labels = [
-          'Author Mode',
+          'AUTHOR MODE',
           '===========',
-          "chunk id: #{args.state.forked.current_chunk[:id]}",
-          "chunk heading: #{args.state.forked.current_chunk[:content][0].text}"
+          "current chunk id: #{args.state.forked.current_chunk[:id]}",
+          "current chunk heading: #{args.state.forked.current_chunk[:content][0].text}",
+          "",
+          "Navigation History",
+          "------------------"
         ]
+
+        am_labels += $story.history_get.reverse.map { |h|
+          "## #{h[2]} #{h[1]}"
+        }
 
         y_loc = 0
 
