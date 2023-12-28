@@ -60,11 +60,17 @@ module Forked
           "current chunk id: #{args.state.forked.current_chunk[:id]}",
           "current chunk heading: #{args.state.forked.current_chunk[:content][0].text}",
           "",
-          "Navigation History",
+        ]
+
+        hist = $story.history_get.reverse
+
+        am_labels += [
+        "Navigation History (#{hist.size})",
           "------------------"
         ]
 
-        am_labels += $story.history_get.reverse.map { |h|
+        am_labels += hist[0..19].map_with_index { |h, i|
+          
           str = ""
           str += "## #{h[2]} " if h[2]
           str += "{#{h[1]}}" if h[1]
@@ -73,12 +79,13 @@ module Forked
 
         y_loc = 0
 
-        am_prims << am_labels.map_with_index do |text, i|
+        am_prims += am_labels.map_with_index do |text, i|
           prim = { 
             x: 1, y: y_loc.from_top,
             text: text,
           }.label!(AUTHOR_MODE_TEXT_STYLE)
           y_loc += AUTHOR_MODE_TEXT_STYLE.size_px * 0.8
+
           prim
         end
       end

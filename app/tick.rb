@@ -1,7 +1,6 @@
 STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
-STORY_FILE = 'app/forked/tests/navigation.md'
 
 # THEME = LIGHT_MODE
 THEME = DARK_MODE
@@ -205,7 +204,7 @@ def tick args
   args.state.forked.forked_show_eval ||= false
   if args.inputs.keyboard.key_held.two && args.inputs.keyboard.key_down.three
     args.state.forked.forked_show_eval = !args.state.forked.forked_show_eval
-    putz args.state.forked.forked_show_eval 
+    puts args.state.forked.forked_show_eval 
   end
   reset if args.inputs.keyboard.key_down.backspace
 
