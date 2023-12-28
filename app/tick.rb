@@ -1,6 +1,7 @@
 STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
+STORY_FILE = 'app/forked/tests/navigation.md'
 
 # THEME = LIGHT_MODE
 THEME = DARK_MODE

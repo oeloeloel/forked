@@ -60,12 +60,19 @@ module Forked
           "current chunk id: #{args.state.forked.current_chunk[:id]}",
           "current chunk heading: #{args.state.forked.current_chunk[:content][0].text}",
           "",
-          "Navigation History",
-          "------------------"
         ]
 
+        # if $story.history
+        #   "Navigation History",
+        #   "------------------"
+        # ]
+        putz "history #{$story.history_get}"
+
         am_labels += $story.history_get.reverse.map { |h|
-          "## #{h[2]} #{h[1]}"
+          str = ""
+          str += "## #{h[2]} " if h[2]
+          str += "{#{h[1]}}" if h[1]
+          str
         }
 
         y_loc = 0
