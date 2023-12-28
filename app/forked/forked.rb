@@ -114,6 +114,16 @@ module Forked
       end
     end
 
+    def history_get
+      state.forked.forked_history.map do |h|
+        [
+          h,
+          state.forked.story.chunks[h][:id],
+          args.state.forked.story.chunks[h][:content].find {|c| c.type == :heading }.text
+        ]
+      end
+    end
+
     def history_add(target)
       args.state.forked.forked_history ||= [] 
       args.state.forked.forked_history << target
