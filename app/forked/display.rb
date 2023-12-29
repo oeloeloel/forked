@@ -47,6 +47,7 @@ module Forked
         if option.intersect_rect?(inputs.mouse.point)
           args.gtk.set_system_cursor(:hand)
           data.selected_option = idx
+          highlight_selected_option
           data.selected_option = -1
           $story.follow(args, option) if args.inputs.mouse.up
         end
