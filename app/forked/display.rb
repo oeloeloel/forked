@@ -24,6 +24,9 @@ module Forked
       data.options = []
       data.defaults_set = true
       apply_theme(@theme)
+      data.keyboard_input_defaults = Forked.keyboard_input_defaults
+      data.controller_input_defaults = Forked.controller_input_defaults
+      data.selected_option = -1
     end
 
     def apply_theme(theme)
@@ -38,18 +41,50 @@ module Forked
     def input
       return if data.options.nil? || data.options.empty?
 
-      data.options.each do |option|
+      data.options.each_with_index do |option, idx|
         next if option.action.empty?
 
         if option.intersect_rect?(inputs.mouse.point)
           args.gtk.set_system_cursor(:hand)
-          option.merge!(data.config.rollover_button_box)
-
+          data.selected_option = idx
+          data.selected_option = -1
           $story.follow(args, option) if args.inputs.mouse.up
-        else
-          option.merge!(data.config.button_box)
         end
       end
+
+      kd = inputs.keyboard.key_down
+      c1 = inputs.controller_one
+
+      select_option(1) if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
+      select_option(-1) if data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) }
+      highlight_selected_option
+      activate_selected_option if data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) }
+
+      if c1.connected
+        select_option(1) if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
+        select_option(-1) if data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
+        highlight_selected_option
+        activate_selected_option if data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
+      end
+
+      # highlight_selected_option
+    end
+
+    def select_option(offset)
+      data.selected_option += offset
+      data.selected_option = data.selected_option.clamp_wrap(0, data.options.size - 1)
+    end
+
+    def activate_selected_option
+      $story.follow(args, data.options[data.selected_option])
+      data.selected_option = -1
+    end
+
+    def highlight_selected_option
+      return unless data.selected_option >= 0
+
+      opt = data.options[data.selected_option]
+      opt.merge!(data.config.rollover_button_box)
     end
 
     def update(content)
