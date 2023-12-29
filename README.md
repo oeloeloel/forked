@@ -15,6 +15,7 @@ What it lets you do:
 * Show or hide text based on conditions
 * Show or hide buttons based on conditions
 * Buttons can link to other parts of the story or run code
+* Track the player's progress through the story
 
 ## Getting started
 Download or clone the project and run it in DragonRuby.
@@ -194,6 +195,6 @@ Author mode provides some features that may be useful while writing your story. 
 | Shortcuts | Action |
 |-|-|
 | Hold `f` and press `u` | Toggle Author Mode on or off. When author mode is active, a red square appears in the bottom left corner of the screen. The following shortcuts become available when Author Mode is on. |
-| `q` | Display information sidebar. This displays the current chunk ID and the text of the current chunk heading. |
+| `q` | Display information sidebar. This displays 1) the current chunk ID and the text of the current chunk heading 2) the most recent 20 items in the player's navigation history |
 | `n` | Navigate to the following chunk in the story file until the last chunk is displayed. |
 | `h` | Navigate to the preceding chunk in the story file until the first chunk is displayed. |

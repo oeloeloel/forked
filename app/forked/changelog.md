@@ -1,5 +1,8 @@
 Current Version:
 
+Experimental Branch:
+* Added display of player navigation history in the Author Mode Information Sidebar (shortcut: `f+u``, hold `q`). Limited to the 20 most recently visited chunks.
+
 Version 0.0.4
 
 * Fixed display issue that caused elements to display with incorrect y location
