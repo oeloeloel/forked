@@ -71,6 +71,7 @@ module Forked
     end
 
     def select_option(offset)
+      data.selected_option = 0 if data.selected_option < 0
       data.selected_option += offset
       data.selected_option = data.selected_option.clamp_wrap(0, data.options.size - 1)
     end
