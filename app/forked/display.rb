@@ -67,8 +67,6 @@ module Forked
         highlight_selected_option
         activate_selected_option if data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
       end
-
-      # highlight_selected_option
     end
 
     def select_option(offset)

@@ -1,7 +1,10 @@
 Current Version:
 
 Experimental Branch:
-* Added display of player navigation history in the Author Mode Information Sidebar (shortcut: `f+u``, hold `q`). Limited to the 20 most recently visited chunks.
+* Added display of player navigation history in the Author Mode Information Sidebar (shortcut: `f+u`, hold `q`). Limited to the 20 most recently visited chunks.
+* Added customizable keyboard navigation to display. Defaults: cycle forwards through buttons with right arrow or down arrow, cycle backwards with left or up arrows activate buttons with space or enter.
+* Added customizable controller navigation to display. Defaults: cycle forwards through buttons with left or down dpad or left thumbstick, cycle backwards with up or left dpad or thumbstick, activate buttons with a, b, r1 or r2.
+
 
 Version 0.0.4
 
