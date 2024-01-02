@@ -1,6 +1,16 @@
 
 module Forked
   class << self
+
+    ### =================
+    ### Export Story JSON
+    ### =================
+
+    ### =================
+    ### Export Spellcheck
+    ### =================
+
+    # call this from the console
     def export_spell_check
       story_text = fetch_story
       story_text = clean_text_for_spellcheck(story_text)
@@ -25,8 +35,10 @@ module Forked
 
         # putz "#{i + 1} #{context} #{l}" if i > 3000 && i < 3050
 
+        # check for end of condition block
         if context.include?(:condition_block)
           if l.strip.end_with?(':>')
+            # cloce condition block AND conditon block condition
             context.delete(:condition_block) 
             context.delete(:condition_block_condition)
             next
@@ -48,20 +60,19 @@ module Forked
           next
         end
 
-
-
         # catch block contexts opening
-        if l.strip.start_with?('~~~')
+        if l.strip.start_with?('~~~') # opening code block
           context << :code_block
           next
-        elsif l.strip.start_with?('<:') &&
+        elsif l.strip.start_with?('<:') && # opening condition block
           context << :condition_block
           context << :condition_block_condition
           next
-        elsif l.strip.start_with?("::") && !context.include?(:condition_block)
-          context << :action_block
+        elsif l.strip.start_with?("::") &&  # opening action block
+              !context.include?(:condition_block)
+              context << :action_block
           next
-        elsif l.strip.start_with?('[') &&
+        elsif l.strip.start_with?('[') && # opening multi-line button
               l.include?('](') &&
               !l.strip.end_with?(')')
           context << :button_code_block
@@ -69,7 +80,7 @@ module Forked
         end
 
         # remove rules
-        next if l.strip.start_with?('---')
+        next if l.strip.start_with?('---') # ingnore horizontal rule
 
         # remove chunk ids from chunk headings
         if l.strip.start_with?('##')
@@ -87,6 +98,7 @@ module Forked
           l = l.split('](')[0] + "]\n"
         end
 
+        # return line with line number prepended
         "#{i + 1}: #{l}"
       end.join
     end
@@ -94,6 +106,10 @@ module Forked
     def save_spellcheck_file(file, path)
       $gtk.write_file(path, file)
     end
+
+    ### =======
+    ### Methods
+    ### =======
   
     def pull_out left, right, str
       left_index = str.index(left)
