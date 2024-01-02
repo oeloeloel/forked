@@ -216,11 +216,11 @@ Expect to see more formatting options added in future.
 
 ## Blockquotes {#blockquotes}
 Blockquotes put your text in a box:
-> The Maharajah's Star is a diamond of great reknown.
+> The Maharajah's Star is a diamond of great renown.
 
 To make a blockquote, start the line with a right angle bracket >
 ~~~
-> The Maharajah's Star is a diamond of great reknown.
+> The Maharajah's Star is a diamond of great renown.
 ~~~
 
 If you put several blockquotes one after the other, they appear as a single blockquote:
@@ -281,7 +281,7 @@ This manual uses horizontal rules to separate the content from the navigational 
 ## Actions and Conditions {#actions}
 Actions get things done. They are short pieces of code that you can put directly into your story to perform some common tasks. You can use actions to tell Forked to do something, remember something, count something, time something, roll dice, go to another chunk, and other things besides.
 
-There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displaye like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.
+There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displayed like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.
 
 [Chunk Actions](#chunk-actions)
 
@@ -325,17 +325,17 @@ You can put commands on multiple lines, like this:
 Sometimes you will want a trigger to perform some kind of action instead of navigating to another chunk.
 
 ~~~
-[Drop the weapon](: bag_remove "dueling pistol" :)
+[Drop the weapon](: bag_remove "duelling pistol" :)
 ~~~
 
 You can combine an action with a trigger by adding the colons above and replacing the chunk id with a command.
 
-In this case, the item "dueling pistol" will be removed from the player's bag when the button is clicked.
+In this case, the item "duelling pistol" will be removed from the player's bag when the button is clicked.
 
 You can put commands on multiple lines:
 ~~~
 [Drop the weapon](:
-  bag_remove "dueling pistol"
+  bag_remove "duelling pistol"
   jump "#surrender"
 :)
 ~~~
@@ -355,7 +355,7 @@ Any fool knows that
 is the Dauphine's favourite colour!
 ~~~
 
-One of the useful tools included with Forked is `memo` and it lets you remember and recall pieces of text like, for example, a character's favourite colour. If the dauphine's favourite color is "Moroccan pink", the following text will be added into the story:
+One of the useful tools included with Forked is `memo` and it lets you remember and recall pieces of text like, for example, a character's favourite colour. If the dauphine's favourite colour is "Moroccan pink", the following text will be added into the story:
 
 > Any fool knows that Moroccan pink is the Dauphine's favourite colour!
 

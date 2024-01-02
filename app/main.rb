@@ -8,5 +8,6 @@ require 'app/forked/display_defaults.rb'
 require 'app/forked/display.rb'
 require 'app/forked/author.rb'
 require 'app/forked/forked.rb'
+require 'app/forked/export.rb'
 
 require 'app/tick.rb'
