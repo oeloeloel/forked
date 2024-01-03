@@ -106,15 +106,6 @@ module Forked
       button_box = data.config.button_box
       inactive_button_box = data.config.inactive_button_box
 
-      # background solid for display area, not very useful
-
-      # data.primitives << {
-      #   x: display.margin_left,
-      #   y: display.margin_bottom,
-      #   w: display.w,
-      #   h: display.h,
-      #   **display.background_color
-      # }.sprite!
       y_pos = display.margin_top.from_top
 
       content.each_with_index do |item, i|

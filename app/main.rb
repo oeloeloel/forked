@@ -1,3 +1,4 @@
+require 'app/libs/json.rb'
 require 'app/forked/themes/light-mode-theme.rb'
 require 'app/forked/themes/dark-mode-theme.rb'
 require 'app/forked/themes/kifass-theme.rb'

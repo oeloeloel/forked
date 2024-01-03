@@ -24,9 +24,12 @@ module Forked
     end
 
     def defaults
-      
-      story_text = fetch_story args
-      args.state.forked.story = Parser.parse(story_text)
+      if STORY_FILE.end_with?('.json')
+        args.state.forked.story = Forked.import_story_from_json
+      else
+        story_text = fetch_story args
+        args.state.forked.story = Parser.parse(story_text)
+      end
 
       args.state.forked.root_chunk = args.state.forked.story[:chunks][0]
       args.state.forked.title = args.state.forked.story[:title]
