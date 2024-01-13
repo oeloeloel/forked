@@ -183,10 +183,8 @@ This is the second line
 | Navigation | (experimental) |
 |-|-|
 | `jump "#chunk_id"` | navigates to the chunk specified by `#chunk_id` |
-| `jump 3` | navigates chunks in the story file relative to the current chunk (e.g. 3 chunks below the current chunk)
-| `fall` | navigates to the next chunk in the story file
-| `jump` | navigates to the previous chunk in the story file
-| `history[-1]` | Gets the chunk_id for the current chunk |
+| `jump 3` | navigates chunks in the story file relative to the current chunk (e.g. 3 chunks below the current chunk). Negative numbers will navigate to previous chunks in the story file.
+| `history[-1]` | Gets the chunk_id for the most recently visited chunk (the current chunk) |
 | `history[-2]` | Gets the chunk_id for the last visited chunk |
 
 ## Author Mode

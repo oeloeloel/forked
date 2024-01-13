@@ -183,6 +183,8 @@ def roll dice
 end
 
 def tick args
+  # original_puts $gtk.methods(false).sort
+  # exit
   args.gtk.set_system_cursor(:arrow)
   $timer_start = Time.now.to_f
 
@@ -207,18 +209,9 @@ def tick args
     args.state.forked.forked_show_eval = !args.state.forked.forked_show_eval
     puts args.state.forked.forked_show_eval 
   end
-  reset if args.inputs.keyboard.key_down.backspace
+  $gtk.reset if args.inputs.keyboard.key_down.backspace
 
   $tick_time = Time.now.to_f - $timer_start 
 end
 
-def reset
-  # $story = nil
-  $args.gtk.reset
-end
-
-reset
-
-
-
-
+$gtk.reset
