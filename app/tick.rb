@@ -1,4 +1,5 @@
-# STORY_FILE = 'app/story.md'
+STORY_FILE = 'app/story.md'
+# STORY_FILE = 'app/story.json'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
 
@@ -182,7 +183,6 @@ def roll dice
 end
 
 def tick args
-  args.gtk.set_system_cursor(:arrow)
   $timer_start = Time.now.to_f
 
   $story ||= Forked::Story.new
@@ -206,18 +206,9 @@ def tick args
     args.state.forked.forked_show_eval = !args.state.forked.forked_show_eval
     puts args.state.forked.forked_show_eval 
   end
-  reset if args.inputs.keyboard.key_down.backspace
+  $gtk.reset if args.inputs.keyboard.key_down.backspace
 
   $tick_time = Time.now.to_f - $timer_start 
 end
 
-def reset
-  # $story = nil
-  $args.gtk.reset
-end
-
-reset
-
-
-
-
+$gtk.reset

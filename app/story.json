@@ -1,0 +1,2149 @@
+{
+    "title": "# Forked User Manual\n",
+    "chunks": [
+        {
+            "id": "#welcome",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Welcome to Forked"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Forked is a scripting system for DragonRuby that lets you write interactive stories, branching dialogues or anything else that requires writing and choices like, for example, this manual.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Forked is intended to be simple to pick up and easy for non-programmers to work with. For people who like to write code, it lets you focus on story-writing while giving you access to the full power of Ruby.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "With Forked, you can learn how to write a simple interactive story in a few minutes.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Getting Started",
+                    "action": "#getting_started"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#contents",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Contents"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Welcome to Forked",
+                    "action": "#welcome"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Getting Started",
+                    "action": "#getting_started"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Essentials",
+                    "action": "#essentials"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Formatting",
+                    "action": "#formatting"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Actions and Conditions",
+                    "action": "#actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Built-in Commands",
+                    "action": "#commands"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Examples",
+                    "action": "#examples"
+                }
+            ]
+        },
+        {
+            "id": "#getting_started",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Getting Started"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "First things first. You need DragonRuby Game Toolkit to use Forked:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Get DragonRuby",
+                    "action": "#dragonruby"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Then you can install Forked:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Install and Run Forked",
+                    "action": "#installation"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Now you can run Forked and start writing your story.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Start Writing",
+                    "action": "#write"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Essentials",
+                    "action": "#essentials"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Welcome to Forked",
+                    "action": "#welcome"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#dragonruby",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "DragonRuby Game Toolkit"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "If you're reading this, you probably already own DragonRuby and you probably also have it installed and working.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "If not, you can find more information about DragonRuby at https://dragonruby.itch.io/dragonruby-gtk.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Be sure to visit the DragonRuby Discord for help or just to hang out with the super-friendly community: http://discord.dragonruby.org.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Getting Started",
+                    "action": "#getting_started"
+                }
+            ]
+        },
+        {
+            "id": "#installation",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Installation"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To install Forked, you should start with a freshly unzipped DragonRuby project.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Download the Forked project from GitHub and move the files into your DragonRuby project.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Copy/paste or drag the `Forked` folder into the `mygame/app` folder. Copy or drag the file `main.rb` into `mygame/app` and let it overwrite the existing file.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Now run DragonRuby: double-click on the DragonRuby executable (`dragonruby.exe` on windows, `dragonruby` on macOS or Linux).",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "By default, Forked will open this manual to help you get started. Since you're already reading this manual, congratulations on a job well done.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Getting Started",
+                    "action": "#getting_started"
+                }
+            ]
+        },
+        {
+            "id": "#write",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Writing and Editing the Story"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Open up the `app/story.md` file in any text editor and you'll see the contents of this manual. When you look at the examples, you'll also be able to see the code that created them.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "When you want to start a new story, create a new file in the `app` folder and call it whatever you want.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Open the `main.rb` file and look for a line near the top that says",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "STORY_FILE = 'app/story.md'\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Change `story.md` to whatever you named your file.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Then you can start writing your story:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Getting Started",
+                    "action": "#getting_started"
+                }
+            ]
+        },
+        {
+            "id": "#essentials",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Essentials"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "There are only a few things you really need to know to write a branching story with Forked.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Set The Story Title",
+                    "action": "#story_title"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Divide the Story into Chunks",
+                    "action": "#story_chunk"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Give Each Chunk a Heading",
+                    "action": "#heading_line"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Add Some Text",
+                    "action": "#adding_text"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Link Chunks to Each Other with Triggers",
+                    "action": "#triggers"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Once you've covered that, you can write a simple branching story and share it with the world.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Formatting",
+                    "action": "#formatting"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Getting Started",
+                    "action": "#getting_started"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#story_title",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "The Story Title"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Every story needs a title and, in Forked, they are written like this:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "# Gentleman, Adventurer, Amphibian: A Memoir\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "The title begins with a hash (also know as a pound) symbol `#` followed by the text of the title.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You can have only one title in your story file and it should be at the top.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "That's all for titles.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Story Chunks",
+                    "action": "#story_chunk"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Essentials",
+                    "action": "#essentials"
+                }
+            ]
+        },
+        {
+            "id": "#story_chunk",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Story Chunks"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "In Forked, stories are divided into sections called chunks. All the text you can see in this window is one chunk of the story.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "With Forked, you can easily link chunks together so the player can click a button and go to a different chunk. You've already seen this happening.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "And you'll see it happen again when you click one of the buttons below.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: The Heading Line",
+                    "action": "#heading_line"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: The Story Title",
+                    "action": "#story_title"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Essentials",
+                    "action": "#essentials"
+                }
+            ]
+        },
+        {
+            "id": "#heading_line",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Heading Lines"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "The first line of a chunk is the heading line. It's what lets Forked know that a new chunk is beginning.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "## The Day I Was Born {#birth}\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "The heading line begins with two hash symbols ##.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Next is the text of the heading (The Day I Was Born). This will be shown at the top of the screen when the chunk is displayed. This text is optional and if it is left out, Forked will show the story title instead.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Finally, there is the Chunk ID {#birth}. This identifies the chunk so Forked knows how to find it. It begins with a hash # followed by a unique name, without any spaces. It is wrapped in curly brackets, also known as braces {}.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Adding Text",
+                    "action": "#adding_text"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Story Chunks",
+                    "action": "#story_chunk"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Essentials",
+                    "action": "#essentials"
+                }
+            ]
+        },
+        {
+            "id": "#adding_text",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Adding Text"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Now that you have your heading line, you can start writing text underneath it.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "## The Day I Was Born {#birth} \n\nMy story begins on the day of my birth, though I do not remember much of that occasion.\n\nMy mother has never discussed it with me. Being a typical crocodile of the West African species, she is not much for conversation.\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "In Forked, you write text in paragraphs separated by a blank line.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Triggers",
+                    "action": "#triggers"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Heading Lines",
+                    "action": "#heading_line"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Essentials",
+                    "action": "#essentials"
+                }
+            ]
+        },
+        {
+            "id": "#triggers",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Triggers"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To allow the player to move from one chunk to another, we can use Triggers.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "[Learn more about my birth](#crocodile_parenting)\n[Let's get to the adventures!](#crocodile_hunters)\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Triggers have two parts, the trigger text, which is surrounded by two square brackets [] and the trigger action, surrounded by two round brackets ().",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Triggers are displayed as buttons labeled with the trigger text. You can see some trigger buttons at the bottom of the screen right now.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Clicking a trigger button will perform its trigger action. In both the examples above, the action is a chunk_id and clicking the trigger will tell Forked to navigate to the specified chunk.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "As well as navigating to other chunks, trigger actions can run Ruby code. We'll see more about that later.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "If the trigger action is empty, Forked will display a non-clickable button like the next button below:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "This matter is now closed",
+                    "action": ""
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Adding Text",
+                    "action": "#adding_text"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Essentials",
+                    "action": "#essentials"
+                }
+            ]
+        },
+        {
+            "id": "#formatting",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Formatting"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Now that you know how to write a story, we can do a few things about the way it looks.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Simple formatting:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Blockquotes",
+                    "action": "#blockquotes"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Code Blocks",
+                    "action": "#code-blocks"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Horizontal Rules",
+                    "action": "#rules"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Related: For more advanced formatting:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Themes",
+                    "action": ""
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Expect to see more formatting options added in future.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Actions",
+                    "action": "#actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Essentials",
+                    "action": "#essentials"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#blockquotes",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Blockquotes"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Blockquotes put your text in a box:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"blockquote"},
+                    "text": "The Maharajah's Star is a diamond of great renown."
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To make a blockquote, start the line with a right angle bracket >",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "> The Maharajah's Star is a diamond of great renown.\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "If you put several blockquotes one after the other, they appear as a single blockquote:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "> Many people have tried to steal it over the centuries.\n> All of them perished.\n> Horribly.\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"blockquote"},
+                    "text": "Many people have tried to steal it over the centuries."
+                },
+                {
+                    "type": {"@@jm:symbol":"blockquote"},
+                    "text": "All of them perished."
+                },
+                {
+                    "type": {"@@jm:symbol":"blockquote"},
+                    "text": "Horribly."
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Formatting",
+                    "action": "#formatting"
+                }
+            ]
+        },
+        {
+            "id": "#code-blocks",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Code Blocks"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Code blocks, as you have already seen in this manual, are used to show code:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "bag_add \"The Maharajah's Star\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Code blocks start and end with three tildes ~",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "~~~\n  bag_add \"The Maharajah's Star\"\n~~~\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Code blocks present text 'as-is', without any formatting changes except for wrapping long lines.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Not every story will need to have code blocks. It's super-useful for manuals though.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Formatting",
+                    "action": "#formatting"
+                }
+            ]
+        },
+        {
+            "id": "#rules",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Horizontal Rules"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You can draw a horizontal line anywhere in your story like this one:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To draw a line you just put three dashes (also known as hyphens) `-` at the start of a line:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "---\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "This manual uses horizontal rules to separate the content from the navigational buttons at the bottom of each chunk, but you can use them wherever you like. You can also use as many as you like:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Formatting",
+                    "action": "#formatting"
+                }
+            ]
+        },
+        {
+            "id": "#themes",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Themes"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                }
+            ]
+        },
+        {
+            "id": "#actions",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Actions and Conditions"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Actions get things done. They are short pieces of code that you can put directly into your story to perform some common tasks. You can use actions to tell Forked to do something, remember something, count something, time something, roll dice, go to another chunk, and other things besides.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displayed like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Chunk Actions",
+                    "action": "#chunk-actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Trigger Actions",
+                    "action": "#trigger-actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Conditions",
+                    "action": "#conditions-1"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Related: Forked includes a number of useful commands you can use with actions.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Built-in Commands",
+                    "action": "#commands"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Commands",
+                    "action": "#commands"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Formatting",
+                    "action": "#formatting"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#chunk-actions",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Chunk Actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You can drop an action into a chunk like this:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": ":: bag_add \"pith helmet\" ::\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Chunk Actions begin and end with a pair of colon `:` symbols. Between the symbols, you can issue commands.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "In this case, we are telling Forked to add a sturdy, yet attractive, \"pith helmet\" to the player's \"bag\" or inventory. Forked comes with some useful commands included, including the ability to store and retrieve items from an inventory. More about custom commands later.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "When you drop an action into a chunk like this, it will run once, each time this chunk is loaded. That's the perfect time to add an item to, or remove an item from, your bag.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You can put commands on multiple lines, like this:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "::\n  bag_add \"pith helmet\"\n  bag_remove \"top hat\"\n::\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Trigger Actions",
+                    "action": "#trigger-actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Actions",
+                    "action": "#actions"
+                }
+            ]
+        },
+        {
+            "id": "#trigger-actions",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Trigger Actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Sometimes you will want a trigger to perform some kind of action instead of navigating to another chunk.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "[Drop the weapon](: bag_remove \"duelling pistol\" :)\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You can combine an action with a trigger by adding the colons above and replacing the chunk id with a command.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "In this case, the item \"duelling pistol\" will be removed from the player's bag when the button is clicked.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You can put commands on multiple lines:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "[Drop the weapon](:\n  bag_remove \"duelling pistol\"\n  jump \"#surrender\"\n:)\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "The `jump` command lets you navigate to another chunk from a trigger action.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Conditional Text",
+                    "action": "#conditions-1"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Chunk Actions",
+                    "action": "#chunk-actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Actions",
+                    "action": "#actions"
+                }
+            ]
+        },
+        {
+            "id": "#conditions-1",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Conditional Text Part 1"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Sometimes you may want to show, hide or change text depending on the situation. Forked gives you a couple of ways to do this. The first lets you insert words or short pieces of text into the story.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "Any fool knows that \n<:\n  memo_check \"dauphine_fave_color\"\n:> \nis the Dauphine's favourite colour!\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "One of the useful tools included with Forked is `memo` and it lets you remember and recall pieces of text like, for example, a character's favourite colour. If the dauphine's favourite colour is \"Moroccan pink\", the following text will be added into the story:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"blockquote"},
+                    "text": "Any fool knows that Moroccan pink is the Dauphine's favourite colour!"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "We'll learn more about `memo` and other included commands later.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Conditions Part 2",
+                    "action": "#conditions-2"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Trigger Actions",
+                    "action": "#trigger-actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Actions",
+                    "action": "#actions"
+                }
+            ]
+        },
+        {
+            "id": "#conditions-2",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Conditional Text Part 2"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "In the previous chunk, we saw how short text can be inserted into the story. For longer texts as well as triggers and blockquotes, we can write them out and use conditions to decide if they should be displayed.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "But how would I travel to Europe?\n<:\n  bag_has? \"submarine\"\n::\n  Of course! The Maharajah's gift! I could travel to Europe by submarine.\n\n  [Travel to Europe by Submarine](#submarine)\n:>\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "In the example above, if the player does not have a submarine in their bag, they will see only the line:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"blockquote"},
+                    "text": "But how would I travel to Europe?"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "But if they have the submarine, they see more text:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"blockquote"},
+                    "text": "But how would I travel to Europe? Of course! The Maharajah's gift! I could travel to Europe by submarine."
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "They will also see a nice new button to help them start their under-sea voyage.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Conditions Part 1",
+                    "action": "#conditions-1"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Actions",
+                    "action": "#actions"
+                }
+            ]
+        },
+        {
+            "id": "#commands",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Built-in Commands"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Forked contains some built-in commands to help you perform some useful or common tasks.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Commands: Bag (Inventory Management)",
+                    "action": "#bag"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Commands: Memo (Information Storage)",
+                    "action": "#memo"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Commands: Timer (Countdown Timers)",
+                    "action": "#timer"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Commands: Counter (Number Tracking)",
+                    "action": "#counter"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Next: Examples",
+                    "action": "#examples"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Actions",
+                    "action": "#actions"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#bag",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Commands: Bag (Inventory Management)"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "The `bag` is where you keep track of the things your player collects during the game. For example, they may pick up a parcel of exotic spices to transport to Europe via submarine. You can add items to the bag like this:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "bag_add \"exotic spices\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Remove items:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "bag_remove \"exotic spices\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "And check to see if the player has an item:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "bag_has? \"exotic spices\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "If your player is involved in a dramatic shipwreck, they might lose the exotic spices along with everything else in their inventory. You can empty out the bag like this:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "bag_clear\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Commands",
+                    "action": "#commands"
+                }
+            ]
+        },
+        {
+            "id": "#memo",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Commands: Memo (Information Storage)"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "`memo` is for remembering information like, did the player meet the person of their dreams and fall in love? Did they run away from the evil pastry chef or stand their ground and fight? To remember something:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "memo_add \"in love with\", \"the Dauphine\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To check a memo:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "memo_check \"in love with\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To forget:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "memo_remove \"in love with\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "If your player is hit on the head by a Montgolfier balloon and suffers from total amnesia, this is how to forget everything:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "memo_clear\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Commands",
+                    "action": "#commands"
+                }
+            ]
+        },
+        {
+            "id": "#timer",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Commands: Timer (Countdown Timers)"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "`timer` lets you create a countdown timer. You can check the timer to see if it's done and perform some other action if it is. For example, your player may only have a few seconds to defuse the saboteur's bomb and save the submarine crew:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "timer_add \"submarine explosion\", 6.seconds\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To know if a timer has finished and the crew are lost:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "timer_done? \"submarine explosion\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To check how much time is left:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "timer_check \"submarine explosion\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To remove a timer:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "timer_remove \"submarine explosion\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Commands",
+                    "action": "#commands"
+                }
+            ]
+        },
+        {
+            "id": "#counter",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Commands: Counters (Number Tracking)"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "`counter` helps you keep track of the number of times something happens. It may be important in your story that the player gains five exquisite Persian rugs by winning games of croquet. To create a new counter:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "counter_add \"number of rugs\", 0\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To remove a counter:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "counter_remove \"number of rugs\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "To increase or decrease a counter:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "counter_up \"number of rugs\", 1\ncounter_down \"number of rugs\", 2\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "And to check how many rugs the player has:",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"code_block"},
+                    "text": "counter_check \"number of rugs\"\n"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Commands",
+                    "action": "#commands"
+                }
+            ]
+        },
+        {
+            "id": "#examples",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Examples"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Setting the Display Theme",
+                    "action": "#theme"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Countdown Timer",
+                    "action": "#example-timer"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back: Built-in Commands",
+                    "action": "#commands"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#theme",
+            "actions": [ ],
+            "conditions": [ ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Example: Setting the Display Theme"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Change the presentation of the story.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Turn the lights on",
+                    "action": "change_theme nil"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Turn the lights off",
+                    "action": "change_theme DARK_MODE"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Turn the lights fun and stupid",
+                    "action": "change_theme KIFASS_THEME"
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You can edit the display theme to change the colour scheme. Open the file `app/themes/dark-mode-theme.rb` and you can see how it's done.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Examples",
+                    "action": "#examples"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Contents",
+                    "action": "#contents"
+                }
+            ]
+        },
+        {
+            "id": "#example-timer",
+            "actions": [
+                "  timer_add \"oxygen\", 11.seconds\n"
+            ],
+            "conditions": [
+                "  \"Oxygen remaining: #{timer_seconds \"oxygen\"}\"\n",
+                "  timer_done? \"oxygen\"\n"
+            ],
+            "content": [
+                {
+                    "type": {"@@jm:symbol":"heading"},
+                    "text": "Countdown Timer"
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 3
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "Warning: space suit rupture detected.",
+                            "styles": [ ],
+                            "condition": [ ]
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "",
+                            "styles": [ ],
+                            "condition": "  \"Oxygen remaining: #{timer_seconds \"oxygen\"}\"\n"
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"paragraph"},
+                    "atoms": [
+                        {
+                            "text": "You ran out of oxygen and you are feeling poorly.",
+                            "styles": [ ],
+                            "condition": "  timer_done? \"oxygen\"\n"
+                        }
+                    ]
+                },
+                {
+                    "type": {"@@jm:symbol":"rule"},
+                    "weight": 1
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Examples",
+                    "action": "#examples"
+                },
+                {
+                    "type": {"@@jm:symbol":"button"},
+                    "text": "Back to Contents",
+                    "action": "#contents"
+                }
+            ]
+        }
+    ]
+}

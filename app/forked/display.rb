@@ -27,6 +27,7 @@ module Forked
       data.keyboard_input_defaults = Forked.keyboard_input_defaults
       data.controller_input_defaults = Forked.controller_input_defaults
       data.selected_option = -1
+      data.mouse_cursor = :arrow
     end
 
     def apply_theme(theme)
@@ -41,16 +42,24 @@ module Forked
     def input
       return if data.options.nil? || data.options.empty?
 
+      cursor_change_to = :arrow
+
       data.options.each_with_index do |option, idx|
         next if option.action.empty?
 
         if option.intersect_rect?(inputs.mouse.point)
-          args.gtk.set_system_cursor(:hand)
+          cursor_change_to = :hand
           data.selected_option = idx
           highlight_selected_option
           data.selected_option = -1
           $story.follow(args, option) if args.inputs.mouse.up
+          break
         end
+      end
+
+      if cursor_change_to != data.mouse_cursor
+        args.gtk.set_system_cursor(cursor_change_to)
+        data.mouse_cursor = cursor_change_to
       end
 
       kd = inputs.keyboard.key_down
@@ -106,15 +115,6 @@ module Forked
       button_box = data.config.button_box
       inactive_button_box = data.config.inactive_button_box
 
-      # background solid for display area, not very useful
-
-      # data.primitives << {
-      #   x: display.margin_left,
-      #   y: display.margin_bottom,
-      #   w: display.w,
-      #   h: display.h,
-      #   **display.background_color
-      # }.sprite!
       y_pos = display.margin_top.from_top
 
       content.each_with_index do |item, i|

@@ -1,10 +1,35 @@
+    # def import_story_from_json
+    #   # Needed to stop dragonjson from soiling the bed
+    #   $__ll_json_move_fast_and_break_things = true
 
+    #   putz "called import_story_from_json"
+    #   # imp = $gtk.parse_json('story.json')
+    #   imp = $gtk.read_file('app/story.json')
+    #   putz imp 
+    #   imp2 = LevisLibs::JSON.parse(imp, symbolize_keys: true)
+    #   putz "Imported data: #{imp2}"
+    #   imp2
+    # end
 module Forked
   class << self
 
     ### =================
     ### Export Story JSON
     ### =================
+
+    def export_story_as_json
+      $__ll_json_move_fast_and_break_things = true
+      putz "called export_story_as_json"
+      $gtk.write_json("story.json", $args.state.forked.story, extensions: true)
+    end
+
+    def import_story_from_json
+      # Needed to stop dragonjson from soiling the bed
+      $__ll_json_move_fast_and_break_things = true
+
+      imp = $gtk.read_file('app/story.json')
+      LevisLibs::JSON.parse(imp, symbolize_keys: true, extensions: true)
+    end
 
     ### =================
     ### Export Spellcheck
