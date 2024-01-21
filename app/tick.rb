@@ -183,9 +183,6 @@ def roll dice
 end
 
 def tick args
-  # original_puts $gtk.methods(false).sort
-  # exit
-  args.gtk.set_system_cursor(:arrow)
   $timer_start = Time.now.to_f
 
   $story ||= Forked::Story.new
