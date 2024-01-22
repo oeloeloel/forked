@@ -87,6 +87,8 @@ module Forked
     end
 
     def activate_selected_option
+      return unless data.selected_option >= 0
+      
       $story.follow(args, data.options[data.selected_option])
       data.selected_option = -1
     end
