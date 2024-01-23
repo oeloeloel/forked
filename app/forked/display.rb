@@ -88,7 +88,7 @@ module Forked
 
     def activate_selected_option
       return unless data.selected_option >= 0
-      
+
       $story.follow(args, data.options[data.selected_option])
       data.selected_option = -1
     end
@@ -104,20 +104,7 @@ module Forked
       data.primitives = []
       data.options = []
 
-      display = data.config.display
-      paragraph = data.config.paragraph
-      heading = data.config.heading
-      rule = data.config.rule
-      code_block = data.config.code_block
-      code_block_box = data.config.code_block_box
-      blockquote = data.config.blockquote
-      blockquote_box = data.config.blockquote_box
-      # blockquote_image = data.config.blockquote_image # For later
-      button = data.config.button
-      button_box = data.config.button_box
-      inactive_button_box = data.config.inactive_button_box
-
-      y_pos = display.margin_top.from_top
+      y_pos = data.config.display.margin_top.from_top
 
       content.each_with_index do |item, i|
         previous_element_type = content[i - 1][:type] 
@@ -139,58 +126,58 @@ module Forked
       end
     end
 
-      def display_button(y_pos, item, previous_element_type, content, i)
-        button = data.config.button  
-        display = data.config.display
-        button_box = data.config.button_box
+    def display_button(y_pos, item, previous_element_type, content, i)
+      button = data.config.button  
+      display = data.config.display
+      button_box = data.config.button_box
       inactive_button_box = data.config.inactive_button_box
-        
-        # if previous element is also a button, use spacing_between instead of spacing_after
-          if content[i - 1].type == :button
-            y_pos += button.spacing_after * button.size_px
-            y_pos -= button.spacing_between * button.size_px
-          end
+      
+      # if previous element is also a button, use spacing_between instead of spacing_after
+      if content[i - 1].type == :button
+        y_pos += button.spacing_after * button.size_px
+        y_pos -= button.spacing_between * button.size_px
+      end
 
-          button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
+      button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
 
-          text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
-          text_w = text_w.to_i
-          button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
+      text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
+      text_w = text_w.to_i
+      button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
 
 
-          if !item.action.empty?
-            option = {
-              x: display.margin_left,
-              y: y_pos - button_h,
-              w: text_w + button_box.padding_left + button_box.padding_right,
-              h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
-              action: item.action
-            }.sprite!(button_box)
-            y_pos -= button_box.padding_top
+      if !item.action.empty?
+        option = {
+          x: display.margin_left,
+          y: y_pos - button_h,
+          w: text_w + button_box.padding_left + button_box.padding_right,
+          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+          action: item.action
+        }.sprite!(button_box)
+        y_pos -= button_box.padding_top
 
-            data.primitives << option
-            data.options << option unless data.options.include? option
-          else
-            data.primitives << {
-              x: display.margin_left,
-              y: y_pos - button_h,
-              w: text_w + button_box.padding_left + button_box.padding_right,
-              h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+        data.primitives << option
+        data.options << option unless data.options.include? option
+      else
+        data.primitives << {
+          x: display.margin_left,
+          y: y_pos - button_h,
+          w: text_w + button_box.padding_left + button_box.padding_right,
+          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
 
-            }.sprite!(inactive_button_box)
+        }.sprite!(inactive_button_box)
 
-            y_pos -= button_box.padding_top
-          end
+        y_pos -= button_box.padding_top
+      end
 
-          data.primitives << {
-            x: display.margin_left + button_box.padding_left,
-            y: y_pos,
-            text: item.text,
-          }.label!(button)
+      data.primitives << {
+        x: display.margin_left + button_box.padding_left,
+        y: y_pos,
+        text: item.text,
+      }.label!(button)
 
-          y_pos -= button.size_px + button_box.padding_bottom
-          y_pos -= button.size_px * button.spacing_after
-        end
+      y_pos -= button.size_px + button_box.padding_bottom
+      y_pos -= button.size_px * button.spacing_after
+    end
 
     def display_paragraph(y_pos, item, previous_element_type)
       paragraph = data.config.paragraph
