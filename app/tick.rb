@@ -2,6 +2,9 @@ STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/story.json'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
+  STORY_FILE = 'app/forked/tests/navigation.md'
+
+
 
 # THEME = LIGHT_MODE
 THEME = DARK_MODE
@@ -42,9 +45,9 @@ end
 ### Navigation
 
 # Jump to a specified label
-def jump label
-  $story.follow $args, { action: label }
-end
+# def jump label
+#   $story.follow $args, { action: label }
+# end
 
 ### Background
 # Sets the background image to a 1280x720 png file (run from a condition)
