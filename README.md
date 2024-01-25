@@ -11,7 +11,7 @@ What it lets you do:
 * Issue commands from within your story
 * Premade commands available for non-programmers
 * Custom commands are simple to create using Ruby
-* Conditions allow allow you to control what the player sees
+* Conditions allow you to control what the player sees
 * Show or hide text based on conditions
 * Show or hide buttons based on conditions
 * Buttons can link to other parts of the story or run code
