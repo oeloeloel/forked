@@ -12,7 +12,7 @@ module Forked
 
       check_input
 
-      @display ||= Display.new(THEME)
+      @display ||= DisplayRT.new(THEME)
       @display.args = args
       @display.tick
 
@@ -24,6 +24,8 @@ module Forked
     end
 
     def defaults
+      @refresh = true
+      @hashed_display = 0
       if STORY_FILE.end_with?('.json')
         args.state.forked.story = Forked.import_story_from_json
       else
@@ -216,7 +218,14 @@ Tell Akz to write a better error message."
         end
       end
 
-      @display.update(display_lines)
+      new_hash = display_lines.hash
+      if @hashed_display == new_hash && !@refresh
+        return
+      else 
+        @display.update(display_lines)
+        @hashed_display = new_hash
+        @refresh = false
+      end
     end
 
     def fetch_story args
@@ -240,6 +249,7 @@ Tell Akz to write a better error message."
 
     def change_theme theme
       @display.apply_theme(theme)
+      @refresh = true
     end
   end
 end
