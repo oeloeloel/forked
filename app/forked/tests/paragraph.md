@@ -43,6 +43,12 @@ Quid igitur est? inquit; audire enim cupio, quid non probes. Principio, inquam, 
 ## Paragraph - Hard Wrap {#hard-wrap}
 Text can be hard wrapped by ending a line with a backslash character (\).
 
+~~~
+Line 1\
+Line 2\
+Line 3
+~~~
+
 Line 1\
 Line 2\
 Line 3

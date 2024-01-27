@@ -42,9 +42,9 @@ end
 ### Navigation
 
 # Jump to a specified label
-def jump label
-  $story.follow $args, { action: label }
-end
+# def jump label
+#   $story.follow $args, { action: label }
+# end
 
 ### Background
 # Sets the background image to a 1280x720 png file (run from a condition)

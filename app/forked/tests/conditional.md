@@ -173,6 +173,16 @@ Multi line string interpolation has the `<:` on the preceding line and `:>` on t
 
 [Next](#)
 
+<:
+```rb
+    
+    subject = args.outputs.primitives[2...4]
+    putz subject
+    expect = [{:x=>200, :y=>604, :text=>"Multi line string interpolation has the `<:` on the preceding line and `:>` on the following line. ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>568, :text=>"This text is conditional ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
+    expect == subject ? "Test passed " : "Test failed"
+```
+:>
+
 ## String Interpolation requires a string expression {#string-interpolation-string-1}
 
 If string interpolation returns a string, it is displayed. 
@@ -282,6 +292,8 @@ three part.
 
 ## Conditional is empty except for a blank line
 
+This test contains a conditional block. The condition evaluates to true but there is only a blank line in the true result. The result should not display so the very next thing should be the "Next" button.
+
 <:
 ```rb
   true
@@ -293,27 +305,28 @@ three part.
 [next](#)
 
 ## First line of conditional text is blank
-
+Conditional result contains a blank line before the true result. This test is successful if the next line is "Success".
 <:
 ```rb
   true
 ```
 ::
 
-insert a blank line before this one for a crash
+Success.
 :>
 
 [next](#)
 
 ## Conditional with blockquote, blank line, text
+Conditional result contains a blockquote, a blank line and text.
 <:
 ```rb
   true
 ```
 ::
-  > TELL SWEETHEART "I LOVE YOU"
+  > Blockquote
 
-insert a blank line before this one for a crash
+Success if no blank line before this text.
 :>
 [Next](#)
 

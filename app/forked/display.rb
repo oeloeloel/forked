@@ -2,7 +2,7 @@ $gtk.reset
 
 module Forked
   # Display class
-  class Display
+  class DisplayRT
     attr_gtk
 
     def initialize(theme = nil)
@@ -42,51 +42,97 @@ module Forked
     def input
       return if data.options.nil? || data.options.empty?
 
-      cursor_change_to = :arrow
+      select = case(inputs.last_active)
+      when :keyboard
+        keyboard_select
+      when :controller
+        controller_select
+      when :mouse
+        m_select = true
+        mouse_select
+      end
 
+      if (select || m_select) && select != data.selected_option
+        unhighlight_selected_option if data.selected_option >= 0
+        data.selected_option = (select || -1) 
+        highlight_selected_option if data.selected_option >= 0
+        gtk.set_system_cursor(data.selected_option >= 0? :hand : :arrow)
+      end
+
+      activate_selected_option if keyboard_activate || controller_activate || mouse_activate
+    end
+
+    def keyboard_activate
+      kd = inputs.keyboard.key_down
+      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
+    end
+
+    def controller_activate
+      c1 = inputs.controller_one
+
+      if c1.connected
+        data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
+      end 
+    end
+
+    def mouse_activate
+      inputs.mouse.up
+    end
+
+    def keyboard_select
+      kd = inputs.keyboard.key_down
+
+      if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
+        return relative_to_absolute_selection(1)
+      elsif data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) } 
+        return relative_to_absolute_selection(-1)
+      end
+
+      nil
+    end
+
+    def controller_select
+      c1 = inputs.controller_one
+
+      if c1.connected
+        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) } 
+          return relative_to_absolute_selection(1)
+        elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
+          return relative_to_absolute_selection(-1)
+        end
+      end 
+
+      nil
+    end
+
+    def mouse_select
+      rollover = -1 
       data.options.each_with_index do |option, idx|
-        next if option.action.empty?
+        
+        next if option.action.empty? 
 
         if option.intersect_rect?(inputs.mouse.point)
-          cursor_change_to = :hand
-          data.selected_option = idx
-          highlight_selected_option
-          data.selected_option = -1
-          $story.follow(args, option) if args.inputs.mouse.up
+          rollover = idx
           break
         end
       end
 
-      if cursor_change_to != data.mouse_cursor
-        args.gtk.set_system_cursor(cursor_change_to)
-        data.mouse_cursor = cursor_change_to
-      end
-
-      kd = inputs.keyboard.key_down
-      c1 = inputs.controller_one
-
-      select_option(1) if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
-      select_option(-1) if data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) }
-      highlight_selected_option
-      activate_selected_option if data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) }
-
-      if c1.connected
-        select_option(1) if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
-        select_option(-1) if data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
-        highlight_selected_option
-        activate_selected_option if data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
-      end
+      rollover
     end
 
-    def select_option(offset)
-      if data.selected_option < 0
-        data.selected_option = offset.positive? ? data.options.size - 1 : 0
+    def relative_to_absolute_selection(index)
+
+      sel_opt = data.selected_option
+      if data.selected_option < 0 || data.selected_option.nil?
+        sel_opt = index.positive? ? data.options.size - 1 : 0
       end
-      data.selected_option += offset
-      data.selected_option = data.selected_option.clamp_wrap(0, data.options.size - 1)
+      sel_opt += index
+      sel_opt = sel_opt.clamp_wrap(0, data.options.size - 1)
     end
 
     def activate_selected_option
+      return unless data.selected_option >= 0
+
       $story.follow(args, data.options[data.selected_option])
       data.selected_option = -1
     end
@@ -98,24 +144,21 @@ module Forked
       opt.merge!(data.config.rollover_button_box)
     end
 
+    def unhighlight_selected_option
+      return unless data.selected_option >= 0
+
+      data.options[data.selected_option].merge!(data.config.button_box)
+    end
+
     def update(content)
+      # content is refreshed so selected option is no longer valid
+      data.selected_option = -1
+      gtk.set_system_cursor(data.selected_option >= 0? :hand : :arrow)
+
       data.primitives = []
       data.options = []
 
-      display = data.config.display
-      paragraph = data.config.paragraph
-      heading = data.config.heading
-      rule = data.config.rule
-      code_block = data.config.code_block
-      code_block_box = data.config.code_block_box
-      blockquote = data.config.blockquote
-      blockquote_box = data.config.blockquote_box
-      # blockquote_image = data.config.blockquote_image # For later
-      button = data.config.button
-      button_box = data.config.button_box
-      inactive_button_box = data.config.inactive_button_box
-
-      y_pos = display.margin_top.from_top
+      y_pos = data.config.display.margin_top.from_top
 
       content.each_with_index do |item, i|
         previous_element_type = content[i - 1][:type] 
@@ -137,58 +180,58 @@ module Forked
       end
     end
 
-      def display_button(y_pos, item, previous_element_type, content, i)
-        button = data.config.button  
-        display = data.config.display
-        button_box = data.config.button_box
+    def display_button(y_pos, item, previous_element_type, content, i)
+      button = data.config.button  
+      display = data.config.display
+      button_box = data.config.button_box
       inactive_button_box = data.config.inactive_button_box
-        
-        # if previous element is also a button, use spacing_between instead of spacing_after
-          if content[i - 1].type == :button
-            y_pos += button.spacing_after * button.size_px
-            y_pos -= button.spacing_between * button.size_px
-          end
+      
+      # if previous element is also a button, use spacing_between instead of spacing_after
+      if content[i - 1].type == :button
+        y_pos += button.spacing_after * button.size_px
+        y_pos -= button.spacing_between * button.size_px
+      end
 
-          button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
+      button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
 
-          text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
-          text_w = text_w.to_i
-          button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
+      text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
+      text_w = text_w.to_i
+      button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
 
 
-          if !item.action.empty?
-            option = {
-              x: display.margin_left,
-              y: y_pos - button_h,
-              w: text_w + button_box.padding_left + button_box.padding_right,
-              h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
-              action: item.action
-            }.sprite!(button_box)
-            y_pos -= button_box.padding_top
+      if !item.action.empty?
+        option = {
+          x: display.margin_left,
+          y: y_pos - button_h,
+          w: text_w + button_box.padding_left + button_box.padding_right,
+          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+          action: item.action
+        }.sprite!(button_box)
+        y_pos -= button_box.padding_top
 
-            data.primitives << option
-            data.options << option unless data.options.include? option
-          else
-            data.primitives << {
-              x: display.margin_left,
-              y: y_pos - button_h,
-              w: text_w + button_box.padding_left + button_box.padding_right,
-              h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+        data.primitives << option
+        data.options << option unless data.options.include? option
+      else
+        data.primitives << {
+          x: display.margin_left,
+          y: y_pos - button_h,
+          w: text_w + button_box.padding_left + button_box.padding_right,
+          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
 
-            }.sprite!(inactive_button_box)
+        }.sprite!(inactive_button_box)
 
-            y_pos -= button_box.padding_top
-          end
+        y_pos -= button_box.padding_top
+      end
 
-          data.primitives << {
-            x: display.margin_left + button_box.padding_left,
-            y: y_pos,
-            text: item.text,
-          }.label!(button)
+      data.primitives << {
+        x: display.margin_left + button_box.padding_left,
+        y: y_pos,
+        text: item.text,
+      }.label!(button)
 
-          y_pos -= button.size_px + button_box.padding_bottom
-          y_pos -= button.size_px * button.spacing_after
-        end
+      y_pos -= button.size_px + button_box.padding_bottom
+      y_pos -= button.size_px * button.spacing_after
+    end
 
     def display_paragraph(y_pos, item, previous_element_type)
       paragraph = data.config.paragraph
@@ -474,7 +517,6 @@ module Forked
 
       wrapped_text
     end
-
 
     def wrap_lines_code_block_slow str, font, size_px, width
       wrapped_text = []
