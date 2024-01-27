@@ -2,7 +2,7 @@ $gtk.reset
 
 module Forked
   # Display class
-  class DisplayRT
+  class Display
     attr_gtk
 
     def initialize(theme = nil)

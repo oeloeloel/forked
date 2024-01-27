@@ -12,7 +12,7 @@ module Forked
 
       check_input
 
-      @display ||= DisplayRT.new(THEME)
+      @display ||= Display.new(THEME)
       @display.args = args
       @display.tick
 
