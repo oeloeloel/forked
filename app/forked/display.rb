@@ -2,7 +2,7 @@ $gtk.reset
 
 module Forked
   # Display class
-  class Display
+  class DisplayRT
     attr_gtk
 
     def initialize(theme = nil)
@@ -40,50 +40,92 @@ module Forked
     end
 
     def input
-      return if data.options.nil? || data.options.empty?
+      select = case(inputs.last_active)
+      when :keyboard
+        keyboard_select
+      when :controller
+        controller_select
+      when :mouse
+        m_select = true
+        mouse_select
+      end
 
-      cursor_change_to = :arrow
+      if (select || m_select) && select != data.selected_option
+        unhighlight_selected_option if data.selected_option >= 0
+        data.selected_option = (select || -1) 
+        highlight_selected_option if data.selected_option >= 0
+        gtk.set_system_cursor(data.selected_option >= 0? :hand : :arrow)
+      end
 
+      activate_selected_option if keyboard_activate || controller_activate || mouse_activate
+    end
+
+    def keyboard_activate
+      kd = inputs.keyboard.key_down
+      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
+    end
+
+    def controller_activate
+      c1 = inputs.controller_one
+
+      if c1.connected
+        data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
+      end 
+    end
+
+    def mouse_activate
+      inputs.mouse.up
+    end
+
+    def keyboard_select
+      kd = inputs.keyboard.key_down
+
+      if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
+        return relative_to_absolute_selection(1)
+      elsif data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) } 
+        return relative_to_absolute_selection(-1)
+      end
+
+      nil
+    end
+
+    def controller_select
+      c1 = inputs.controller_one
+
+      if c1.connected
+        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) } 
+          return relative_to_absolute_selection(1)
+        elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
+          return relative_to_absolute_selection(-1)
+        end
+      end 
+
+      nil
+    end
+
+    def mouse_select
+      rollover = -1 
       data.options.each_with_index do |option, idx|
-        next if option.action.empty?
+        
+        next if option.action.empty? 
 
         if option.intersect_rect?(inputs.mouse.point)
-          cursor_change_to = :hand
-          data.selected_option = idx
-          highlight_selected_option
-          data.selected_option = -1
-          $story.follow(args, option) if args.inputs.mouse.up
+          rollover = idx
           break
         end
       end
 
-      if cursor_change_to != data.mouse_cursor
-        args.gtk.set_system_cursor(cursor_change_to)
-        data.mouse_cursor = cursor_change_to
-      end
-
-      kd = inputs.keyboard.key_down
-      c1 = inputs.controller_one
-
-      select_option(1) if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
-      select_option(-1) if data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) }
-      highlight_selected_option
-      activate_selected_option if data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) }
-
-      if c1.connected
-        select_option(1) if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
-        select_option(-1) if data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
-        highlight_selected_option
-        activate_selected_option if data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
-      end
+      rollover
     end
 
-    def select_option(offset)
-      if data.selected_option < 0
-        data.selected_option = offset.positive? ? data.options.size - 1 : 0
+    def relative_to_absolute_selection(index)
+
+      sel_opt = data.selected_option
+      if data.selected_option < 0 || data.selected_option.nil?
+        sel_opt = index.positive? ? data.options.size - 1 : 0
       end
-      data.selected_option += offset
-      data.selected_option = data.selected_option.clamp_wrap(0, data.options.size - 1)
+      sel_opt += index
+      sel_opt = sel_opt.clamp_wrap(0, data.options.size - 1)
     end
 
     def activate_selected_option
@@ -100,7 +142,17 @@ module Forked
       opt.merge!(data.config.rollover_button_box)
     end
 
+    def unhighlight_selected_option
+      return unless data.selected_option >= 0
+
+      data.options[data.selected_option].merge!(data.config.button_box)
+    end
+
     def update(content)
+      # content is refreshed so selected option is no longer valid
+      data.selected_option = -1
+      gtk.set_system_cursor(data.selected_option >= 0? :hand : :arrow)
+
       data.primitives = []
       data.options = []
 
@@ -463,7 +515,6 @@ module Forked
 
       wrapped_text
     end
-
 
     def wrap_lines_code_block_slow str, font, size_px, width
       wrapped_text = []
