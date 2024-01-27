@@ -56,7 +56,11 @@ module Forked
         unhighlight_selected_option if data.selected_option >= 0
         data.selected_option = (select || -1) 
         highlight_selected_option if data.selected_option >= 0
-        gtk.set_system_cursor(data.selected_option >= 0? :hand : :arrow)
+        if m_select && data.selected_option >= 0
+          gtk.set_system_cursor(:hand)
+        else 
+          gtk.set_system_cursor(:arrow)
+        end
       end
 
       activate_selected_option if keyboard_activate || controller_activate || mouse_activate
