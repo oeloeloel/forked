@@ -2,17 +2,17 @@ module Forked
   class << self
     def keyboard_input_defaults
       {
-        next:       [:down, :right],
-        prev:       [:up, :left],
+        next:       [:down,  :right],
+        prev:       [:up,    :left],
         activate:   [:space, :enter],
       }
     end
 
     def controller_input_defaults
       {
-        next:     [:down, :right],
-        prev:     [:up, :left],
-        activate: [:a, :b, :r1, :r2]
+        next:     [:down, :right      ],
+        prev:     [:up,   :left       ],
+        activate: [:a,    :b, :r1, :r2]
       }
     end
   end
