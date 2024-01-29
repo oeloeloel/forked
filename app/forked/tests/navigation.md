@@ -70,6 +70,11 @@ Button action `jump(-1)` navigates to chunk above.
   ```
 :>
 
+## Button contains code, no navigation
+
+[code only button](: putz "code only button clicked" :)
+[Next](#)
+
 ## Tests Complete
 All tests are complete.
 

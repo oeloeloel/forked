@@ -36,6 +36,7 @@ module Forked
       args.state.forked.root_chunk = args.state.forked.story[:chunks][0]
       args.state.forked.title = args.state.forked.story[:title]
 
+      args.state.forked.navigated = false
       follow args
       
       args.state.forked.defaults_set = true
@@ -105,6 +106,8 @@ module Forked
       args.state.forked.current_lines = args.state.forked.current_chunk[:content]
       # clear the options array
       args.state.forked.options = []
+
+      args.state.forked.navigated = true
 
       process_new_chunk
     end
@@ -176,7 +179,9 @@ Tell Akz to write a better error message."
     end
 
     def follow(args, option = nil)
-      process_action(args, option.action) if option&.action
+      if option&.action
+        process_action(args, option.action) 
+      end
     end
 
     def fall

@@ -1,7 +1,8 @@
-STORY_FILE = 'app/story.md'
-# STORY_FILE = 'app/story.json'
+# STORY_FILE = 'app/story.md'
+STORY_FILE = 'app/story.json'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
+
 
 # THEME = LIGHT_MODE
 THEME = DARK_MODE

@@ -39,8 +39,8 @@ module Forked
       end
     end
 
-    def input
-      return if data.options.nil? || data.options.empty?
+    def update_selection
+      return if data.options.nil? || data.options.empty? 
 
       select = case(inputs.last_active)
       when :keyboard
@@ -51,17 +51,29 @@ module Forked
         m_select = true
         mouse_select
       end
-
+      
       if (select || m_select) && select != data.selected_option
         unhighlight_selected_option if data.selected_option >= 0
         data.selected_option = (select || -1) 
         highlight_selected_option if data.selected_option >= 0
         if m_select && data.selected_option >= 0
-          gtk.set_system_cursor(:hand)
-        else 
-          gtk.set_system_cursor(:arrow)
+          next_cursor = :hand
+        else
+          next_cursor = :arrow
         end
       end
+
+      if next_cursor && next_cursor != data.mouse_cursor
+        gtk.set_system_cursor(next_cursor)
+        data.mouse_cursor = next_cursor
+      end
+    end
+
+    def input
+      return if data.options.nil? || data.options.empty?
+
+      update_selection
+
 
       activate_selected_option if keyboard_activate || controller_activate || mouse_activate
     end
@@ -136,6 +148,7 @@ module Forked
 
     def activate_selected_option
       return unless data.selected_option >= 0
+      putz data.options[data.selected_option]
 
       $story.follow(args, data.options[data.selected_option])
       data.selected_option = -1
@@ -151,13 +164,14 @@ module Forked
     def unhighlight_selected_option
       return unless data.selected_option >= 0
 
+      if data.selected_option >= data.options.count
+        return 
+      end
       data.options[data.selected_option].merge!(data.config.button_box)
     end
 
     def update(content)
-      # content is refreshed so selected option is no longer valid
-      data.selected_option = -1
-      gtk.set_system_cursor(data.selected_option >= 0? :hand : :arrow)
+      update_selection
 
       data.primitives = []
       data.options = []
