@@ -205,7 +205,6 @@ def strip_ruby_comment_from_line(line)
     # get the index of the [space]# characters
     index = line.index(' #')
     # ignore if the # symbol is inside a string
-    putz "INDEX IS INSIDE STRING? #{index_is_in_string_in_string} #{line}"
     return line[0...index]
   end
 

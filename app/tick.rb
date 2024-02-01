@@ -1,5 +1,4 @@
-# STORY_FILE = 'app/story.md'
-STORY_FILE = 'app/story.json'
+STORY_FILE = 'app/story.md'
 # STORY_FILE = 'app/peas.md'
 # STORY_FILE = 'app/threshold.md'
 
@@ -39,13 +38,6 @@ end
 def bag_clear
   $args.state.forked_bag = []
 end
-
-### Navigation
-
-# Jump to a specified label
-# def jump label
-#   $story.follow $args, { action: label }
-# end
 
 ### Background
 # Sets the background image to a 1280x720 png file (run from a condition)

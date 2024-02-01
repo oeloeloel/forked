@@ -2,21 +2,21 @@
 
 ## Test Trigger Action executes code on click (single line)
 ~~~
-[Code execution](: putz "success" :)
+[Code execution](: puts "success" :)
 ~~~
 
-[Code execution](: putz "success" :)
+[Code execution](: puts "success" :)
 
 [Next](#)
 
 ## Test Trigger Action executes code on click (multi line)
 ~~~
 [Code execution](: 
-  putz "success1" 
-  putz "success2"
+  puts "success1" 
+  puts "success2"
 :)
 ~~~
 [Code execution](: 
-  putz "success1" 
-  putz "success2"
+  puts "success1" 
+  puts "success2"
 :)

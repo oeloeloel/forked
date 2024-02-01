@@ -9,15 +9,23 @@ module Forked
 
     def tick
       defaults unless args.state.forked.defaults_set
+      # navigated is passed to display to determine whether to reset
+      # the keyboard selection during an update
+      # set to false every tick and set to true if navigation happens later
+      args.state.forked.navigated = false 
 
+      # process player input (mouse, keyboard, controller)
       check_input
 
+      # create and feed the display object
       @display ||= Display.new(THEME)
       @display.args = args
       @display.tick
 
+      # make the display hash and send it to the display object
       present args
 
+      # create the Author object. Author mode provides tools for the developer.
       @author ||= Author.new(self)
       @author.args = args
       @author.tick
@@ -36,7 +44,7 @@ module Forked
       args.state.forked.root_chunk = args.state.forked.story[:chunks][0]
       args.state.forked.title = args.state.forked.story[:title]
 
-      args.state.forked.navigated = false
+      # args.state.forked.navigated = false
       follow args
       
       args.state.forked.defaults_set = true
@@ -77,6 +85,11 @@ module Forked
     # accepts chunk ID, finds the chunk index and calls navigate()
     def navigate_id(chunk_id)
       idx = find_chunk_index_from_id(chunk_id)
+      if idx.nil?
+        raise "FORKED: TARGET NOT FOUND.\n"\
+        "Cannot navigate to the specified chunk.\n"\
+        "Attempted to navigate to: #{chunk_id}"
+      end 
       navigate(idx)
     end
 
@@ -88,6 +101,11 @@ module Forked
 
     # navigates to the chunk with the provided index number
     def navigate(idx)
+      if idx.nil?
+        raise "FORKED: TARGET NOT FOUND. "\
+        "Cannot navigate to the specified chunk."
+      end 
+
       target = args.state.forked.story.chunks[idx]
 
       if target.nil?
@@ -184,11 +202,15 @@ Tell Akz to write a better error message."
       end
     end
 
+    ### DEPRECATED
     def fall
+      puts "`fall` is deprecated. Please use `jump(1)` instead."
       navigate_relative(1)
     end
 
+    ### DEPRECATED
     def rise
+      puts "`rise` is deprecated. Please use `jump(-1)` instead."
       navigate_relative(-1)
     end
 
@@ -227,7 +249,7 @@ Tell Akz to write a better error message."
       if @hashed_display == new_hash && !@refresh
         return
       else 
-        @display.update(display_lines)
+        @display.update(display_lines, args.state.forked.navigated)
         @hashed_display = new_hash
         @refresh = false
       end

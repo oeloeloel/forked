@@ -64,7 +64,7 @@ Button action `jump(-1)` navigates to chunk above.
 
 <: 
   ```rb
-    # putz $story.history[-2...$story.history.size]
+    # puts $story.history[-2...$story.history.size]
     $expect = $story.history[-2...$story.history.size] == [5, 7]
     $expect ? "Test passed " : "Test failed"
   ```
@@ -72,7 +72,7 @@ Button action `jump(-1)` navigates to chunk above.
 
 ## Button contains code, no navigation
 
-[code only button](: putz "code only button clicked" :)
+[code only button](: puts "code only button clicked" :)
 [Next](#)
 
 ## Tests Complete

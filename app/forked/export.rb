@@ -1,15 +1,4 @@
-    # def import_story_from_json
-    #   # Needed to stop dragonjson from soiling the bed
-    #   $__ll_json_move_fast_and_break_things = true
 
-    #   putz "called import_story_from_json"
-    #   # imp = $gtk.parse_json('story.json')
-    #   imp = $gtk.read_file('app/story.json')
-    #   putz imp 
-    #   imp2 = LevisLibs::JSON.parse(imp, symbolize_keys: true)
-    #   putz "Imported data: #{imp2}"
-    #   imp2
-    # end
 module Forked
   class << self
 
@@ -57,8 +46,6 @@ module Forked
       temp = story_text.lines.map_with_index do |l, i|
         # omit empty lines
         next if l.strip.empty?
-
-        # putz "#{i + 1} #{context} #{l}" if i > 3000 && i < 3050
 
         # check for end of condition block
         if context.include?(:condition_block)

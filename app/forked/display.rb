@@ -6,6 +6,7 @@ module Forked
     attr_gtk
 
     def initialize(theme = nil)
+      # set the current theme if passed
       @theme = theme
     end
 
@@ -15,19 +16,24 @@ module Forked
       render
     end
 
+    # stores object data in state
     def data
       args.state.forked.display ||= args.state.new_entity('forked display')
     end
 
     def defaults
-      data.config = config_defaults
-      data.options = []
-      data.defaults_set = true
-      apply_theme(@theme)
+      data.config = config_defaults # display defaults
+      data.options = []             # current options (buttons) in chunk
+      apply_theme(@theme)           # set the current theme
+
+      # get input defaults (from input.rb)
       data.keyboard_input_defaults = Forked.keyboard_input_defaults
       data.controller_input_defaults = Forked.controller_input_defaults
-      data.selected_option = -1
-      data.mouse_cursor = :arrow
+
+      data.selected_option = -1 # set the current selection to no selection
+      data.mouse_cursor = :arrow # set the default cursor
+
+      data.defaults_set = true # and don't come back
     end
 
     def apply_theme(theme)
@@ -37,9 +43,10 @@ module Forked
       theme.each do |k, v|
         data.config[k].merge!(v)
       end
+      highlight_selected_option
     end
 
-    def update_selection
+    def update_selection(navigated = nil)
       return if data.options.nil? || data.options.empty? 
 
       select = case(inputs.last_active)
@@ -51,18 +58,33 @@ module Forked
         m_select = true
         mouse_select
       end
+
+      # if we came here from a navigation command,
+      # deselect the buttons (the selection is not valid)
+      # otherwise, maintain the same selection (we just executed some code)
+      data.selected_option = -1 if navigated
       
+      # if an option has been selected
+      # and the selection is not the same as the previous selection
       if (select || m_select) && select != data.selected_option
+        # remove the highlight from the previous selection
         unhighlight_selected_option if data.selected_option >= 0
-        data.selected_option = (select || -1) 
+        # set the currently selected option to the new selection
+        data.selected_option = select
+        # add a highlight to the currently selected option
         highlight_selected_option if data.selected_option >= 0
+        # if the selection was made by mouse
+        # and is not -1 (no selection)
         if m_select && data.selected_option >= 0
+          # try to change to the hand cursor
           next_cursor = :hand
         else
+          # try to change to the arrow cursor
           next_cursor = :arrow
         end
       end
 
+      # set the cursor if it has changed
       if next_cursor && next_cursor != data.mouse_cursor
         gtk.set_system_cursor(next_cursor)
         data.mouse_cursor = next_cursor
@@ -73,8 +95,6 @@ module Forked
       return if data.options.nil? || data.options.empty?
 
       update_selection
-
-
       activate_selected_option if keyboard_activate || controller_activate || mouse_activate
     end
 
@@ -148,16 +168,15 @@ module Forked
 
     def activate_selected_option
       return unless data.selected_option >= 0
-      putz data.options[data.selected_option]
 
       $story.follow(args, data.options[data.selected_option])
-      data.selected_option = -1
+
     end
 
     def highlight_selected_option
-      return unless data.selected_option >= 0
-
+      return unless data.options && data.selected_option && data.selected_option >= 0
       opt = data.options[data.selected_option]
+      return unless opt
       opt.merge!(data.config.rollover_button_box)
     end
 
@@ -170,8 +189,8 @@ module Forked
       data.options[data.selected_option].merge!(data.config.button_box)
     end
 
-    def update(content)
-      update_selection
+    def update(content, navigated)
+      update_selection(navigated)
 
       data.primitives = []
       data.options = []
@@ -194,6 +213,7 @@ module Forked
           y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
         when :button
           y_pos = display_button(y_pos, item, previous_element_type, content, i)
+          highlight_selected_option        
         end
       end
     end

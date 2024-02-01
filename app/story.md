@@ -8,7 +8,6 @@ Forked is intended to be simple to pick up and easy for non-programmers to work 
 With Forked, you can learn how to write a simple interactive story in a few minutes.
 
 ---
-
 [Next: Getting Started](#getting_started)
 
 [Contents](#contents)
@@ -521,14 +520,16 @@ counter_check "number of rugs"
 
 ## Examples {#examples}
 
-[Setting the Display Theme](#theme)
+[Setting the Display Theme](#example-theme)
 [Countdown Timer](#example-timer)
+[Background Image](#example-background-image)
+[Roll Dice](#example-roll-dice)
 
 ---
 [Back: Built-in Commands](#commands)
 [Contents](#contents)
 
-## Example: Setting the Display Theme {#theme}
+## Example: Setting the Display Theme {#example-theme}
 
 Change the presentation of the story.
 
@@ -542,7 +543,7 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
-## Countdown Timer {#example-timer}
+## Example: Countdown Timer {#example-timer}
 ::
   timer_add "oxygen", 11.seconds
 ::
@@ -557,6 +558,62 @@ Warning: space suit rupture detected.
   timer_done? "oxygen"
 ::
   You ran out of oxygen and you are feeling poorly.
+:>
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+## Example: Background Image {#example-background-image}
+This example displays a background image behind the story.
+
+The simplest way to do that is to add a conditional block and use the `background_image` command with the path to your image file.
+
+~~~
+<: 
+background_image "sprites/background.png" 
+:>
+~~~
+
+<: 
+background_image "sprites/background.png" 
+:>
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+
+## Example: Roll the Dice {#example-roll-dice}
+Are you feeling lucky?
+
+The `roll` command lets you add some randomness to your game.
+
+~~~
+roll("1d6") # gives the roll of one, six-sided die
+roll("2d6") # gives the roll of two, six-sided dice
+roll("10d20") # gives the roll of ten, 20-sided dice
+~~~
+[Try to roll a 6!](: memo_add "roll", roll('1d6') :)
+
+<:
+```rb
+# use a Ruby case statement to decide how to handle the result
+case memo_check "roll" # check the result of the roll
+when 6 # handle the different results
+  "You did it! You rolled a 6!" # text to display for this result
+when 5
+  "Ye...oh! You almost got it. You rolled a 5!"
+when 4
+  "Getting close! You rolled a 4!"
+when 3
+  "Eh, you rolled a 3."
+when 2
+  "You're not very good at this. You rolled a 2."
+when 1
+  "Terrible! You rolled a 1!"
+end
+```
 :>
 
 ---
