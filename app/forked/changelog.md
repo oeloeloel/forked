@@ -1,14 +1,16 @@
 Current Version:
 
 Version 0.0.5
-Experimental Changes:
-* Added display of player navigation history in the Author Mode Information Sidebar (shortcut: `f+u`, hold `q`). Limited to the 20 most recently visited chunks. (You can print the entire history to the console by entering `$story.history_get`)
+
 * Added customizable keyboard navigation to display. Defaults: cycle forwards through buttons with right arrow or down arrow, cycle backwards with left or up arrows activate buttons with space or enter. Keyboard defaults can be modified in `app/forked/input.rb`
 * Added customizable controller navigation to display. Defaults: cycle forwards through buttons with left or down dpad or left thumbstick, cycle backwards with up or left dpad or thumbstick, activate buttons with a, b, r1 or r2. Controller defaults can be modified in `app/forked/input.rb`
-* The `fall` and `rise` commands have been deprecated. Use `jump(1)` and `jump(-1)` instead.
+* Added display of player navigation history in the Author Mode Information Sidebar (shortcut: `f+u`, hold `q`). Limited to the 20 most recently visited chunks. (You can print the entire history to the console by entering `$story.history_get`)
 * Display code has been changed to improve performance. The display is only recalculated if the content has changed.
 * The default story file (the manual) has a number of spelling corrections.
 * Exceptions: Exception message identifies incorrect chunk_id when navigation fails
+* The `fall` and `rise` commands have been deprecated. Use `jump(1)` and `jump(-1)` instead.
+* Added Background Image example to manual showing how to set a background image for the current story chunk.
+* Added Roll Dice example to manual showing how to generate random dice rolls.
 
 Experimental features:
 ======================
