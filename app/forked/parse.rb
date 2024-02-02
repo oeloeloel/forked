@@ -620,6 +620,9 @@ Please add a title to the top of the Story File. Example:
                 # capture single line trigger action
                 action.delete_prefix!(': ')
                 action.delete_suffix!(' :')
+                # a kludge that identifies a Ruby trigger action from a normal action 
+                # so actions that begin with '#' are not mistaken for navigational actions
+                action = '@@@@' + action
                 story[:chunks][-1][:content][-1].action = action
                 return true
               else

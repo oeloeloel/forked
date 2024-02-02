@@ -171,8 +171,8 @@ module Forked
         elsif action.start_with?('#')
           navigate_id(action)
         else
-          action.delete_prefix!('@@@@')
-          evaluate(args, action.to_s)
+          eval_action = action.delete_prefix('@@@@')
+          evaluate(args, eval_action.to_s)
           return
         end
       else
