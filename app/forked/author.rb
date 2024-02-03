@@ -34,8 +34,8 @@ module Forked
       fall_key = :n
       rise_key = :h
       left_sidebar_key = :q
-      @story.fall if k_d.send(fall_key)
-      @story.rise if k_d.send(rise_key)
+      @story.jump(1) if k_d.send(fall_key)
+      @story.jump(-1) if k_d.send(rise_key)
       args.state.forked.author_mode_sidebar = k_h.send(left_sidebar_key)
     end
 
