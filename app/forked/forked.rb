@@ -9,28 +9,42 @@ module Forked
 
     def tick
       defaults unless args.state.forked.defaults_set
+      # navigated is passed to display to determine whether to reset
+      # the keyboard selection during an update
+      # set to false every tick and set to true if navigation happens later
+      args.state.forked.navigated = false 
 
+      # process player input (mouse, keyboard, controller)
       check_input
 
+      # create and feed the display object
       @display ||= Display.new(THEME)
       @display.args = args
       @display.tick
 
+      # make the display hash and send it to the display object
       present args
 
+      # create the Author object. Author mode provides tools for the developer.
       @author ||= Author.new(self)
       @author.args = args
       @author.tick
     end
 
     def defaults
-      
-      story_text = fetch_story args
-      args.state.forked.story = Parser.parse(story_text)
+      @refresh = true
+      @hashed_display = 0
+      if STORY_FILE.end_with?('.json')
+        args.state.forked.story = Forked.import_story_from_json
+      else
+        story_text = fetch_story args
+        args.state.forked.story = Parser.parse(story_text)
+      end
 
       args.state.forked.root_chunk = args.state.forked.story[:chunks][0]
       args.state.forked.title = args.state.forked.story[:title]
 
+      # args.state.forked.navigated = false
       follow args
       
       args.state.forked.defaults_set = true
@@ -71,6 +85,11 @@ module Forked
     # accepts chunk ID, finds the chunk index and calls navigate()
     def navigate_id(chunk_id)
       idx = find_chunk_index_from_id(chunk_id)
+      if idx.nil?
+        raise "FORKED: TARGET NOT FOUND.\n"\
+        "Cannot navigate to the specified chunk.\n"\
+        "Attempted to navigate to: #{chunk_id}"
+      end 
       navigate(idx)
     end
 
@@ -82,6 +101,11 @@ module Forked
 
     # navigates to the chunk with the provided index number
     def navigate(idx)
+      if idx.nil?
+        raise "FORKED: TARGET NOT FOUND. "\
+        "Cannot navigate to the specified chunk."
+      end 
+
       target = args.state.forked.story.chunks[idx]
 
       if target.nil?
@@ -101,6 +125,8 @@ module Forked
       # clear the options array
       args.state.forked.options = []
 
+      args.state.forked.navigated = true
+
       process_new_chunk
     end
 
@@ -111,6 +137,16 @@ module Forked
       elsif param.is_a?(String)
         # TODO: Check that label exists
         navigate_id(param)
+      end
+    end
+
+    def history_get
+      state.forked.forked_history.map do |h|
+        [
+          h,
+          state.forked.story.chunks[h][:id],
+          args.state.forked.story.chunks[h][:content].find {|c| c.type == :heading }.text
+        ]
       end
     end
 
@@ -135,8 +171,8 @@ module Forked
         elsif action.start_with?('#')
           navigate_id(action)
         else
-          action.delete_prefix!('@@@@')
-          evaluate(args, action.to_s)
+          eval_action = action.delete_prefix('@@@@')
+          evaluate(args, eval_action.to_s)
           return
         end
       else
@@ -161,14 +197,20 @@ Tell Akz to write a better error message."
     end
 
     def follow(args, option = nil)
-      process_action(args, option.action) if option&.action
+      if option&.action
+        process_action(args, option.action) 
+      end
     end
 
+    ### DEPRECATED
     def fall
+      puts "`fall` is deprecated. Please use `jump(1)` instead."
       navigate_relative(1)
     end
 
+    ### DEPRECATED
     def rise
+      puts "`rise` is deprecated. Please use `jump(-1)` instead."
       navigate_relative(-1)
     end
 
@@ -203,7 +245,14 @@ Tell Akz to write a better error message."
         end
       end
 
-      @display.update(display_lines)
+      new_hash = display_lines.hash
+      if @hashed_display == new_hash && !@refresh
+        return
+      else 
+        @display.update(display_lines, args.state.forked.navigated)
+        @hashed_display = new_hash
+        @refresh = false
+      end
     end
 
     def fetch_story args
@@ -227,6 +276,7 @@ Tell Akz to write a better error message."
 
     def change_theme theme
       @display.apply_theme(theme)
+      @refresh = true
     end
   end
 end

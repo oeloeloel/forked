@@ -8,7 +8,6 @@ Forked is intended to be simple to pick up and easy for non-programmers to work 
 With Forked, you can learn how to write a simple interactive story in a few minutes.
 
 ---
-
 [Next: Getting Started](#getting_started)
 
 [Contents](#contents)
@@ -60,7 +59,7 @@ To install Forked, you should start with a freshly unzipped DragonRuby project.
 
 Download the Forked project from GitHub and move the files into your DragonRuby project.
 
-Copy/paste or drag the `Forked` folder into the `mygame/app` folder. Copy or drag the file `main.rb` into `mygame/app` and let it overwrite the existing file.
+Copy/paste or drag the `Forked` folder into the `mygame/app` folder. Copy or drag the file `tick.rb` into `mygame/app` and let it overwrite the existing file.
 
 Now run DragonRuby: double-click on the DragonRuby executable (`dragonruby.exe` on windows, `dragonruby` on macOS or Linux).
 
@@ -216,11 +215,11 @@ Expect to see more formatting options added in future.
 
 ## Blockquotes {#blockquotes}
 Blockquotes put your text in a box:
-> The Maharajah's Star is a diamond of great reknown.
+> The Maharajah's Star is a diamond of great renown.
 
 To make a blockquote, start the line with a right angle bracket >
 ~~~
-> The Maharajah's Star is a diamond of great reknown.
+> The Maharajah's Star is a diamond of great renown.
 ~~~
 
 If you put several blockquotes one after the other, they appear as a single blockquote:
@@ -281,7 +280,7 @@ This manual uses horizontal rules to separate the content from the navigational 
 ## Actions and Conditions {#actions}
 Actions get things done. They are short pieces of code that you can put directly into your story to perform some common tasks. You can use actions to tell Forked to do something, remember something, count something, time something, roll dice, go to another chunk, and other things besides.
 
-There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displaye like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.
+There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displayed like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.
 
 [Chunk Actions](#chunk-actions)
 
@@ -325,17 +324,17 @@ You can put commands on multiple lines, like this:
 Sometimes you will want a trigger to perform some kind of action instead of navigating to another chunk.
 
 ~~~
-[Drop the weapon](: bag_remove "dueling pistol" :)
+[Drop the weapon](: bag_remove "duelling pistol" :)
 ~~~
 
 You can combine an action with a trigger by adding the colons above and replacing the chunk id with a command.
 
-In this case, the item "dueling pistol" will be removed from the player's bag when the button is clicked.
+In this case, the item "duelling pistol" will be removed from the player's bag when the button is clicked.
 
 You can put commands on multiple lines:
 ~~~
 [Drop the weapon](:
-  bag_remove "dueling pistol"
+  bag_remove "duelling pistol"
   jump "#surrender"
 :)
 ~~~
@@ -355,7 +354,7 @@ Any fool knows that
 is the Dauphine's favourite colour!
 ~~~
 
-One of the useful tools included with Forked is `memo` and it lets you remember and recall pieces of text like, for example, a character's favourite colour. If the dauphine's favourite color is "Moroccan pink", the following text will be added into the story:
+One of the useful tools included with Forked is `memo` and it lets you remember and recall pieces of text like, for example, a character's favourite colour. If the dauphine's favourite colour is "Moroccan pink", the following text will be added into the story:
 
 > Any fool knows that Moroccan pink is the Dauphine's favourite colour!
 
@@ -521,14 +520,16 @@ counter_check "number of rugs"
 
 ## Examples {#examples}
 
-[Setting the Display Theme](#theme)
+[Setting the Display Theme](#example-theme)
 [Countdown Timer](#example-timer)
+[Background Image](#example-background-image)
+[Roll Dice](#example-roll-dice)
 
 ---
 [Back: Built-in Commands](#commands)
 [Contents](#contents)
 
-## Example: Setting the Display Theme {#theme}
+## Example: Setting the Display Theme {#example-theme}
 
 Change the presentation of the story.
 
@@ -542,7 +543,7 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
-## Countdown Timer {#example-timer}
+## Example: Countdown Timer {#example-timer}
 ::
   timer_add "oxygen", 11.seconds
 ::
@@ -557,6 +558,62 @@ Warning: space suit rupture detected.
   timer_done? "oxygen"
 ::
   You ran out of oxygen and you are feeling poorly.
+:>
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+## Example: Background Image {#example-background-image}
+This example displays a background image behind the story.
+
+The simplest way to do that is to add a conditional block and use the `background_image` command with the path to your image file.
+
+~~~
+<: 
+background_image "sprites/background.png" 
+:>
+~~~
+
+<: 
+background_image "sprites/background.png" 
+:>
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+
+## Example: Roll the Dice {#example-roll-dice}
+Are you feeling lucky?
+
+The `roll` command lets you add some randomness to your game.
+
+~~~
+roll("1d6") # gives the roll of one, six-sided die
+roll("2d6") # gives the roll of two, six-sided dice
+roll("10d20") # gives the roll of ten, 20-sided dice
+~~~
+[Try to roll a 6!](: memo_add "roll", roll('1d6') :)
+
+<:
+```rb
+# use a Ruby case statement to decide how to handle the result
+case memo_check "roll" # check the result of the roll
+when 6 # handle the different results
+  "You did it! You rolled a 6!" # text to display for this result
+when 5
+  "Ye...oh! You almost got it. You rolled a 5!"
+when 4
+  "Getting close! You rolled a 4!"
+when 3
+  "Eh, you rolled a 3."
+when 2
+  "You're not very good at this. You rolled a 2."
+when 1
+  "Terrible! You rolled a 1!"
+end
+```
 :>
 
 ---

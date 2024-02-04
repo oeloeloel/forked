@@ -1,5 +1,26 @@
 Current Version:
 
+Version 0.0.5
+
+* Added customizable keyboard navigation to display. Defaults: cycle forwards through buttons with right arrow or down arrow, cycle backwards with left or up arrows activate buttons with space or enter. Keyboard defaults can be modified in `app/forked/input.rb`
+* Added customizable controller navigation to display. Defaults: cycle forwards through buttons with left or down dpad or left thumbstick, cycle backwards with up or left dpad or thumbstick, activate buttons with a, b, r1 or r2. Controller defaults can be modified in `app/forked/input.rb`
+* Added display of player navigation history in the Author Mode Information Sidebar (shortcut: `f+u`, hold `q`). Limited to the 20 most recently visited chunks. (You can print the entire history to the console by entering `$story.history_get`)
+* Display code has been changed to improve performance. The display is only recalculated if the content has changed.
+* The default story file (the manual) has a number of spelling corrections.
+* Exceptions: Exception message identifies incorrect chunk_id when navigation fails
+* The `fall` and `rise` commands have been deprecated. Use `jump(1)` and `jump(-1)` instead.
+* Added Background Image example to manual showing how to set a background image for the current story chunk.
+* Added Roll Dice example to manual showing how to generate random dice rolls.
+
+Experimental features:
+======================
+* Added spellcheck export: Devmode support. Exports text file with code and chunk ids removed. Line numbers are added to make corrections easier. Type `Forked.export_spell_check` in the console to export a file `spellcheck.txt` in the project folder.
+* Added json story export feature (experimental). Exports the currently loaded story to a json file in the DragonRuby folder. Json functionality is provided by [dragonjson](https://github.com/leviongit/dragonjson/blob/master/json.rb).
+To use, load a story file into forked, then enter in the console: `Forked.export_story_as_json`
+* Added manual json story import feature (experimental). Loads an exported json story file. Note that exported files are placed in the DragonRuby folder and need to be moved to the game folder to be imported. `Forked.import_story_from_json`
+* Added automatic json story import (experimental). If you provide a valid json file as your STORY_FILE, forked will import it. Only filenames ending in `.json` are imported as json. Forked will attempt to import any other files as markdown type files.
+* Added link validation (experimental). Checks all actions in the current story and verifies that the target chunk exists. Results are printed to the console. To run link validation, enter `validate_links` in the console. By default, only invalid links will be reported. To report on all links, enter `validate_links(true)`.
+
 Version 0.0.4
 
 * Fixed display issue that caused elements to display with incorrect y location

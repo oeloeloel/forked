@@ -34,8 +34,8 @@ module Forked
       fall_key = :n
       rise_key = :h
       left_sidebar_key = :q
-      @story.fall if k_d.send(fall_key)
-      @story.rise if k_d.send(rise_key)
+      @story.jump(1) if k_d.send(fall_key)
+      @story.jump(-1) if k_d.send(rise_key)
       args.state.forked.author_mode_sidebar = k_h.send(left_sidebar_key)
     end
 
@@ -55,20 +55,37 @@ module Forked
 
         # labels
         am_labels = [
-          'Author Mode',
+          'AUTHOR MODE',
           '===========',
-          "chunk id: #{args.state.forked.current_chunk[:id]}",
-          "chunk heading: #{args.state.forked.current_chunk[:content][0].text}"
+          "current chunk id: #{args.state.forked.current_chunk[:id]}",
+          "current chunk heading: #{args.state.forked.current_chunk[:content][0].text}",
+          "",
         ]
+
+        hist = $story.history_get.reverse
+
+        am_labels += [
+        "Navigation History (#{hist.size})",
+          "------------------"
+        ]
+
+        am_labels += hist[0..19].map_with_index { |h, i|
+          
+          str = ""
+          str += "## #{h[2]} " if h[2]
+          str += "{#{h[1]}}" if h[1]
+          str
+        }
 
         y_loc = 0
 
-        am_prims << am_labels.map_with_index do |text, i|
+        am_prims += am_labels.map_with_index do |text, i|
           prim = { 
             x: 1, y: y_loc.from_top,
             text: text,
           }.label!(AUTHOR_MODE_TEXT_STYLE)
           y_loc += AUTHOR_MODE_TEXT_STYLE.size_px * 0.8
+
           prim
         end
       end

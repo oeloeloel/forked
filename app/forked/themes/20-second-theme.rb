@@ -1,8 +1,8 @@
 YELLOW_BRIGHT = { r: 0xff, g: 0xce, b: 0x27 }
-YELLOW_PALE = { r: 0xdf, g: 0xce, b: 0x77 }
-PURPLE = { r: 0x2f, g: 0x2f, b: 0x54 }
-BLUE   = { r: 0x97, g: 0xbf, b: 0xe8 }
-WHITE  = { r: 255,  g: 255,  b: 255  }
+YELLOW_PALE =   { r: 0xdf, g: 0xce, b: 0x77 }
+PURPLE =        { r: 0x2f, g: 0x2f, b: 0x54 }
+BLUE   =        { r: 0x97, g: 0xbf, b: 0xe8 }
+WHITE  =        { r: 255,  g: 255,  b: 255  }
 
 TWENTY_SECOND_THEME = {
   display: {
@@ -11,14 +11,14 @@ TWENTY_SECOND_THEME = {
   heading: {
     **BLUE,
     size_enum: 8,
-    font: 'fonts/Mali/Mali-Bold.ttf',
+    font: 'fonts/mali/mali-bold.ttf',
   },
   rule: {
     **BLUE
   },
   paragraph: {
     **WHITE,
-    font: 'fonts/Mali/Mali-Regular.ttf',
+    font: 'fonts/mali/mali-regular.ttf',
     size_enum: 2,
     spacing_after: 0.4,
   },
@@ -31,7 +31,7 @@ TWENTY_SECOND_THEME = {
   blockquote: {
     **PURPLE,
     size_enum: 2,
-    font: 'fonts/Mali/Mali-MediumItalic.ttf'
+    font: 'fonts/mali/mali-mediumitalic.ttf'
   },
   blockquote_box: {
     **BLUE
@@ -39,7 +39,7 @@ TWENTY_SECOND_THEME = {
   button: {
     r: 51, g: 51, b: 51,
     size_enum: 2,
-    font: 'fonts/Mali/Mali-Medium.ttf',
+    font: 'fonts/mali/mali-medium.ttf',
   },
   button_box: {
     **YELLOW_PALE

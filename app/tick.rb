@@ -38,13 +38,6 @@ def bag_clear
   $args.state.forked_bag = []
 end
 
-### Navigation
-
-# Jump to a specified label
-def jump label
-  $story.follow $args, { action: label }
-end
-
 ### Background
 # Sets the background image to a 1280x720 png file (run from a condition)
 def background_image(path)
@@ -182,7 +175,6 @@ def roll dice
 end
 
 def tick args
-  args.gtk.set_system_cursor(:arrow)
   $timer_start = Time.now.to_f
 
   $story ||= Forked::Story.new
@@ -204,20 +196,11 @@ def tick args
   args.state.forked.forked_show_eval ||= false
   if args.inputs.keyboard.key_held.two && args.inputs.keyboard.key_down.three
     args.state.forked.forked_show_eval = !args.state.forked.forked_show_eval
-    putz args.state.forked.forked_show_eval 
+    puts args.state.forked.forked_show_eval 
   end
-  reset if args.inputs.keyboard.key_down.backspace
+  $gtk.reset if args.inputs.keyboard.key_down.backspace
 
   $tick_time = Time.now.to_f - $timer_start 
 end
 
-def reset
-  # $story = nil
-  $args.gtk.reset
-end
-
-reset
-
-
-
-
+$gtk.reset
