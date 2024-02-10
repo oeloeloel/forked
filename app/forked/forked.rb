@@ -280,5 +280,173 @@ Tell Akz to write a better error message."
       @display.apply_theme(theme)
       @refresh = true
     end
+
+    #################
+    # Commands
+    #################
+
+    ### BAG (player inventory)
+
+    # adds an item to the player inventory
+    def bag_add item
+      bag << item unless bag_has? item
+    end
+
+    # removes an item from the player inventory
+    def bag_remove item
+      bag.delete item
+    end
+
+    # returns true if the player inventory includes item
+    def bag_has? item
+      bag.include? item
+    end
+
+    # the player inventory
+    def bag
+      $args.state.forked_bag ||= []
+    end
+
+    # empties the player inventory
+    def bag_clear
+      $args.state.forked_bag = []
+    end
+
+    ### Background
+    # Sets the background image to a 1280x720 png file (run from a condition)
+    def background_image(path)
+      $args.outputs.sprites << {
+        x: 0,
+        y: 0,
+        w: 1280,
+        h: 720,
+        path: path
+      }
+    end
+
+    ### Counters
+
+    def counter
+      $args.state.forked_counter ||= {}
+    end
+
+    def counter_up name, value = 1
+      counter[name] += value
+    end
+
+    def counter_down name, value = 1
+      counter[name] -= value
+    end
+
+    def counter_add name, value = 0
+      counter[name] = value
+    end
+
+    def counter_remove name
+      counter.delete(name)
+    end
+
+    def counter_check name
+      counter[name]
+    end
+
+    def counter_clear
+      $args.state.forked_counter = {}
+    end
+
+    ### Memos
+    # stores information that can be checked later
+    def memo
+      $args.state.forked_memo ||= {}
+    end
+
+    # adds a memo
+    def memo_add name, value
+      memo[name] = value
+    end
+
+    # deletes a memo
+    def memo_remove name
+      memo.delete(name)
+    end
+
+    # clears all memos
+    def memo_clear
+      $args.state.forked_memo = {}
+    end
+
+    # returns true if a memo exists
+    def memo_exists? name
+      memo[name] != nil
+    end
+
+    # returns the value of a memo
+    def memo_check name
+      memo[name]
+    end
+
+    ### Wallet
+    # Keeps track of the player's finances (gold coins, dollars, anything you like)
+    def wallet
+      args.state.forked_wallet ||= 0
+    end
+
+    # adds money to the wallet
+    def wallet_plus num
+      wallet = wallet + num
+    end
+
+    # removes money from the wallet
+    def wallet_minus num
+      wallet = wallet - num
+    end
+
+    # removes all money from the wallet
+    def wallet_clear
+      wallet = 0
+    end
+
+    ### Timers
+    # lets you create timers
+    def timer
+      args.state.forked_timer ||= {}
+    end
+
+    # creates a new, named timer with the provided duration
+    def timer_add name, duration
+      timer[name] = {
+        start_time: $args.tick_count,
+        duration: duration
+      }
+    end
+
+    # removes a named timer
+    def timer_remove name
+      timer.delete(name)
+    end
+
+    # checks how much time is left for a timer (will be negative when duration is up)
+    def timer_check name
+      timer[name][:duration] - ($args.tick_count - timer[name][:start_time])
+    end
+
+    # returns true if the named timer is complete
+    def timer_done? name
+      timer_check(name) <= 0
+    end
+
+    # returns timer value as seconds, minimum 0
+    def timer_seconds(name)
+      timer_check(name).idiv(60).greater(0)
+    end
+
+    ### Dice Roll
+    def roll dice
+      result = 0
+      num_dice, num_sides = dice.split('d', 2)
+      num_dice.to_i.times { result += rand(num_sides.to_i) + 1 }
+      result
+    end
+
   end
 end
