@@ -4,6 +4,8 @@ Version 0.0.6
 
 * Feature: Added html-style comments for greater ease of use in markdown editors
 * Exception: when using the `jump()` command without a parameter, Forked raises an exception with a message.
+* Added command `bag_sentence` which returns a string listing the player's inventory items.
+* Example: Added `Example: Inventory` to the manual to demonstrate simple inventory management with the `bag` commands.
 
 Current Version:
 

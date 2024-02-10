@@ -317,16 +317,7 @@ Tell Akz to write a better error message."
 
       return "nothing" if $args.state.forked_bag.empty?
 
-      str = ""
-      $args.state.forked_bag.each_with_index do |item, i|
-        str += item
-        if i < $args.state.forked_bag.count - 1
-          str += ", "
-        else
-          str += "."
-        end
-      end
-      str
+      $args.state.forked_bag.join(', ') + "."
     end
 
     ### Background
