@@ -429,6 +429,7 @@ If your player is involved in a dramatic shipwreck, they might lose the exotic s
 ~~~
 bag_clear
 ~~~
+[See Example](#example-inventory)
 
 ---
 [Back to Commands](#commands)
@@ -524,6 +525,7 @@ counter_check "number of rugs"
 [Countdown Timer](#example-timer)
 [Background Image](#example-background-image)
 [Roll Dice](#example-roll-dice)
+[Inventory](#example-inventory)
 
 ---
 [Back: Built-in Commands](#commands)
@@ -615,6 +617,27 @@ when 1
 end
 ```
 :>
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+## Example: Inventory {#example-inventory}
+
+Forked gives you a bag to hold the player's inventory.
+
+Your inventory currently contains: 
+<: bag_sentence :>
+
+[Pick up the potion of inconsequence](: bag_add "potion of inconsequence" :)
+[Pick up the Sword of Astrabliano](: bag_add "Sword of Astrabliano" :)
+[Pick up the Golden Crown of Impolior](: bag_add "Golden Crown of Impolior" :)
+@@
+[Drop the potion of inconsequence](: bag_remove "potion of inconsequence" :)
+[Drop the Sword of Astrabliano](: bag_remove "Sword of Astrabliano" :)
+[Drop the Golden Crown of Impolior](: bag_remove "Golden Crown of Impolior" :)
+@@
+[Turn bag upside down and shake it out](: bag_clear :)
 
 ---
 [Back to Examples](#examples)

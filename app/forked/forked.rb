@@ -312,6 +312,23 @@ Tell Akz to write a better error message."
       $args.state.forked_bag = []
     end
 
+    def bag_sentence
+      return "nothing" unless $args.state.forked_bag
+
+      return "nothing" if $args.state.forked_bag.empty?
+
+      str = ""
+      $args.state.forked_bag.each_with_index do |item, i|
+        str += item
+        if i < $args.state.forked_bag.count - 1
+          str += ", "
+        else
+          str += "."
+        end
+      end
+      str
+    end
+
     ### Background
     # Sets the background image to a 1280x720 png file (run from a condition)
     def background_image(path)
