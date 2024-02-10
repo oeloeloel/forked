@@ -80,4 +80,7 @@ Line E: The previous lines (Line B, C and D) should not be displayed.
 
 <!-- ## Ignored Chunk {#html-ignored}
 This entire chunk is ignored. The following Ruby code will cause an exception if this chunk is loaded.
-:: raise("This code shall not pass") :: -->
+:: raise("This code shall not pass! This error means the parser failed to ignore this commented code.") :: -->
+
+## Not ignored {#html-ignored}
+If we make it here, it means the previous commented out chunk was successfully ignored.
