@@ -1,3 +1,10 @@
+Next Version:
+
+Version 0.0.6
+
+* Feature: Added html-style comments for greater ease of use in markdown editors
+* Exception: when using the `jump()` command without a parameter, Forked raises an exception with a message.
+
 Current Version:
 
 Version 0.0.5
