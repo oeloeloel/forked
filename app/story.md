@@ -630,14 +630,26 @@ Your inventory currently contains:
 <: bag_sentence :>
 
 [Pick up the potion of inconsequence](: bag_add "potion of inconsequence" :)
-[Pick up the Sword of Astrabliano](: bag_add "Sword of Astrabliano" :)
+[Pick up the Spear of Astrabliano](: bag_add "Spear of Astrabliano" :)
 [Pick up the Golden Crown of Impolior](: bag_add "Golden Crown of Impolior" :)
-@@
-[Drop the potion of inconsequence](: bag_remove "potion of inconsequence" :)
-[Drop the Sword of Astrabliano](: bag_remove "Sword of Astrabliano" :)
-[Drop the Golden Crown of Impolior](: bag_remove "Golden Crown of Impolior" :)
-@@
-[Turn bag upside down and shake it out](: bag_clear :)
+
+<: 
+  bag_has? "potion of inconsequence" 
+::
+  [Drink the potion of inconsequence](: bag_remove "potion of inconsequence" :)
+:>
+<:
+  bag_has? "Spear of Astrabliano" 
+::
+  [Throw the Spear of Astrabliano](: bag_remove "Spear of Astrabliano" :)
+:>
+<:
+  bag_has? "Golden Crown of Impolior" 
+::
+  [Melt down the Golden Crown of Impolior](: bag_remove "Golden Crown of Impolior" :)
+:>
+
+[Turn your bag upside down and shake it out](: bag_clear :)
 
 ---
 [Back to Examples](#examples)
