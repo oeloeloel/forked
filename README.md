@@ -121,8 +121,16 @@ This text is displayed if the condition is true.
 
 ### Comment:
 Comments are not displayed and can be useful for leaving notes for yourself of other people.
+
+There are two kinds of comments available. C-style line comments, which are easier to type:
 ```
 // this line is a comment
+a = 1 // this is an inline comment
+```
+And HTML-style comments which have greater compatibility with markdown editors:
+```
+<!-- This is an html-style comment
+which can span multiple lines -->
 ```
 
 ## Formatting
