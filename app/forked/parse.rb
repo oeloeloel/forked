@@ -25,7 +25,8 @@ module Forked
         # [x] :chunk_id (chunk identifier)
         # [x] :paragraph (plain text)
         # [x] preformatted line (do not parse line and present as text)
-        # [x] comments (stripped and ignored)
+        # [x] c-style line comments (stripped and ignored)
+        # [x] html-style comments (stripped and ignored)
         # [x] :rule (horizontal rule)
         # :action (single line code)
         # :code (present with code format < 1 line)
@@ -44,9 +45,15 @@ module Forked
           result = parse_preformatted_line(line, context, story, line_no)
           next if result
 
-          ### STRIP COMMENT (//) and continue parsing line
-          result = parse_comment(line, context)
+          ### STRIP C COMMENT (//) and continue parsing line
+          result = parse_c_comment(line, context)
           line = result if result
+
+          ### HTML COMMENTS (<!-- -->)
+          result = parse_html_comment(line, context, line_no)
+          next unless result
+
+          line = result
 
           ### TITLE
           result = parse_title(line, context, story, line_no)
@@ -252,7 +259,7 @@ Please add a heading line after the title and before any other content. Example:
       end
 
       # strip comments from line (comments begin with //)
-      def parse_comment(line, context)
+      def parse_c_comment(line, context)
         return unless line.include?('//')
 
         prohibited_contexts = [:code_block]
@@ -267,6 +274,46 @@ Please add a heading line after the title and before any other content. Example:
         end
 
         nil
+      end
+
+      def parse_html_comment(line, context, line_no)
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return line unless context_safe?(context, prohibited_contexts, mandatory_contexts) 
+
+        left_mark = '<!--'
+        right_mark = '-->'
+
+        # catch inline or single line html comment
+
+        if line.include?(left_mark) && line.include?(right_mark)
+          line = (pull_out(left_mark, right_mark, line))[0]
+          
+          return line unless line.empty?
+
+          return nil
+        end
+
+        # start html comment (return non-comment part of line)
+        if line.include?(left_mark)
+          context << (:comment)
+          line = left_of_string(line, left_mark)
+          return nil if line.strip.empty?
+        end
+
+        # end html comment (return non-comment part of line)
+        if line.include?(right_mark)
+          context.delete(:comment)
+          line = right_of_string(line, right_mark)
+          return nil if line.strip.empty?
+        end
+
+        # while comment is open
+        if context.include?(:comment)
+          return nil
+        end
+
+        return line
       end
 
       def parse_blockquote(line, context, story, _line_no)
@@ -726,6 +773,11 @@ Please add a title to the top of the Story File. Example:
         }
       end
 
+      # given a string str and string delimiters left and right
+      # returns an array containing
+      # [0] the content of the string to the left of the left delimiter + the content of the string to the right of the right delimiter
+      # [1] the content of the string between the left and right delimiters
+      # If either or both delimiters are not found, [0] will be an empty string and [1] will contain the original str
       def pull_out left, right, str
         left_index = str.index(left)
 
@@ -737,6 +789,25 @@ Please add a title to the top of the Story File. Example:
         pulled = str.slice!(left_index + left.size..right_index - 1)
         str.sub!(left + right, '')
         [str.strip, pulled.strip]
+      end
+
+      # given a string str and a string delimiter
+      # returns the portion of str preceding the delimiter
+      # returns nil if the delimiter is not found
+      def left_of_string str, delimiter
+        return unless index = str.index(delimiter)
+
+        str.slice(0, index)
+      end
+
+      # given a string str and a string delimiter
+      # returns the portion of str following the delimiter
+      # returns nil if the delimiter is not found
+      def right_of_string str, delimiter
+        return unless index = str.index(delimiter)
+
+        index += delimiter.length
+        str.slice(index, str.length)
       end
     end
   end
