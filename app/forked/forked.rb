@@ -131,12 +131,15 @@ module Forked
     end
 
     # Jump to a specified label
-    def jump param
+    def jump param = nil
+      putz "jump(#{param})"
       if param.is_a?(Integer)
         navigate_relative(param)
       elsif param.is_a?(String)
         # TODO: Check that label exists
         navigate_id(param)
+      elsif param.is_a?(NilClass)
+        raise "`jump` must be given a parameter."
       end
     end
 
@@ -165,6 +168,7 @@ module Forked
     ### Actions
 
     def process_action(args, action)
+      putz "process_action(#{action})"
       if action.class == String
         if action == '#'
           navigate_relative(1)
