@@ -176,6 +176,7 @@ The Bag is a handy place to store stuff your player might be carrying with them.
 |`bag_add item` | adds an item to the player's inventory |
 |`bag_remove item` | removes an item from the player's inventory |
 |`bag_has? item` | `true` if the item is in the player's inventory or `false` if not |
+|`bag_sentence` | returns a string containing all the items in the player's bag |
 |`bag_clear` | clear all items from the inventory |
 
 Memo is for storing useful textual information, such as your player's name or what pronouns they use to describe themself. You can use it to store any information you want check or reuse later in your story.
