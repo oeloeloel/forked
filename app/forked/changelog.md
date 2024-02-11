@@ -6,6 +6,7 @@ Version 0.0.6
 * Exception: when using the `jump()` command without a parameter, Forked raises an exception with a message.
 * Added command `bag_sentence` which returns a string listing the player's inventory items.
 * Example: Added `Example: Inventory` to the manual to demonstrate simple inventory management with the `bag` commands.
+* Fixed: No longer attempts to display string interpolation if the condition evaluates to an empty string
 
 Current Version:
 
