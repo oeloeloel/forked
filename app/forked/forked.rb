@@ -216,10 +216,11 @@ Tell Akz to write a better error message."
     end
 
     def present(args)
+
       display_lines = state.forked.current_lines.copy
 
       display_lines.each do |element|
-
+      # putz "present #{element}"
         # deal first with content that contains atoms
         if element[:atoms]
 
@@ -231,6 +232,7 @@ Tell Akz to write a better error message."
             if result.class == String
               element[:atoms][j][:text] = "#{result} "
             elsif result.nil? || result == false
+              # putz "present result of atomic evaluation is empty string"
               element[:atoms][j][:text] = ''
             end
           end
@@ -239,6 +241,7 @@ Tell Akz to write a better error message."
           next unless element && element[:condition]
 
           result = evaluate(args, element[:condition])
+              # putz "present result of non-atomic evaluation is checked here"
 
           if result.nil? || result == false
             element[:type] = :blank
@@ -271,6 +274,9 @@ Tell Akz to write a better error message."
     #####################
 
     def evaluate(args, command)
+      # don't evalulate empty commands
+      return if command.strip == ("\"\"")
+      
       puts "Evaluating: #{command}" if state.forked.forked_show_eval
       eval(command)
     end
