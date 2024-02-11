@@ -26,10 +26,10 @@ STORY_FILE = 'app/story.md'
 # THEME = LIGHT_MODE
 
 # Dark background, light text
-# THEME = DARK_MODE
+THEME = DARK_MODE
 
 # Vibrant colours inspired by the KIFASS game jam
-THEME = KIFASS_THEME
+# THEME = KIFASS_THEME
 
 # Colour scheme inspired by the 20 Second Game Jam
 # THEME = TWENTY_SECOND_THEME
