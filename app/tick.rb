@@ -40,8 +40,8 @@ THEME = KIFASS_THEME
 # Loads the story
 #################
 def tick args
-  # on the html5 player, the story file loads faster if it runs after tick 0
-  # the code below prevents Forked from running on tick 0 if the game is running on the web
+  # on the html5 player, the story file loads faster if doesn't run immediately
+  # the code below prevents Forked from running on the first tick (tick 0) if the game is running on the web
   # this is a good place to add a splash/loading screen if you want one
   # but, generally, loading will be complete before the player has time to read any text
   if args.tick_count.zero? && args.gtk.platform?(:web)
