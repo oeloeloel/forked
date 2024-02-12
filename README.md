@@ -16,6 +16,7 @@ What it lets you do:
   * Show or hide buttons based on conditions
 * Buttons can link to other parts of the story or run code
 * Track the player's progress through the story
+* Automatically save the player's progress so they can continue playing where they left off
 
 ## Getting started
 To begin:
