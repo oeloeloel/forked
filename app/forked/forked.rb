@@ -306,20 +306,20 @@ Tell Akz to write a better error message."
 
     # the player inventory
     def bag
-      state.forked_bag ||= []
+      state.forked.forked_bag ||= []
     end
 
     # empties the player inventory
     def bag_clear
-      state.forked_bag = []
+      state.forked.forked_bag = []
     end
 
     def bag_sentence
-      return "nothing" unless state.forked_bag
+      return "nothing" unless state.forked.forked_bag
 
-      return "nothing" if state.forked_bag.empty?
+      return "nothing" if state.forked.forked_bag.empty?
 
-      state.forked_bag.join(', ') + "."
+      state.forked.forked_bag.join(', ') + "."
     end
 
     ### Background
@@ -337,7 +337,7 @@ Tell Akz to write a better error message."
     ### Counters
 
     def counter
-      state.forked_counter ||= {}
+      state.forked.forked_counter ||= {}
     end
 
     def counter_up name, value = 1
@@ -361,13 +361,13 @@ Tell Akz to write a better error message."
     end
 
     def counter_clear
-      state.forked_counter = {}
+      state.forked.forked_counter = {}
     end
 
     ### Memos
     # stores information that can be checked later
     def memo
-      state.forked_memo ||= {}
+      state.forked.forked_memo ||= {}
     end
 
     # adds a memo
@@ -382,7 +382,7 @@ Tell Akz to write a better error message."
 
     # clears all memos
     def memo_clear
-      state.forked_memo = {}
+      state.forked.forked_memo = {}
     end
 
     # returns true if a memo exists
@@ -398,7 +398,7 @@ Tell Akz to write a better error message."
     ### Wallet
     # Keeps track of the player's finances (gold coins, dollars, anything you like)
     def wallet
-      state.forked_wallet ||= 0
+      state.forked.forked_wallet ||= 0
     end
 
     # adds money to the wallet
@@ -419,7 +419,7 @@ Tell Akz to write a better error message."
     ### Timers
     # lets you create timers
     def timer
-      state.forked_timer ||= {}
+      state.forked.forked_timer ||= {}
     end
 
     # creates a new, named timer with the provided duration
