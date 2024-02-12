@@ -2,11 +2,13 @@ Next Version:
 
 Version 0.0.6
 
-* Feature: Added html-style comments for greater ease of use in markdown editors
-* Exception: when using the `jump()` command without a parameter, Forked raises an exception with a message.
+* Added html-style comments for greater ease of use in markdown editors
 * Added command `bag_sentence` which returns a string listing the player's inventory items.
-* Example: Added `Example: Inventory` to the manual to demonstrate simple inventory management with the `bag` commands.
+* Added exception: when using the `jump()` command without a parameter, Forked raises an exception with a message.
 * Fixed: No longer attempts to display string interpolation if the condition evaluates to an empty string
+* Added `Example: Inventory` to the manual to demonstrate simple inventory management with the `bag` commands.
+* Updated story example `A Story As You Like it by Raymond Queneau` and published on itch.io https://akzidenz.itch.io/peas
+* Updated story example `The Threshold`, added comments to the story file and published on itch.io https://akzidenz.itch.io/the-threshold
 
 Current Version:
 
