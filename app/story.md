@@ -546,20 +546,38 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 [Back to Contents](#contents)
 
 ## Example: Countdown Timer {#example-timer}
+<!-- Check to see if the "oxygen" timer has been created yet
+and if it has not, show the button that will create (add) it -->
+<:
+  !timer_exist? "oxygen"
 ::
-  timer_add "oxygen", 11.seconds
-::
-
-Warning: space suit rupture detected.
-
-<: 
-  "Oxygen remaining: #{timer_seconds "oxygen"}"
+  [Accidentally poke your spacesuit with a screwdriver](: timer_add "oxygen", 10.seconds :)
 :>
 
+<!-- If the "oxygen" timer has already been created and is counting down
+display another button to stop (remove) the timer -->
 <:
-  timer_done? "oxygen"
+  timer_exist? "oxygen"
 ::
-  You ran out of oxygen and you are feeling poorly.
+  [Fix the hole in your spacesuit with duct tape](: timer_remove "oxygen" :)
+  Warning: space suit rupture detected.
+:>
+
+<!-- If the "oxygen" timer exists...
+AND if it has finished counting down (done), display a message
+if it has not finished counting down, show how many seconds are left -->
+<:
+  ```rb
+  if (timer_exist? "oxygen")
+    if (timer_done? "oxygen")
+      "Oxygen level: critical! You are feeling very poorly!"
+    else
+      "Oxygen level: #{timer_seconds "oxygen"}"
+    end 
+  else
+    "Oxygen level: maximum"
+  end
+  ```
 :>
 
 ---

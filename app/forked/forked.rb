@@ -8,6 +8,8 @@ module Forked
     attr_gtk
 
     def tick
+      state.forked.dynamic.tick_count ||= -1
+      state.forked.dynamic.tick_count += 1
       defaults unless state.forked.defaults_set
       # navigated is passed to display to determine whether to reset
       # the keyboard selection during an update
@@ -43,12 +45,18 @@ module Forked
 
       state.forked.root_chunk = state.forked.story[:chunks][0]
       state.forked.title = state.forked.story[:title]
+      state.forked.story_id = state.forked.title.hash
 
       follow args
-      
+
       state.forked.defaults_set = true
 
-      navigate(0)
+      load_dynamic_state
+      if state.forked.dynamic&.forked_history.count > 0
+        navigate state.forked.dynamic.forked_history[-1]
+      else
+        navigate(0)
+      end
     end
 
     ## input for Forked
@@ -142,7 +150,7 @@ module Forked
     end
 
     def history_get
-      state.forked.forked_history.map do |h|
+      state.forked.dynamic.forked_history.map do |h|
         [
           h,
           state.forked.story.chunks[h][:id],
@@ -152,12 +160,12 @@ module Forked
     end
 
     def history_add(target)
-      state.forked.forked_history ||= [] 
-      state.forked.forked_history << target
+      state.forked.dynamic.forked_history ||= [] 
+      state.forked.dynamic.forked_history << target
     end
 
     def history(idx = nil)
-      history = state.forked.forked_history
+      history = state.forked.dynamic.forked_history
       return history unless idx
 
       history[idx]
@@ -174,11 +182,12 @@ module Forked
         else
           eval_action = action.delete_prefix('@@@@')
           evaluate(args, eval_action.to_s)
-          return
         end
       else
         raise "Forked: Unexpected action value. Expecting String or Integer. #{action.to_s}"
       end
+
+      save_dynamic_state
     end
 
     def process_new_chunk
@@ -306,20 +315,20 @@ Tell Akz to write a better error message."
 
     # the player inventory
     def bag
-      state.forked.forked_bag ||= []
+      state.forked.dynamic.forked_bag ||= []
     end
 
     # empties the player inventory
     def bag_clear
-      state.forked.forked_bag = []
+      state.forked.dynamic.forked_bag = []
     end
 
     def bag_sentence
-      return "nothing" unless state.forked.forked_bag
+      return "nothing" unless state.forked.dynamic.forked_bag
 
-      return "nothing" if state.forked.forked_bag.empty?
+      return "nothing" if state.forked.dynamic.forked_bag.empty?
 
-      state.forked.forked_bag.join(', ') + "."
+      state.forked.dynamic.forked_bag.join(', ') + "."
     end
 
     ### Background
@@ -337,7 +346,7 @@ Tell Akz to write a better error message."
     ### Counters
 
     def counter
-      state.forked.forked_counter ||= {}
+      state.forked.dynamic.forked_counter ||= {}
     end
 
     def counter_up name, value = 1
@@ -361,13 +370,13 @@ Tell Akz to write a better error message."
     end
 
     def counter_clear
-      state.forked.forked_counter = {}
+      state.forked.dynamic.forked_counter = {}
     end
 
     ### Memos
     # stores information that can be checked later
     def memo
-      state.forked.forked_memo ||= {}
+      state.forked.dynamic.forked_memo ||= {}
     end
 
     # adds a memo
@@ -382,7 +391,7 @@ Tell Akz to write a better error message."
 
     # clears all memos
     def memo_clear
-      state.forked.forked_memo = {}
+      state.forked.dynamic.forked_memo = {}
     end
 
     # returns true if a memo exists
@@ -398,7 +407,7 @@ Tell Akz to write a better error message."
     ### Wallet
     # Keeps track of the player's finances (gold coins, dollars, anything you like)
     def wallet
-      state.forked.forked_wallet ||= 0
+      state.forked.dynamic.forked_wallet ||= 0
     end
 
     # adds money to the wallet
@@ -419,13 +428,17 @@ Tell Akz to write a better error message."
     ### Timers
     # lets you create timers
     def timer
-      state.forked.forked_timer ||= {}
+      state.forked.dynamic.forked_timer ||= {}
+    end
+
+    def timer_exist? name
+      timer.keys.include? name
     end
 
     # creates a new, named timer with the provided duration
     def timer_add name, duration
       timer[name] = {
-        start_time: $args.tick_count,
+        start_time: state.forked.dynamic.tick_count,
         duration: duration
       }
     end
@@ -437,17 +450,22 @@ Tell Akz to write a better error message."
 
     # checks how much time is left for a timer (will be negative when duration is up)
     def timer_check name
+      return unless timer_exist?(name)
       timer[name][:duration] - ($args.tick_count - timer[name][:start_time])
     end
 
     # returns true if the named timer is complete
     def timer_done? name
+      return unless timer_exist?(name)
       timer_check(name) <= 0
     end
 
     # returns timer value as seconds, minimum 0
     def timer_seconds(name)
-      timer_check(name).idiv(60).greater(0)
+      return unless timer_exist?(name)
+
+      ticks = timer_check(name)
+      (ticks / 60).ceil.greater(0)
     end
 
     ### Dice Roll
@@ -456,6 +474,25 @@ Tell Akz to write a better error message."
       num_dice, num_sides = dice.split('d', 2)
       num_dice.to_i.times { result += rand(num_sides.to_i) + 1 }
       result
+    end
+
+
+    ##########
+    # SAVE
+    ##########
+
+    def save_dynamic_state
+      $gtk.serialize_state(save_path_get(:dynamic), state.forked.dynamic)
+    end
+
+    def load_dynamic_state
+      parsed_state = gtk.deserialize_state(save_path_get(:dynamic))
+      state.forked.dynamic = parsed_state if parsed_state
+    end
+
+    def save_path_get(save_type)
+      devmode = gtk.production ? '' : '-dev'
+      "data/#{save_type.to_s}-#{state.forked.story_id}#{devmode}.txt"
     end
 
   end
