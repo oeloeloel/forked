@@ -52,6 +52,7 @@ module Forked
       state.forked.defaults_set = true
 
       load_dynamic_state
+      state.forked.dynamic.forked_history ||= [] 
       if state.forked.dynamic&.forked_history.count > 0
         navigate state.forked.dynamic.forked_history[-1]
       else
@@ -150,6 +151,7 @@ module Forked
     end
 
     def history_get
+      state.forked.dynamic.forked_history ||= [] 
       state.forked.dynamic.forked_history.map do |h|
         [
           h,
