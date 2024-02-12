@@ -2,11 +2,14 @@ Next Version:
 
 Version 0.0.6
 
+* Added automatic saves. Whenever a button is clicked, the game automatically saves the player's navigation history, inventory, timers, counters, wallet. When the game is next loaded, the game will resume from the same location in the story with these variables restored.
 * Added html-style comments for greater ease of use in markdown editors
+* Added command `timer_exist` to check to see if a timer has been created
 * Added command `bag_sentence` which returns a string listing the player's inventory items.
 * Added exception: when using the `jump()` command without a parameter, Forked raises an exception with a message.
 * Fixed: No longer attempts to display string interpolation if the condition evaluates to an empty string
 * Added `Example: Inventory` to the manual to demonstrate simple inventory management with the `bag` commands.
+* Updated `Example: Countdown` to better illustrate the timer functionality
 * Updated story example `A Story As You Like it by Raymond Queneau` and published on itch.io https://akzidenz.itch.io/peas
 * Updated story example `The Threshold`, added comments to the story file and published on itch.io https://akzidenz.itch.io/the-threshold
 
