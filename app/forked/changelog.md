@@ -2,7 +2,7 @@ Current Version:
 
 Version 0.0.6
 
-* Added automatic saves. Whenever a button is clicked, the game automatically saves the player's navigation history, inventory, timers, counters, wallet. When the game is next loaded, the game will resume from the same location in the story with these variables restored.
+* Added automatic saves. Whenever a button is clicked, the game automatically saves the player's navigation history, inventory, timers, counters, wallet. When the game is next loaded, the game will resume from the same location in the story with these variables restored. Autosaving can be disabled by changing `autosave: true` to `false` in `defaults.rb`.
 * Added html-style comments for greater ease of use in markdown editors
 * Added command `timer_exist` to check to see if a timer has been created
 * Added command `bag_sentence` which returns a string listing the player's inventory items.
