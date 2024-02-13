@@ -74,7 +74,7 @@ Open up the `app/story.md` file in any text editor and you'll see the contents o
 
 When you want to start a new story, create a new file in the `app` folder and call it whatever you want.
 
-Open the `main.rb` file and look for a line near the top that says
+Open the `tick.rb` file and look for a line near the top that says
 
 ~~~
 STORY_FILE = 'app/story.md'
