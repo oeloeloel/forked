@@ -9,7 +9,6 @@
 
 # This is the user manual
 STORY_FILE = 'app/story.md'
-STORY_FILE = 'app/forked/tests/save.md'
 
 # A story about three peas, written by Raymond Queneau
 # STORY_FILE = 'app/peas.md'
