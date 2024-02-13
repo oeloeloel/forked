@@ -493,8 +493,16 @@ Tell Akz to write a better error message."
       save_dynamic_state
     end
 
+    def clear_save_data
+      clear_saved_dynamic_state
+    end
+
     def save_dynamic_state
       $gtk.serialize_state(save_path_get(:dynamic), state.forked.dynamic)
+    end
+
+    def clear_saved_dynamic_state
+      $gtk.write_file(save_path_get(:dynamic), '')
     end
 
     def load_dynamic_state

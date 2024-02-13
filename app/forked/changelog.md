@@ -2,6 +2,17 @@ Current Version:
 
 Version 0.0.6
 
+* Added save feature. Author can save the player's navigation history, inventory, etc. from within the story file using the `save_game` command:
+To save the game when a chunk is loaded:
+```
+:: save_game ::
+```
+
+To save the game when a button is clicked:
+```
+[Save your progress before entering the boss battle](: save_game :)
+```
+Saved game data will be automatically loaded when the story starts up. The game will continue from the chunk that was on display when the game was saved.
 * Added automatic saves. Whenever a button is clicked, the game automatically saves the player's navigation history, inventory, timers, counters, wallet. When the game is next loaded, the game will resume from the same location in the story with these variables restored. Autosaving can be disabled by changing `autosave: true` to `false` in `defaults.rb`.
 * Added html-style comments for greater ease of use in markdown editors
 * Added command `timer_exist` to check to see if a timer has been created
