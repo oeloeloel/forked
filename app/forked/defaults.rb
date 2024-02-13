@@ -5,7 +5,7 @@ module Forked
     {
       # if autosave is true, game progress will be
       # saved every time the player clicks a button
-      autosave: false,
+      autosave: true,
     }
   end
 end
