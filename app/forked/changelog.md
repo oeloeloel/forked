@@ -12,8 +12,14 @@ To save the game when a button is clicked:
 ```
 [Save your progress before entering the boss battle](: save_game :)
 ```
+
 Saved game data will be automatically loaded when the story starts up. The game will continue from the chunk that was on display when the game was saved.
-* Added automatic saves. Whenever a button is clicked, the game automatically saves the player's navigation history, inventory, timers, counters, wallet. When the game is next loaded, the game will resume from the same location in the story with these variables restored. Autosaving can be disabled by changing `autosave: true` to `false` in `defaults.rb`.
+
+Save data can be cleared from within the story file using the `clear_save_data` command. This empties the save file (note that this may not be meaningful if autosaves are enabled - see below)
+```
+:: clear_save_data ::
+```
+* Added automatic saves. Whenever the player clicks a button, the game automatically saves the game. Autosaving can be disabled by changing `autosave: false` in `defaults.rb`.
 * Added html-style comments for greater ease of use in markdown editors
 * Added command `timer_exist` to check to see if a timer has been created
 * Added command `bag_sentence` which returns a string listing the player's inventory items.
