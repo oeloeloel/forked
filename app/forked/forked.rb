@@ -7,6 +7,10 @@ module Forked
   class Story
     attr_gtk
 
+    def data
+      state.forked ||= state.new_entity('forked')
+    end
+
     def tick
       state.forked.dynamic.tick_count ||= -1
       state.forked.dynamic.tick_count += 1
@@ -34,6 +38,8 @@ module Forked
     end
 
     def defaults
+      # state.forked.defaults = forked_defaults
+      state.forked.defaults = Forked.forked_defaults
       @refresh = true
       @hashed_display = 0
       if STORY_FILE.end_with?('.json')
@@ -189,7 +195,7 @@ module Forked
         raise "Forked: Unexpected action value. Expecting String or Integer. #{action.to_s}"
       end
 
-      save_dynamic_state
+      save_dynamic_state if state.forked.defaults[:autosave]
     end
 
     def process_new_chunk
