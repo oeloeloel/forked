@@ -489,6 +489,10 @@ Tell Akz to write a better error message."
     # SAVE
     ##########
 
+    def save_game
+      save_dynamic_state
+    end
+
     def save_dynamic_state
       $gtk.serialize_state(save_path_get(:dynamic), state.forked.dynamic)
     end
