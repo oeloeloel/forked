@@ -1,5 +1,36 @@
 Current Version:
 
+Version 0.0.6
+
+* Added save feature. Author can save the player's navigation history, inventory, etc. from within the story file using the `save_game` command:
+To save the game when a chunk is loaded:
+```
+:: save_game ::
+```
+
+To save the game when a button is clicked:
+```
+[Save your progress before entering the boss battle](: save_game :)
+```
+
+Saved game data will be automatically loaded when the story starts up. The game will continue from the chunk that was on display when the game was saved.
+
+Save data can be cleared from within the story file using the `clear_save_data` command. This empties the save file (note that this may not be meaningful if autosaves are enabled - see below)
+```
+:: clear_save_data ::
+```
+* Added automatic saves. Whenever the player clicks a button, the game automatically saves the game. Autosaving can be disabled by changing `autosave: false` in `defaults.rb`.
+* Added html-style comments for greater ease of use in markdown editors
+* Added command `timer_exist` to check to see if a timer has been created
+* Added command `bag_sentence` which returns a string listing the player's inventory items.
+* Added exception: when using the `jump()` command without a parameter, Forked raises an exception with a message.
+* Fixed: No longer attempts to display string interpolation if the condition evaluates to an empty string
+* Clean-up of functionality in `tick.rb` and comments added to make it easier to follow the deployment. Loading story file on second tick when running on the web for performance improvement.
+* Added `Example: Inventory` to the manual to demonstrate simple inventory management with the `bag` commands.
+* Updated `Example: Countdown` to better illustrate the timer functionality
+* Updated story example `A Story As You Like it by Raymond Queneau` and published on itch.io https://akzidenz.itch.io/peas
+* Updated story example `The Threshold`, added comments to the story file and published on itch.io https://akzidenz.itch.io/the-threshold
+
 Version 0.0.5
 
 * Added customizable keyboard navigation to display. Defaults: cycle forwards through buttons with right arrow or down arrow, cycle backwards with left or up arrows activate buttons with space or enter. Keyboard defaults can be modified in `app/forked/input.rb`

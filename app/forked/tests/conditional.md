@@ -1,6 +1,6 @@
 # Conditional Elements
 
-## Test 1: Interpolation:
+## Interpolation solo
 
 ~~~
 <:
@@ -16,7 +16,6 @@
 
 <: 
 ```rb
-    puts args.outputs.primitives[2...7]
     subject = args.outputs.primitives[2...7]
     expect = [{:x=>200, :y=>528.9, :w=>880, :h=>75.09999999999999, :primitive_marker=>:sprite, :padding_left=>20, :padding_right=>20, :padding_top=>7, :padding_bottom=>12, :margin_left=>0, :margin_right=>0, :margin_top=>0, :margin_bottom=>0, :min_height=>0, :r=>63, :g=>67, :b=>51}, {:x=>220, :y=>597.0, :text=>"<:\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>578.3, :text=>"\"1 During\"\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>559.5999999999999, :text=>":>\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>200, :y=>513, :text=>"1 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
@@ -24,7 +23,7 @@
 :>
 
 
-## Test 2: Interpolation after text
+## Interpolation after text
 ~~~
 2 Before
 <:
@@ -43,13 +42,12 @@
 <: 
 ```rb
     subject = args.outputs.primitives[2...9]
-    puts subject
     expect = [{:x=>200, :y=>510.2, :w=>880, :h=>93.8, :primitive_marker=>:sprite, :padding_left=>20, :padding_right=>20, :padding_top=>7, :padding_bottom=>12, :margin_left=>0, :margin_right=>0, :margin_top=>0, :margin_bottom=>0, :min_height=>0, :r=>63, :g=>67, :b=>51}, {:x=>220, :y=>597.0, :text=>"2 Before\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>578.3, :text=>"<:\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>559.5999999999999, :text=>"\"2 During\"\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>540.8999999999999, :text=>":>\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>200, :y=>494, :text=>"2 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>494, :text=>"2 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
 
-## Test 3: Interpolation before text
+## Interpolation before text
 
 ~~~
 <:
@@ -68,14 +66,14 @@
 <: 
 ```rb
     subject = args.outputs.primitives[2...9]
-    putz subject
+
     expect = [{:x=>200, :y=>510.2, :w=>880, :h=>93.8, :primitive_marker=>:sprite, :padding_left=>20, :padding_right=>20, :padding_top=>7, :padding_bottom=>12, :margin_left=>0, :margin_right=>0, :margin_top=>0, :margin_bottom=>0, :min_height=>0, :r=>63, :g=>67, :b=>51}, {:x=>220, :y=>597.0, :text=>"<:\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>578.3, :text=>"\"3 During\"\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>559.5999999999999, :text=>":>\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>540.8999999999999, :text=>"3 After\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>200, :y=>494, :text=>"3 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>494, :text=>"3 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
 
 
-## Test 4: Interpolation after and before text
+## Interpolation before and after text
 ~~~
 4 Before
 <:
@@ -95,14 +93,14 @@
 
 <: 
 ```rb
-    puts subject = args.outputs.primitives[2...11]
+    subject = args.outputs.primitives[2...11]
     expect = [{:x=>200, :y=>491.5, :w=>880, :h=>112.5, :primitive_marker=>:sprite, :padding_left=>20, :padding_right=>20, :padding_top=>7, :padding_bottom=>12, :margin_left=>0, :margin_right=>0, :margin_top=>0, :margin_bottom=>0, :min_height=>0, :r=>63, :g=>67, :b=>51}, {:x=>220, :y=>597.0, :text=>"4 Before\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>578.3, :text=>"<:\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>559.5999999999999, :text=>"\"4 During\"\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>540.8999999999999, :text=>":>\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>220, :y=>522.1999999999998, :text=>"4 After\n ", :primitive_marker=>:label, :font=>"fonts/roboto_mono/static/robotomono-regular.ttf", :size_enum=>0, :line_spacing=>0.85, :r=>179, :g=>204, :b=>127, :spacing_after=>0.7, :size_px=>22.0}, {:x=>200, :y=>476, :text=>"4 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>476, :text=>"4 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>349, :y=>476, :text=>"4 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
 
 
-## Test 5: Conditional
+## Conditional
 
 <:
 true
@@ -115,13 +113,13 @@ true
 
 <: 
 ```rb
-    puts subject = args.outputs.primitives[2...3]
+    subject = args.outputs.primitives[2...3]
     expect = [{:x=>200, :y=>604, :text=>"5 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
 
-## Test 6: Conditional after text
+## Conditional after text
 
 6 Before
 <:
@@ -135,13 +133,13 @@ true
 
 <: 
 ```rb
-    puts subject = args.outputs.primitives[2...4]
+    subject = args.outputs.primitives[2...4]
     expect = [{:x=>200, :y=>604, :text=>"6 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"6 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
 
-## Test 7: Conditional before text
+## Conditional before text
 
 <:
 true
@@ -155,13 +153,13 @@ true
 
 <: 
 ```rb
-    puts subject = args.outputs.primitives[2...4]
+    subject = args.outputs.primitives[2...4]
     expect = [{:x=>200, :y=>604, :text=>"7 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"7 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
 :>
 
-## Test 8: Conditional after and before text
+## Conditional after and before text
 
 8 Before
 <:
@@ -176,7 +174,7 @@ true
 
 <: 
 ```rb
-    puts subject = args.outputs.primitives[2...5]
+    subject = args.outputs.primitives[2...5]
     expect = [{:x=>200, :y=>604, :text=>"8 Before ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>274, :y=>604, :text=>"8 During ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>349, :y=>604, :text=>"8 After ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
@@ -195,7 +193,6 @@ Single line string interpolation is wrapped in `<:` and `:>` symbols.
 ```rb
     
     subject = args.outputs.primitives[2...4]
-    puts subject
     expect = [{:x=>200, :y=>604, :text=>"Single line string interpolation is wrapped in `<:` and `:>` symbols. ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>568, :text=>"This text is conditional ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
@@ -216,7 +213,6 @@ Multi line string interpolation has the `<:` on the preceding line and `:>` on t
 ```rb
     
     subject = args.outputs.primitives[2...4]
-    puts subject
     expect = [{:x=>200, :y=>604, :text=>"Multi line string interpolation has the `<:` on the preceding line and `:>` on the following line. ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>568, :text=>"This text is conditional ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
 ```
@@ -398,8 +394,29 @@ Test Paragraph 2
 ```rb
     
     subject = args.outputs.primitives[2...6]
-    puts subject
     expect = [{:x=>200, :y=>604, :text=>"Test Paragraph 1 ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>528.2, :w=>182, :h=>34.0, :primitive_marker=>:sprite, :padding_left=>10, :padding_right=>10, :padding_top=>6, :padding_bottom=>6, :margin_left=>0, :margin_right=>0, :margin_top=>0, :margin_bottom=>0, :min_height=>0, :r=>102, :g=>102, :b=>102}, {:x=>210, :y=>556.2, :text=>"Test Block Element", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-bold.ttf", :size_enum=>0, :line_spacing=>1, :r=>51, :g=>51, :b=>51, :spacing_between=>0.25, :spacing_after=>0.7, :size_px=>22.0}, {:x=>200, :y=>512, :text=>"Test Paragraph 2 ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}]
     expect == subject ? "Test passed " : "Test failed"
+```
+:>
+
+## Interpolation evaluates to empty string {#empty-string}
+
+Forked should not attempt to display string interpolation if the result string is empty
+
+:: $val = "" ::
+
+Text before interpolation
+<: $val :>
+
+Paragraph after interpolation
+
+---
+[Next]()
+
+<: 
+```rb
+    
+    subject = args.outputs.primitives[2...5]
+    expect = [{:x=>200, :y=>604, :text=>"Forked should not attempt to display string interpolation if the result string is empty ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>568, :text=>"Text before interpolation ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>533, :text=>"Para after ", :primitive_marker=>:label, :font=>"fonts/roboto/roboto-regular.ttf", :size_enum=>0, :line_spacing=>1, :r=>204, :g=>204, :b=>204, :spacing_between=>0.6, :spacing_after=>0.9, :size_px=>22.0}, {:x=>200, :y=>491.7999999999999, :w=>880, :h=>1, :primitive_marker=>:sprite, :r=>204, :g=>204, :b=>204, :weight=>3, :spacing_after=>11}]
 ```
 :>
