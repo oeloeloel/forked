@@ -502,7 +502,7 @@ Tell Akz to write a better error message."
     end
 
     def clear_saved_dynamic_state
-      $gtk.write_file(save_path_get(:dynamic), '')
+      $gtk.delete_file_if_exist(save_path_get(:dynamic))
     end
 
     def load_dynamic_state
