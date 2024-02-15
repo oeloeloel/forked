@@ -53,6 +53,12 @@ module Forked
       state.forked.title = state.forked.story[:title]
       state.forked.story_id = state.forked.title.hash
 
+      # allow story to run one-time setup code that needs to be
+      # setup regardless of where we start the story after a reload
+      state.forked.story.actions.each do |a|
+        evaluate args, a
+      end
+
       follow args
 
       state.forked.defaults_set = true

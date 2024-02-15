@@ -74,15 +74,15 @@ module Forked
 
           # Forked wants the first non blank line after the title
           # to be a heading and will throw a wobbly if it isn't
-          if context.include?(:heading) && !line.strip.empty?
-            raise "FORKED: CONTENT BEFORE FIRST HEADING.
+#           if context.include?(:heading) && !line.strip.empty?
+#             raise "FORKED: CONTENT BEFORE FIRST HEADING.
 
-Forked expects to find a heading before finding any content.
-Please add a heading line after the title and before any other content. Example:
+# Forked expects to find a heading before finding any content.
+# Please add a heading line after the title and before any other content. Example:
 
-`## The First Chapter {#start}`
-"
-          end
+# `## The First Chapter {#start}`
+# "
+#           end
 
           ### RULE
           result = parse_rule(line, context, story, line_no)
@@ -418,27 +418,42 @@ Please add a heading line after the title and before any other content. Example:
             line.delete_prefix!(':: ')
             line.delete_suffix!(' ::')
             line.strip!
-            story[:chunks][-1][:actions] << line
+            if story[:chunks][-1]
+              story[:chunks][-1][:actions] << line
+            else # different behaviour for code that comes between the title and the first chunk
+              story[:actions] ||= []
+              story[:actions] << line
+            end
+
             return true
           end
 
           # capture action block end/start (close/open context)
           if context.include?(:action_block)
             context.delete(:action_block)
-          else
+          elsif story[:chunks][-1] 
             context << (:action_block)
             story[:chunks][-1][:actions] << ''
+          else # different behaviour for code that comes before the first chunk
+            context << (:action_block)
           end
           return true
 
         # capture action block content
         elsif context.include?(:action_block)
-          destination = story[:chunks][-1][:actions][-1]
-          if destination.nil?
-            raise "FORKED: An action block is open but no action exists in the current chunk.\n"\
-                  "Check for an unterminated action block (::) around or before line #{line_no + 1}."
+          
+          if story[:chunks][-1] 
+            destination = story[:chunks][-1][:actions][-1]
+            
+            if destination.nil?
+              raise "FORKED: An action block is open but no action exists in the current chunk.\n"\
+                    "Check for an unterminated action block (::) around or before line #{line_no + 1}."
+            end
+            story[:chunks][-1][:actions][-1] += line
+          else # different behaviour for code that comes before the first chunk
+            story[:actions] ||= []
+            story[:actions] << line
           end
-          story[:chunks][-1][:actions][-1] += line
           return true
         end
       end
