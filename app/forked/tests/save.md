@@ -1,39 +1,48 @@
 # Saving and Loading Game Progress
 
-## Saving and Loading Game Progress
-This file assumes that
+## Saving and Loading Game Progress {#start}
 
-1. Autosaving is enabled\
-2. There is no current save file when beginning this test
+:: 
+state.forked.defaults.autosave = false
+clear_save_data
+::
 
-If necessary, go to the `data` folder and delete the save files
+When this chunk was loaded, autosave was set to false and any existing save data for this story was deleted.
 
-No save file should be created yet (by default, progress is not saved immediately).
+The current save file `dynamic-2547718119-dev.txt` should not exist.
 
-Check the `data` folder.
+Check the data folder to ensure that the save file does not exist.
 
 ---
 [Next](#)
+
 
 
 ## Autosave
-Autosave must be enabled (it is by default) for this test to work.
 
-When entering this chunk, a save file was created in the data folder.
+In this chunk, autosave is enabled. A save file was created in the data folder.
+
+The save file name will be:\
+`dynamic-2547718119-dev.txt`
+
+Check that the file exists.
+
+:: state.forked.defaults[:autosave] = true ::
 
 ---
 [Next](#)
+[Restart tests](#start)
 
 ## Autoload
-Autosave must be enabled and the previous chunk (# Autosave) must have been visited.
 
 Quit the game and re-open it. This chunk, the current chunk, should be displayed.
 
 ---
 [Next](#)
+[Restart tests](#start)
 
 ## Save Bag (Inventory)
-When this chunk loads, inventory will be added to the bag. This will be verified in the next chunk.
+When this chunk loads, inventory will be added to the bag and displayed below. Close and re-open the game to check that the inventory remains the same.
 
 ::
 bag_add "item 1"
@@ -41,38 +50,37 @@ bag_add "item 2"
 bag_add "item 3"
 ::
 
----
-[Next](#)
-
-## View Bag
-
-The bag should contain 3 items. If you see them listed below, the test passed.
-
-The bag contains:
 <: bag_sentence :>
 
 ---
 [Next](#)
+[Restart tests](#start)
 
-## Remove Item from Bag
+## Clear Bag
 
-The second item is removed from the bag when this chunk loads. The current list of items is shown below.
+:: 
+state.forked.defaults.autosave = false
+clear_save_data
+::
 
-:: bag_remove "item 2" ::
+Autosave has been disabled and the save data has been cleared.
 
-The bag contains:
-<: bag_sentence :>
-
-Quit and restart this story. When it reloads, the same two items should be displayed.
+Check that the save file is removed.
 
 ---
 [Next](#)
+[Restart tests](#start)
 
-## Empty Bag
+## Autosaving disabled (last test)
 
-All items are removed from the bag using the `bag_clear` command.
+:: 
+state.forked.defaults.autosave = false
+::
 
-:: bag_clear ::
+Autosave is disabled. Close and reopen the game. 
 
-The bag contains:
-<: bag_sentence :>
+When the game loads, you should not see this screen. The game will be returned to the first screen.
+
+---
+[Next]()
+[Restart tests](#start)
