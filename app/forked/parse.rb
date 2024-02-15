@@ -616,22 +616,26 @@ Please add a title to the top of the Story File. Example:
         line.strip!
         line.delete_prefix!('##').strip!
 
+        gfm_slug = make_slug(line)
+        putz gfm_slug
+
         if line.include?('{') && line.include?('}')
           line = pull_out('{', '}', line)
         else
           line = [line]
         end
 
-        # line
+      
+        
         heading, chunk_id = line
             if heading.empty? && chunk_id.nil?
               raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
             end
 
             heading = story.title.delete_prefix("#").strip if heading.empty?
-            
             chk = make_chunk_hash
             chk[:id] = chunk_id
+            chk[:slug] = gfm_slug
 
             hdg = make_heading_hash
             hdg[:text] = heading
@@ -719,6 +723,19 @@ Please add a title to the top of the Story File. Example:
           story[:chunks][-1][:content][-1].action += line
           return true
         end
+      end
+
+      def make_slug(line)
+        # make slug for GFM compatibility
+        l = line.downcase.gsub(' ', '-')
+        slug = ''
+        l.chars.each do |c|
+          o = c.ord
+          if (o >= 97 && o <= 122) || (o >= 48 && o <= 57) || o == 45
+           slug += c
+          end
+        end
+        slug
       end
 
       def make_story_hash
