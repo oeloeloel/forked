@@ -508,6 +508,14 @@ Tell Akz to write a better error message."
     # SAVE
     ##########
 
+    def autosave_off
+      state.forked.defaults.autosave = false
+    end
+
+    def autosave_on
+      state.forked.defaults.autosave = true
+    end
+
     def save_game
       save_dynamic_state
     end
