@@ -1,5 +1,18 @@
 Current Version:
 
+Next version 0.0.7
+
+* Forked now allows GitHub Flavor Markdown links. It is now possible to link to headers as seen below. This makes writing buttons easier and improves compatibility with markdown editors, such as Visual Studio Code.
+```md
+<!-- header -->
+## Target Header
+
+<!-- button -->
+[Go to Target Header](#target-header)
+```
+
+
+
 Version 0.0.6
 
 * Added save feature. Author can save the player's navigation history, inventory, etc. from within the story file using the `save_game` command:
