@@ -101,12 +101,18 @@ module Forked
     end
 
     def find_chunk_index_from_id(chunk_id)
-      ind = state.forked.story.chunks.index { |i| i[:id] == chunk_id }
+      ci = chunk_id
+      # find chunk by ID if it exists
+      ind = state.forked.story.chunks.index { |i| i[:id] == ci }
       return ind if ind
       
-      ci = chunk_id.delete_prefix('#')
+      # if ID does not exist, remove # and find slug if it exists
+      ci.delete_prefix!('#')
       ind = state.forked.story.chunks.index { |i| i[:slug] == ci }
-      return ind
+      return ind if ind
+
+      # if ID does not exist and slug does not exist, make some noise
+      raise "FORKED: Broken link. Unable to find the chunk `#{chunk_id}`"
     end
 
     # accepts chunk ID, finds the chunk index and calls navigate()
