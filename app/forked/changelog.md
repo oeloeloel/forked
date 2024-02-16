@@ -1,8 +1,10 @@
-Current Version:
 
-Next version 0.0.7
 
-* Forked now allows GitHub Flavor Markdown links. It is now possible to link to headers as seen below. This makes writing buttons easier and improves compatibility with markdown editors, such as Visual Studio Code.
+Next Version
+
+### Version 0.0.7
+
+* **Added GitHub Flavor Markdown links**. It is now possible to link to headers as seen below. This makes buttons easier to create and improves compatibility with markdown editors, such as Visual Studio Code.
 ```md
 <!-- header -->
 ## Target Header
@@ -10,10 +12,27 @@ Next version 0.0.7
 <!-- button -->
 [Go to Target Header](#target-header)
 ```
+* **Added new autosave commands** that can be called from inside a story file: `autosave_off` and `autosave_on` control whether player variables will be automatically saved. By default autosave is enabled and runs whenever the player activates a button. Autosave commands can be called when a story chunk loads:
+```
+## Forgetting
+:: autosave_off ::
+```
+Or when a button is ativated:
+```
+## Remembering
+[Start remembering](: autosave_on :)
+```
+* **Added ability to run actions whenever the game is loaded**. These block actions will run one time, when the game is reloaded or reset. This may be useful for changing autosave settings on a per-story basis. To do this, add a block action after the game title and before the first chunk heading. Example:
+```
+# Memoirs of an Amnesiac
+:: autosave_off ::
 
+## Chapter One
+```
 
+## Current Version:
 
-Version 0.0.6
+### Version 0.0.6
 
 * Added save feature. Author can save the player's navigation history, inventory, etc. from within the story file using the `save_game` command:
 To save the game when a chunk is loaded:
