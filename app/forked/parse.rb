@@ -616,8 +616,7 @@ Please add a title to the top of the Story File. Example:
         line.strip!
         line.delete_prefix!('##').strip!
 
-        gfm_slug = make_slug(line)
-        putz gfm_slug
+        gfm_slug = make_slug(line) # GFM style header navigation
 
         if line.include?('{') && line.include?('}')
           line = pull_out('{', '}', line)
