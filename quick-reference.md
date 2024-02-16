@@ -202,6 +202,8 @@ Forked automatically saves progress but, if you prefer, you can manually control
 |-|-|
 | `save_game` | saves game progress, including navigation history, bag items, timers, counters and memos. Saved data is automatically loaded when Forked starts up. |
 | `clear_save_data` | deletes saved game progress if autosaving is disabled |
+| `autosave_off` | disables autosaving |
+| `autosave_on` | enables autosaving |
 
 ## Author Mode
 Author mode provides some features that may be useful while writing your story. Note that the shortcut keys may change in the future.

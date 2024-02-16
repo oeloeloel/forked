@@ -87,3 +87,28 @@ To clear save data when a player activates a button:
 ## Clear save data when player clicks button {#clear-save-on-click}
 [Click to clear save data file](: clear_save_data :)
 ```
+
+It is also possible to enable/disable autosaving from inside a story file:
+```
+<!-- disable autosave when chunk loads -->
+:: autosave_off ::
+
+<!-- enable autosave when chunk loads -->
+:: autosave_on ::
+
+<!-- disable autosave when button is clicked -->
+[Button](: autosave_off :)
+
+<!-- enable autosave when button is clicked -->
+[Button](: autosave_on :)
+```
+
+If you want to disable autosaving for a story file you can do that from within the story file by putting the `autosave_off` command after the story title (before the first chunk header):
+```
+# This is the Story Title
+
+<!-- disable autosave for this story -->
+:: autosave_off ::
+
+## This is the first chunk
+```
