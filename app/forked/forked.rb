@@ -101,7 +101,12 @@ module Forked
     end
 
     def find_chunk_index_from_id(chunk_id)
-      state.forked.story.chunks.index { |i| i[:id] == chunk_id }
+      ind = state.forked.story.chunks.index { |i| i[:id] == chunk_id }
+      return ind if ind
+      
+      ci = chunk_id.delete_prefix('#')
+      ind = state.forked.story.chunks.index { |i| i[:slug] == ci }
+      return ind
     end
 
     # accepts chunk ID, finds the chunk index and calls navigate()
