@@ -6,24 +6,32 @@ You must provide a title for your story and it should be the first line in the s
 # Title
 ```
 
-### Chunk heading and ID:
-Forked displays the heading text for the current chunk.
-The Chunk ID allows Forked to identify each chunk of the story and should be unique.
+### Chunk heading (and optional Chunk ID)
+Forked displays the heading text for the current chunk. Headings begin with `##` (2 hash/pound symbols).
+
+```md
+## Heading Name
 ```
+Forked allows you to link from one chunk to another using the heading name. Optionally, you can add a Chunk ID to the heading line. The Chunk ID should be unique and it will help you to ensure that you do not have duplicated heading lines.
+
+```md
 ## Heading Name {#chunk_id}`
 ```
 
 ### Trigger and target:
 By default, a trigger is displayed as a button.
 The first part of the trigger, between `[ ]` is the visible text of the button.
-The second part of the trigger, between `( )`, is the action to perform. See the examples below.
+The second part of the trigger, between `( )`, is the action to perform. To navigate to another chunk of the story, add the chunk header here. (Note that you need to write the chunk header in all lowercase letters, removing all punctuation marks and replace spaces with hyphens)
 
-Navigate to a chunk by its Chunk ID
-```
-[Trigger text](#target_id)
+```md
+<!-- the following examples will show navigation to a chunk named "Target Header" -->
+## Target Header
+
+<!-- Navigate to "Target Header" -->
+[Trigger text](#target-header)
 ```
 
-Navigate to the following chunk in the story file:
+This trigger will navigate to the following chunk in the story file:
 ```
 [Trigger text](#)
 ```
