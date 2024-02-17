@@ -29,6 +29,7 @@ Or when a button is ativated:
 
 ## Chapter One
 ```
+* File structure: In the Forked repo, the `forked` folder has moved from `app/forked` to `lib/forked`. Requires have been changed to use `require_relative` so the developer can require `forked` with a single line and move the `forked` folder wherever they like. 
 
 ## Current Version:
 
@@ -75,8 +76,7 @@ Version 0.0.5
 * Added Background Image example to manual showing how to set a background image for the current story chunk.
 * Added Roll Dice example to manual showing how to generate random dice rolls.
 
-Experimental features:
-======================
+** Experimental features:**
 * Added spellcheck export: Devmode support. Exports text file with code and chunk ids removed. Line numbers are added to make corrections easier. Type `Forked.export_spell_check` in the console to export a file `spellcheck.txt` in the project folder.
 * Added json story export feature (experimental). Exports the currently loaded story to a json file in the DragonRuby folder. Json functionality is provided by [dragonjson](https://github.com/leviongit/dragonjson/blob/master/json.rb).
 To use, load a story file into forked, then enter in the console: `Forked.export_story_as_json`
