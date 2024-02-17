@@ -69,13 +69,21 @@ module Forked
           "------------------"
         ]
 
-        am_labels += hist[0..19].map_with_index { |h, i|
+        am_labels += hist[0..10].map_with_index { |h, i|
           
           str = ""
           str += "## #{h[2]} " if h[2]
           str += "{#{h[1]}}" if h[1]
           str
         }
+
+        am_labels += [
+          "",
+          "Bag",
+          "------------------",
+        ]
+
+        am_labels += $story.bag.map_with_index { |h| h }
 
         y_loc = 0
 
@@ -88,6 +96,8 @@ module Forked
 
           prim
         end
+
+
       end
 
       args.state.forked.author_mode_primitives = am_prims

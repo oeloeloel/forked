@@ -95,7 +95,7 @@ module Forked
       if  inputs.keyboard.key_held.f &&
           inputs.keyboard.key_down.u
         state.forked.author_mode = !state.forked.author_mode
-        puts "Forked Author Mode is " + (state.forked.author_mode ? "on" : "off")
+        puts "Forked Author Mode is " + (state.forked.author_mode ? "on. Hold Q to display the sidebar." : "off")
       end
     end
 
