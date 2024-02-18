@@ -116,13 +116,12 @@ module Forked
     end
 
     def find_chunk_index_from_id(chunk_id)
-      ci = chunk_id
       # find chunk by ID if it exists
-      ind = state.forked.story.chunks.index { |i| i[:id] == ci }
+      ind = state.forked.story.chunks.index { |i| i[:id] == chunk_id }
       return ind if ind
       
       # if ID does not exist, remove # and find slug if it exists
-      ci.delete_prefix!('#')
+      ci = chunk_id.delete_prefix('#')
       ind = state.forked.story.chunks.index { |i| i[:slug] == ci }
       return ind if ind
 
