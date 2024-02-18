@@ -30,6 +30,8 @@ Or when a button is ativated:
 ## Chapter One
 ```
 * File structure: In the Forked repo, the `forked` folder has moved from `app/forked` to `lib/forked`. Requires have been changed to use `require_relative` so the developer can require `forked` with a single line and move the `forked` folder wherever they like. 
+* The author mode sidebar (to access, press `f+u` and then hold `q`) now shows the contents of the player's bag (inventory)
+
 
 ## Current Version:
 
