@@ -12,7 +12,7 @@ Forked displays the heading text for the current chunk. Headings begin with `##`
 ```md
 ## Heading Name
 ```
-Forked allows you to link from one chunk to another using the heading name. Optionally, you can add a Chunk ID to the heading line. The Chunk ID should be unique and it will help you to ensure that you do not have duplicated heading lines.
+Forked allows you to link from one chunk to another using the heading name (see [Trigger and Target](#trigger-and-target)). Optionally, you can add a Chunk ID to the heading line. The Chunk ID must be unique and it will help you to ensure that you do not have duplicated heading lines.
 
 ```md
 ## Heading Name {#chunk_id}`
@@ -21,7 +21,7 @@ Forked allows you to link from one chunk to another using the heading name. Opti
 ### Trigger and target:
 By default, a trigger is displayed as a button.
 The first part of the trigger, between `[ ]` is the visible text of the button.
-The second part of the trigger, between `( )`, is the action to perform. To navigate to another chunk of the story, add the chunk header here. (Note that you need to write the chunk header in all lowercase letters, removing all punctuation marks and replace spaces with hyphens)
+The second part of the trigger, between `( )`, is the action to perform. To navigate to another chunk of the story, add the chunk header here. The chunk header must be rewritten to contain only lower-case letters (`a`-`z`), numbers (`0`-`9`), hyphens (`-`) or underscores (`_`). Spaces must be replaced with hyphens. If you are using a code editor that understands markdown (such as Visual Studio Code), it may autocomplete links for you.
 
 ```md
 <!-- the following examples will show navigation to a chunk named "Target Header" -->
