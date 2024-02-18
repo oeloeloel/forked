@@ -1,4 +1,4 @@
-# require_relative 'json/json.rb'
+require_relative 'json/json.rb'
 require_relative 'defaults.rb'
 require_relative 'tools.rb'
 require_relative 'themes/light-mode-theme.rb'
@@ -11,10 +11,6 @@ require_relative 'display_defaults.rb'
 require_relative 'display.rb'
 require_relative 'author.rb'
 require_relative 'export.rb'
-
-
-
-# $story = nil
 
 module Forked
 
