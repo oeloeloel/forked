@@ -433,11 +433,13 @@ Tell Akz to write a better error message."
 
     # returns true if a memo exists
     def memo_exists? name
-      memo[name] != nil
+      memo.has_key?(name)
     end
 
     # returns the value of a memo
     def memo_check name
+      return unless memo_exists?(name)
+
       memo[name]
     end
 
