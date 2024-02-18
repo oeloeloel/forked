@@ -730,7 +730,7 @@ Please add a title to the top of the Story File. Example:
         slug = ''
         l.chars.each do |c|
           o = c.ord
-          if (o >= 97 && o <= 122) || (o >= 48 && o <= 57) || o == 45
+          if (o >= 97 && o <= 122) || (o >= 48 && o <= 57) || o == 45 || o == 95
            slug += c
           end
         end
