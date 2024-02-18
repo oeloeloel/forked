@@ -13,7 +13,7 @@ require_relative 'author.rb'
 require_relative 'export.rb'
 
 
-$gtk.reset
+
 # $story = nil
 
 module Forked
@@ -558,3 +558,5 @@ Tell Akz to write a better error message."
 
   end
 end
+
+$gtk.reset
