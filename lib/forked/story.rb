@@ -39,10 +39,13 @@ module Forked
       state.forked.defaults = Forked.forked_defaults
       @refresh = true
       @hashed_display = 0
-      if STORY_FILE.end_with?('.json')
-        state.forked.story = Forked.import_story_from_json
+
+      story_file = get_story_from_argv || STORY_FILE
+
+      if story_file.end_with?('.json')
+        state.forked.story = Forked.import_story_from_json(story_file)
       else
-        story_text = fetch_story args
+        story_text = fetch_story(args, story_file)
         state.forked.story = Parser.parse(story_text)
       end
 
@@ -69,6 +72,18 @@ module Forked
       else
         navigate(0)
       end
+    end
+
+    def get_story_from_argv
+      split = $gtk.argv.split(' --')
+      split.each do |p|
+        if p.start_with? "story "
+          file = p.split(' ')[1]
+          putz "Forked: Loading story file #{file} from command line argument"
+          return file
+        end
+      end
+      nil
     end
 
     ## input for Forked
@@ -288,11 +303,12 @@ Tell Akz to write a better error message."
       end
     end
 
-    def fetch_story args
-      story_text = gtk.read_file STORY_FILE
+    def fetch_story args, story_file
+      # story_text = gtk.read_file STORY_FILE
+      story_text = gtk.read_file(story_file)
 
       if story_text.nil?
-        raise "The file #{STORY_FILE} failed to load. Please check the filename and path."
+        raise "The file #{story_file} failed to load. Please check the filename and path."
       end
 
       story_text

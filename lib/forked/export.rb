@@ -12,11 +12,12 @@ module Forked
       $gtk.write_json("story.json", $args.state.forked.story, extensions: true)
     end
 
-    def import_story_from_json
+    def import_story_from_json(filename)
       # Needed to stop dragonjson from soiling the bed
       $__ll_json_move_fast_and_break_things = true
 
-      imp = $gtk.read_file('app/story.json')
+      # imp = $gtk.read_file('app/story.json')
+      imp = $gtk.read_file(filename)
       LevisLibs::JSON.parse(imp, symbolize_keys: true, extensions: true)
     end
 
@@ -31,11 +32,11 @@ module Forked
       save_spellcheck_file(story_text, "spellcheck.txt")
     end
 
-    def fetch_story
-      story_text = $gtk.read_file STORY_FILE
+    def fetch_story(filename = nil)
+      story_text = $gtk.read_file(filename || STORY_FILE)
 
       if story_text.nil?
-        raise "The file #{STORY_FILE} failed to load. Please check the filename and path."
+        raise "The file #{filename || STORY_FILE} failed to load. Please check the filename and path."
       end
 
       story_text
