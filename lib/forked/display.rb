@@ -47,7 +47,7 @@ module Forked
     end
 
     def update_selection(navigated = nil)
-      return if data.options.nil? || data.options.empty? 
+      # return if data.options.nil? || data.options.empty? 
 
       select = case(inputs.last_active)
       when :keyboard
@@ -92,9 +92,10 @@ module Forked
     end
 
     def input
+      update_selection
+
       return if data.options.nil? || data.options.empty?
 
-      update_selection
       activate_selected_option if keyboard_activate || controller_activate || mouse_activate
     end
 
