@@ -2,6 +2,6 @@
 /metadata
 /data
 /app/wip
-/lib/forked/tests
+/lib/forked/forked-tests
 *~undo-tree~
 ctags-vim
