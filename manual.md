@@ -409,15 +409,80 @@ And to check how many rugs the player has:
 counter_check "number of rugs"
 ~~~
 
----
-[Back to Commands](#commands)
+[Back to Contents](#contents)
 
 
-## Examples
+## Saving game data
+By default, Forked will automatically save the player's progress. When the game is reloaded, Forked will load the save file so the player can continue where they left off.
+
+If you prefer not to automatically save player progress, you can disable autosaves:
+1. Open the file `app/forked/defaults`
+2. Change the line 
+```rb
+autosave: true,
+```
+to
+```rb
+autosave: false,
+```
+
+If autosaves are disabled, you can manually trigger a save from inside your story file using the `save_game` command.
+To save when a new chunk is loaded:
+```
+## Save when this chunk loads {#save-on-load}
+:: save_game ::
+```
+
+To save when a player activates a button:
+```
+## Save when player clicks button {#save-on-click}
+[Click to save](: save_game :)
+```
+
+If you need to remove saved data, you can use the `clear_save_data` command.
+Note that if autosaves are enabled, this command may not appear to have any effect.
+To clear save data when a new chunk is loaded:
+```
+## Clear save data when this chunk loads {#clear-save-on-load}
+:: clear_save_data ::
+```
+
+To clear save data when a player activates a button:
+```
+## Clear save data when player clicks button {#clear-save-on-click}
+[Click to clear save data file](: clear_save_data :)
+```
+
+It is also possible to enable/disable autosaving from inside a story file:
+```
+<!-- disable autosave when chunk loads -->
+:: autosave_off ::
+
+<!-- enable autosave when chunk loads -->
+:: autosave_on ::
+
+<!-- disable autosave when button is clicked -->
+[Button](: autosave_off :)
+
+<!-- enable autosave when button is clicked -->
+[Button](: autosave_on :)
+```
+
+If you want to disable autosaving for a story file you can do that from within the story file by putting the `autosave_off` command after the story title (before the first chunk header):
+```
+# This is the Story Title
+
+<!-- disable autosave for this story -->
+:: autosave_off ::
+
+## This is the first chunk
+```
 
 [Back to Contents](#contents)
 
-## Example: Setting the Display Theme
+## Examples
+
+### Example: Setting the Display Theme
 
 Change the presentation of the story.
 ```md
@@ -428,7 +493,7 @@ Change the presentation of the story.
 You can edit the display theme to change the colour scheme. Open the file `app/themes/dark-mode-theme.rb` and you can see how it's done.
 ```
 
-## Example: Countdown Timer
+### Example: Countdown Timer
 ```
 <!-- Check to see if the "oxygen" timer has been created yet
 and if it has not, show the button that will create (add) it -->
@@ -463,7 +528,7 @@ if it has not finished counting down, show how many seconds are left -->
 :>
 ```
 
-## Example: Background Image
+### Example: Background Image
 This example displays a background image behind the story.
 
 The simplest way to do that is to add a conditional block and use the `background_image` command with the path to your image file.
@@ -476,7 +541,7 @@ background_image "sprites/background.png"
 
 
 
-## Example: Roll the Dice
+### Example: Roll the Dice
 Are you feeling lucky?
 
 The `roll` command lets you add some randomness to your game.
@@ -509,7 +574,7 @@ end
 :>
 ```
 
-## Example: Inventory
+### Example: Inventory
 
 Forked gives you a bag to hold the player's inventory.
 
