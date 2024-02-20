@@ -1,10 +1,11 @@
 
 
-Next Version
+## Current Version
 
 ### Version 0.0.7
 
 * **Added GitHub Flavor Markdown links**. It is now possible to link to headers as seen below. This makes buttons easier to create and improves compatibility with markdown editors, such as Visual Studio Code.
+
 ```md
 <!-- header -->
 ## Target Header
@@ -39,7 +40,7 @@ Note that: DragonRuby recommends that passing command line arguments to the Drag
 * Bugfix: Using the mouse to navigate to a chunk without any triggers would cause the mouse cursor to stay as finger instead of reverting to arrow
 
 
-## Current Version:
+## Older Versions:
 
 ### Version 0.0.6
 
