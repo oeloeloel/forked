@@ -44,3 +44,6 @@ Now you can start writing your story in the `my-life-story.md` file.
 
 See the [User Manual](manual.md) to learn how to use Forked.
 See the [Quick Reference](quick-reference.md) to see the formatting options and action commands available.
+
+---
+Forked makes use of https://github.com/leviongit/dragonjson
