@@ -46,4 +46,4 @@ See the [User Manual](manual.md) to learn how to use Forked.
 See the [Quick Reference](quick-reference.md) to see the formatting options and action commands available.
 
 ---
-Forked makes use of https://github.com/leviongit/dragonjson
+Forked makes use of [dragonjson by leviongit](https://github.com/leviongit/dragonjson)
