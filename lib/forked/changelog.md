@@ -17,7 +17,7 @@ Next Version
 ## Forgetting
 :: autosave_off ::
 ```
-Or when a button is ativated:
+Or when a button is activated:
 ```
 ## Remembering
 [Start remembering](: autosave_on :)
@@ -29,8 +29,14 @@ Or when a button is ativated:
 
 ## Chapter One
 ```
-* File structure: In the Forked repo, the `forked` folder has moved from `app/forked` to `lib/forked`. Requires have been changed to use `require_relative` so the developer can require `forked` with a single line and move the `forked` folder wherever they like. 
-* The author mode sidebar (to access, press `f+u` and then hold `q`) now shows the contents of the player's bag (inventory)
+* **Load a story file from the command line** when launching DragonRuby. Example:
+`./dragonruby —story app/my-story.md`\
+Story files passed in this way will override the STORY_FILE specified in the code.\
+Note that: DragonRuby recommends that passing command line arguments to the DragonRuby binary should be used for development/debugging purposes only.
+* **Changed file structure**: In the Forked repo, the `forked` folder has moved from `app/forked` to `lib/forked`. Requires have been changed to use `require_relative` so the developer can require `forked` with a single line and move the `forked` folder wherever they like. 
+* **Added bag to author mode sidebar**: The author mode sidebar (to access, press `f+u` and then hold `q`) now shows the contents of the player's bag (inventory)
+* Documentation improvement: the manual has been updated and an expanded, non-interactive version is included with Forked (manual.md)
+* Bugfix: Using the mouse to navigate to a chunk without any triggers would cause the mouse cursor to stay as finger instead of reverting to arrow
 
 
 ## Current Version:
