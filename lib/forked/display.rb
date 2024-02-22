@@ -485,6 +485,8 @@ module Forked
     def get_font_style styles
       if styles.include?(:bold) && styles.include?(:italic)
         data.config.bold_italic
+      elsif styles.include? :bold_italic
+        data.config.bold_italic
       elsif styles.include? :bold
         data.config.bold
       elsif styles.include? :italic
