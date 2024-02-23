@@ -39,7 +39,7 @@ TWENTY_SECOND_THEME = {
   button: {
     r: 51, g: 51, b: 51,
     size_enum: 2,
-    font: 'fonts/mali/mali-medium.ttf',
+    font: 'fonts/mali/mali-regular.ttf',
   },
   button_box: {
     **YELLOW_PALE
@@ -57,15 +57,23 @@ TWENTY_SECOND_THEME = {
     r: 102, g: 102, b: 102, 
   },
   bold: {
-    r: 204, g: 204, b: 204,
+    font: 'fonts/mali/mali-bold.ttf',
+        size_enum: 2,
+    **WHITE
   },
   italic: {
-    r: 204, g: 204, b: 204, 
+    font: 'fonts/mali/mali-italic.ttf',
+        size_enum: 2,
+    **WHITE
   },
   bold_italic: {
-    r: 204, g: 204, b: 204, 
+    font: 'fonts/mali/mali-bolditalic.ttf',
+        size_enum: 2,
+    **WHITE 
   },
   code: {
+    font: 'fonts/mali/mali-semibold.ttf',
+        size_enum: 2,
     r: 153, g: 204, b: 102,
   }
 }
