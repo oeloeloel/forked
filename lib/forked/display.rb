@@ -289,7 +289,7 @@ module Forked
       
       args.state.forked.forked_display_last_element_empty = false
 
-      empty_paragraph = true
+      empty_paragraph = true # until proven false
       item.atoms.each_with_index do |atom, i|
 
         # if we're at the end of the paragraph and no atoms have had any text
@@ -305,11 +305,15 @@ module Forked
 
         font_style = get_font_style(atom.styles)
         default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
-        words = atom.text.split(' ')
+        # words = atom.text.split(' ')
+        words = split_preserve_space(atom.text)
         line_frag = ''
 
         until words.empty?
-          word = words[0]
+          word = words[0] 
+          # word += ' ' if words.size > 1 # add back in the space removed by split
+          # note that this will only work as long as the only split delimiter is space!
+
           new_frag = line_frag + word
           new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
           if new_x_pos > display.w
@@ -323,16 +327,18 @@ module Forked
             new_y_pos -= paragraph.size_px * paragraph.line_spacing
             
           else
-            line_frag = new_frag + ' '
+            ### CHANGED
+            line_frag = new_frag #+ ' '
+            # putz [line_frag]
             words.shift
           end
 
           next unless words.empty?
-
+# putz ["lf", line_frag]
           loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
           lab = loc.merge(make_paragraph_label(line_frag, font_style))
           data.primitives << lab
-          x_pos = new_x_pos + default_space_w
+          x_pos = new_x_pos #+ default_space_w
           line_frag = ''
           if atom.text[-1] == "\n"
             x_pos = 0
@@ -362,6 +368,24 @@ module Forked
 
       # return the y_pos for the next element
       empty_paragraph ? y_pos : new_y_pos
+    end
+
+    ## split string (str) on space
+    ## preserve spaces
+    def split_preserve_space(str)
+      arr = []
+      while str.length > 0
+        idx = str.index(' ')
+        if idx
+          cap = str[0...idx + 1] 
+          arr << cap
+          str = str [idx + 1..-1]
+        else
+          arr << str
+          str = ''
+        end
+      end
+      arr
     end
 
     def display_heading(y_pos, item, previous_element_type)
