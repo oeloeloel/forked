@@ -3,6 +3,7 @@ module Forked
   # manages the story data
   class Story
     attr_gtk
+    attr_accessor :display
 
     def data
       state.forked ||= state.new_entity('forked')
