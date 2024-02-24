@@ -200,22 +200,28 @@ module Forked
 
       content.each_with_index do |item, i|
         previous_element_type = content[i - 1][:type] 
+        @last_printed_element_type ||= :none
 
         case item[:type]
         when :heading
-          y_pos = display_heading(y_pos, item, previous_element_type)
+          next_y_pos = display_heading(y_pos, item, previous_element_type)
         when :rule
-          y_pos = display_rule(y_pos, item, previous_element_type)
+          next_y_pos = display_rule(y_pos, item, previous_element_type)
         when :paragraph
-          y_pos = display_paragraph(y_pos, item, previous_element_type)
+          next_y_pos = display_paragraph(y_pos, item)
         when :code_block
-          y_pos = display_code_block(y_pos, item, previous_element_type)
+          next_y_pos = display_code_block(y_pos, item, previous_element_type)
         when :blockquote
-          y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
+          next_y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
         when :button
-          y_pos = display_button(y_pos, item, previous_element_type, content, i)
+          next_y_pos = display_button(y_pos, item, previous_element_type, content, i)
           highlight_selected_option        
         end
+
+        unless (next_y_pos - y_pos).zero?
+          @last_printed_element_type = item[:type]
+        end
+        y_pos = next_y_pos
       end
     end
 
@@ -272,7 +278,7 @@ module Forked
       y_pos -= button.size_px * button.spacing_after
     end
 
-    def display_paragraph(y_pos, item, previous_element_type)
+    def display_paragraph(y_pos, item)
       paragraph = data.config.paragraph
       display = data.config.display
       paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
@@ -280,7 +286,7 @@ module Forked
       x_pos = 0
       new_y_pos = y_pos
 
-      if previous_element_type == :paragraph
+      if @last_printed_element_type == :paragraph
         # paragraph follows paragraph, so undo the added 'spacing after'
         new_y_pos += paragraph.size_px * paragraph.spacing_after
         # paragraph follows paragraph, so add 'spacing between'
@@ -329,12 +335,10 @@ module Forked
           else
             ### CHANGED
             line_frag = new_frag #+ ' '
-            # putz [line_frag]
             words.shift
           end
 
           next unless words.empty?
-# putz ["lf", line_frag]
           loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
           lab = loc.merge(make_paragraph_label(line_frag, font_style))
           data.primitives << lab
