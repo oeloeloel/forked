@@ -197,6 +197,7 @@ module Forked
       data.options = []
 
       y_pos = data.config.display.margin_top.from_top
+      next_y_pos = y_pos
 
       content.each_with_index do |item, i|
         previous_element_type = content[i - 1][:type] 
@@ -215,7 +216,7 @@ module Forked
           next_y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
         when :button
           next_y_pos = display_button(y_pos, item, previous_element_type, content, i)
-          highlight_selected_option        
+          highlight_selected_option
         end
 
         unless (next_y_pos - y_pos).zero?
@@ -297,10 +298,9 @@ module Forked
 
       empty_paragraph = true # until proven false
       item.atoms.each_with_index do |atom, i|
-
         # if we're at the end of the paragraph and no atoms have had any text
         # mark it as empty so we know not to remove added 'spacing after'
-        empty_paragraph = false if atom[:text] != ''
+        empty_paragraph = false if atom[:text].strip != ''
         if i == item.atoms.size - 1 && empty_paragraph
           args.state.forked.forked_display_last_element_empty = true
           # if previous element was a paragraph, remove the between spacing
@@ -311,7 +311,6 @@ module Forked
 
         font_style = get_font_style(atom.styles)
         default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
-        # words = atom.text.split(' ')
         words = split_preserve_space(atom.text)
         line_frag = ''
 

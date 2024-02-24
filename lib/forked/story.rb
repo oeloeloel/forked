@@ -80,7 +80,7 @@ module Forked
       split.each do |p|
         if p.start_with? "story "
           file = p.split(' ')[1]
-          putz "Forked: Loading story file #{file} from command line argument"
+          puts "Forked: Loading story file #{file} from command line argument"
           return file
         end
       end
@@ -266,7 +266,6 @@ Tell Akz to write a better error message."
     def present(args)
 
       display_lines = state.forked.current_lines.copy
-
       display_lines.each do |element|
         # deal first with content that contains atoms
         if element[:atoms]
@@ -279,18 +278,12 @@ Tell Akz to write a better error message."
             if result.class == String && !result.empty?
               # String Interpolation
               ### CONTROVERSIAL
-              # add space before the result if it's not the first atom
-              
-              result = ' ' + result if j > 0
               # Add space after the result
               result += ' '
               element[:atoms][j][:text] = "#{result}"
             elsif !result
               # if the result is falsey, don't display
-              element[:atoms][j][:text] = j > 0 ? ' ' : ''
-            elsif result == true
-              element[:atoms][j][:text] = ' ' + element[:atoms][j][:text] if j > 0 
-              element[:atoms][j][:text] += ' ' 
+              element[:atoms][j][:text] = '' #j > 0 ? ' ' : ''
             end
           end
         else

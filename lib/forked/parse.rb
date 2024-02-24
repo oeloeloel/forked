@@ -267,12 +267,13 @@ module Forked
           # INLINE STYLES DONE
           ######
           
-
           # if prev item is not a paragraph, make a new paragraph
           prev_item = story[:chunks][-1][:content][-1]
           unless prev_item[:type] == :paragraph
             story[:chunks][-1][:content] << make_paragraph_hash
           end
+          # add a space to the last new atom
+          atoms[-1].text += ' ' unless atoms.empty? || atoms[-1].text.end_with?("\n")
           story[:chunks][-1][:content][-1][:atoms] += atoms
         end
         
