@@ -270,7 +270,6 @@ Tell Akz to write a better error message."
       display_lines.each do |element|
         # deal first with content that contains atoms
         if element[:atoms]
-
           element[:atoms].each_with_index do |atom, j|
             next unless atom[:condition] &&
                         atom[:condition].class == String &&
@@ -278,9 +277,21 @@ Tell Akz to write a better error message."
             result = evaluate(args, atom[:condition])
             # if it's a non-empty string, display the result
             if result.class == String && !result.empty?
-              element[:atoms][j][:text] = "#{result} "
+              # String Interpolation
+              ### CONTROVERSIAL
+              # add space before the result if it's not the first atom
+              
+              result = ' ' + result if j > 0
+              # Add space after the result
+              result += ' '
+              element[:atoms][j][:text] = "#{result}"
             elsif result.nil? || result == false
+              # if the result is falsey, don't display
               element[:atoms][j][:text] = ''
+            elsif result == true
+              element[:atoms][j][:text] = ' ' + element[:atoms][j][:text] if j > 0 
+              element[:atoms][j][:text] += ' ' 
+              # putz  element[:atoms][j][:text].length
             end
           end
         else
