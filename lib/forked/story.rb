@@ -285,13 +285,12 @@ Tell Akz to write a better error message."
               # Add space after the result
               result += ' '
               element[:atoms][j][:text] = "#{result}"
-            elsif result.nil? || result == false
+            elsif !result
               # if the result is falsey, don't display
-              element[:atoms][j][:text] = ''
+              element[:atoms][j][:text] = j > 0 ? ' ' : ''
             elsif result == true
               element[:atoms][j][:text] = ' ' + element[:atoms][j][:text] if j > 0 
               element[:atoms][j][:text] += ' ' 
-              # putz  element[:atoms][j][:text].length
             end
           end
         else
