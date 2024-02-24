@@ -222,16 +222,18 @@ module Forked
         if context_state == :open
           # if text is a placeholder for interpolation, blank it
 
+          atoms = []
           if line == '@#$%INTERPOLATION@#$%'
             conditional = true
             line = ''
+            atoms << make_atom_hash()
           end
 
           ######
           # APPLY INLINE STYLES HERE
           ######
 
-          atoms = []
+          
           while !line.empty?
             first_idx1 = 10000000
             first_idx2 = first_idx1
@@ -256,7 +258,7 @@ module Forked
 
               line = line[first_idx2 + first_mark[:mark].length..-1]
 
-              atoms << make_atom_hash(left_text)
+              atoms << make_atom_hash(left_text) unless left_text.empty?
               atoms << make_atom_hash(marked_text, [first_mark[:symbol]])
             end
           end
@@ -264,7 +266,6 @@ module Forked
           ######
           # INLINE STYLES DONE
           ######
-
           
 
           # if prev item is not a paragraph, make a new paragraph
