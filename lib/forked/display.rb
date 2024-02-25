@@ -260,9 +260,9 @@ module Forked
       else
         data.primitives << {
           x: display.margin_left,
-          y: y_pos - button_h,
+          y: (y_pos - button_h).to_i,
           w: text_w + button_box.padding_left + button_box.padding_right,
-          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+          h: (button.size_px + button_box.padding_top + button_box.padding_bottom).to_i,
 
         }.sprite!(inactive_button_box)
 
@@ -271,7 +271,7 @@ module Forked
 
       data.primitives << {
         x: display.margin_left + button_box.padding_left,
-        y: y_pos,
+        y: y_pos.to_i,
         text: item.text,
       }.label!(button)
 
