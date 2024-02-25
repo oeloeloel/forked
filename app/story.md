@@ -650,7 +650,8 @@ Your inventory currently contains:
 [Pick up the potion of inconsequence](: bag_add "potion of inconsequence" :)
 [Pick up the Spear of Astrabliano](: bag_add "Spear of Astrabliano" :)
 [Pick up the Golden Crown of Impolior](: bag_add "Golden Crown of Impolior" :)
-@@
+
+---
 <: 
   bag_has? "potion of inconsequence" 
 ::
@@ -666,7 +667,8 @@ Your inventory currently contains:
 ::
   [Melt down the Golden Crown of Impolior](: bag_remove "Golden Crown of Impolior" :)
 :>
-@@
+
+---
 [Turn your bag upside down and shake it out](: bag_clear :)
 
 ---
