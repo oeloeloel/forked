@@ -375,14 +375,13 @@ module Forked
     def split_preserve_one_space(str)
       arr = []
       while str.length > 0
-        idx = str.index(' ')
-        if idx
+        if idx = str.index(' ')
           capture = str[0...idx + 1]
           # prevent runs of spaces
-          unless capture == ' ' && arr&.[](-1)&.[](-1) == ' '
+          # unless capture == ' ' && arr&.[](-1)&.[](-1) == ' '
+          unless capture == ' ' && arr[-1]&.end_with?(" ")
             arr << capture
           end
-          # end
           str = str [idx + 1..-1]
         else
           # if the string does not or no longer contains a space
