@@ -311,13 +311,10 @@ module Forked
 
         font_style = get_font_style(atom.styles)
         default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
-        words = split_preserve_space(atom.text)
+        words = split_preserve_one_space(atom.text)
         line_frag = ''
-
         until words.empty?
           word = words[0] 
-          # word += ' ' if words.size > 1 # add back in the space removed by split
-          # note that this will only work as long as the only split delimiter is space!
 
           new_frag = line_frag + word
           new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
@@ -371,6 +368,29 @@ module Forked
 
       # return the y_pos for the next element
       empty_paragraph ? y_pos : new_y_pos
+    end
+
+    ## split string (str) on space
+    ## preserve a maximum of one consecutive space
+    def split_preserve_one_space(str)
+      arr = []
+      while str.length > 0
+        idx = str.index(' ')
+        if idx
+          capture = str[0...idx + 1]
+          # prevent runs of spaces
+          unless capture == ' ' && arr&.[](-1)&.[](-1) == ' '
+            arr << capture
+          end
+          # end
+          str = str [idx + 1..-1]
+        else
+          # if the string does not or no longer contains a space
+          arr << str
+          str = ''
+        end
+      end
+      arr
     end
 
     ## split string (str) on space
