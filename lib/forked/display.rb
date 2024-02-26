@@ -22,7 +22,7 @@ module Forked
     end
 
     def defaults
-      data.config = config_defaults # display defaults
+      data.style = config_defaults # display defaults
       data.options = []             # current options (buttons) in chunk
       apply_theme(@theme)           # set the current theme
 
@@ -37,11 +37,11 @@ module Forked
     end
 
     def apply_theme(theme)
-      data.config = config_defaults
+      data.style = config_defaults
       return unless theme
 
       theme.each do |k, v|
-        data.config[k].merge!(v)
+        data.style[k].merge!(v)
       end
       highlight_selected_option
     end
@@ -178,7 +178,7 @@ module Forked
       return unless data.options && data.selected_option && data.selected_option >= 0
       opt = data.options[data.selected_option]
       return unless opt
-      opt.merge!(data.config.rollover_button_box)
+      opt.merge!(data.style.rollover_button_box)
     end
 
     def unhighlight_selected_option
@@ -187,7 +187,7 @@ module Forked
       if data.selected_option >= data.options.count
         return 
       end
-      data.options[data.selected_option].merge!(data.config.button_box)
+      data.options[data.selected_option].merge!(data.style.button_box)
     end
 
     def update(content, navigated)
@@ -196,7 +196,7 @@ module Forked
       data.primitives = []
       data.options = []
 
-      y_pos = data.config.display.margin_top.from_top
+      y_pos = data.style.display.margin_top.from_top
       next_y_pos = y_pos
 
       content.each_with_index do |item, i|
@@ -227,10 +227,10 @@ module Forked
     end
 
     def display_button(y_pos, item, previous_element_type, content, i)
-      button = data.config.button  
-      display = data.config.display
-      button_box = data.config.button_box
-      inactive_button_box = data.config.inactive_button_box
+      button = data.style.button  
+      display = data.style.display
+      button_box = data.style.button_box
+      inactive_button_box = data.style.inactive_button_box
       
       # if previous element is also a button, use spacing_between instead of spacing_after
       if content[i - 1].type == :button
@@ -280,8 +280,8 @@ module Forked
     end
 
     def display_paragraph(y_pos, item)
-      paragraph = data.config.paragraph
-      display = data.config.display
+      paragraph = data.style.paragraph
+      display = data.style.display
       paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
 
       x_pos = 0
@@ -412,8 +412,8 @@ module Forked
     end
 
     def display_heading(y_pos, item, previous_element_type)
-      heading = data.config.heading
-      display = data.config.display
+      heading = data.style.heading
+      display = data.style.display
       heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
 
       data.primitives << {
@@ -426,8 +426,8 @@ module Forked
     end
 
     def display_rule(y_pos, item, previous_element_type)
-      rule = data.config.rule
-      display = data.config.display
+      rule = data.style.rule
+      display = data.style.display
       weight = rule.weight
       weight = item.weight if item.weight
       
@@ -442,9 +442,9 @@ module Forked
     end
 
     def display_code_block(y_pos, item, previous_element_type)
-      code_block = data.config.code_block
-      display = data.config.display
-      code_block_box = data.config.code_block_box
+      code_block = data.style.code_block
+      display = data.style.display
+      code_block_box = data.style.code_block_box
 
       text_array = wrap_lines_code_block(
         item.text, code_block.font, code_block.size_enum,
@@ -485,9 +485,9 @@ module Forked
     def display_blockquote(y_pos, item, previous_element_type, content, i)
       next if item[:text].empty?
 
-      blockquote = data.config.blockquote
-      display = data.config.display
-      blockquote_box = data.config.blockquote_box
+      blockquote = data.style.blockquote
+      display = data.style.display
+      blockquote_box = data.style.blockquote_box
 
       # if previous element is also a blockquote, use spacing_between instead of spacing_after
       if content[i - 1][:type] == :blockquote
@@ -531,17 +531,17 @@ module Forked
 
     def get_font_style styles
       if styles.include?(:bold) && styles.include?(:italic)
-        data.config.bold_italic
+        data.style.bold_italic
       elsif styles.include? :bold_italic
-        data.config.bold_italic
+        data.style.bold_italic
       elsif styles.include? :bold
-        data.config.bold
+        data.style.bold
       elsif styles.include? :italic
-        data.config.italic
+        data.style.italic
       elsif styles.include? :code
-        data.config.code
+        data.style.code
       else
-        data.config.paragraph
+        data.style.paragraph
       end
     end
 
@@ -681,7 +681,7 @@ module Forked
     end
 
     def render
-      outputs.background_color = data.config.display.background_color.values
+      outputs.background_color = data.style.display.background_color.values
       args.outputs.primitives << data.primitives
     end
   end
