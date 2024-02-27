@@ -19,7 +19,7 @@ With Forked, you can learn how to write a simple interactive story in a few minu
 [Essentials](#essentials)
 [Formatting](#formatting)
 [Actions and Conditions](#actions-and-conditions)
-[Built-in Commands]((#built-in-commands))
+[Built-in Commands](#built-in-commands)
 [Examples](#examples)
 
 ## Getting Started
