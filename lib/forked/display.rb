@@ -458,7 +458,7 @@ module Forked
 
       data.primitives << {
         x: display.margin_left,
-        y: temp_y_pos - box_height,
+        y: (temp_y_pos - box_height).to_i,
         w: display.w,
         h: box_height,
       }.sprite!(code_block_box)
@@ -468,7 +468,7 @@ module Forked
 
         label = {
           x: display.margin_left + code_block_box.padding_left,
-          y: temp_y_pos,
+          y: temp_y_pos.to_i,
           text: line,
         }.label!(code_block)
 
@@ -504,7 +504,7 @@ module Forked
 
       data.primitives << {
         x: display.margin_left,
-        y: y_pos - box_height,
+        y: (y_pos - box_height).to_i,
         w: display.w,
         h: box_height,
       }.sprite!(blockquote_box)
@@ -514,7 +514,7 @@ module Forked
       data.primitives << text_array.map do |line|
         label = {
           x: display.margin_left + blockquote_box.padding_left,
-          y: temp_y_pos,
+          y: temp_y_pos.to_i,
           text: line,
         }.label!(blockquote)
 
