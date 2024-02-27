@@ -119,7 +119,7 @@ You can have only one title in your story file and it should be at the top.
 That's all for titles.
 
 ---
-[Next: Story Chunks](#story-chunk)
+[Next: Story Chunks](#story-chunks)
 [Back to Essentials](#essentials)
 
 ## Story Chunks
@@ -130,8 +130,8 @@ With Forked, you can easily link chunks together so the player can click a butto
 And you'll see it happen again when you click one of the buttons below.
 
 ---
-[Next: The Heading Line](#heading-line)
-[Back: The Story Title](#story-title)
+[Next: The Heading Line](#heading-lines)
+[Back: The Story Title](#the-story-title)
 [Back to Essentials](#essentials)
 
 ## Heading Lines
@@ -149,7 +149,7 @@ Finally, there is the Chunk ID. This identifies the chunk so Forked knows how to
 
 ---
 [Next: Adding Text](#adding-text)
-[Back: Story Chunks](#story-chunk)
+[Back: Story Chunks](#story-chunks)
 [Back to Essentials](#essentials)
 
 ## Adding Text
@@ -168,7 +168,7 @@ In Forked, you write text in paragraphs separated by a blank line.
 
 ---
 [Next: Triggers](#triggers)
-[Back: Heading Lines](#heading-line)
+[Back: Heading Lines](#heading-lines)
 [Back to Essentials](#essentials)
 
 ## Triggers
