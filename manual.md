@@ -229,7 +229,7 @@ Actions get things done. They are short pieces of code that you can put directly
 There are three ways to use actions. **Chunk Actions** perform tasks when the chunk gets displayed like, for example, adding an item to the inventory. **Trigger actions** make something happen when a player clicks a button like, for example, remembering a choice. **Conditions** make decisions like which text to display or which buttons should be visible.
 
 Related: Forked includes a number of useful commands you can use with actions.
-[Built-in Commands](#commands)
+[Built-in Commands](#built-in-commands)
 
 
 ### Chunk Actions

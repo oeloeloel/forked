@@ -1,6 +1,6 @@
 # Forked User Manual
 
-## Welcome to Forked {#welcome}
+## Welcome to Forked
 Forked is a scripting system for DragonRuby that lets you write interactive stories, branching dialogues or anything else that requires writing and choices like, for example, this manual.
 
 Forked is intended to be simple to pick up and easy for non-programmers to work with. For people who like to write code, it lets you focus on story-writing while giving you access to the full power of Ruby.
@@ -8,25 +8,25 @@ Forked is intended to be simple to pick up and easy for non-programmers to work 
 With Forked, you can learn how to write a simple interactive story in a few minutes.
 
 ---
-[Next: Getting Started](#getting_started)
+[Next: Getting Started](#getting-started)
 
 [Contents](#contents)
 
-## Contents {#contents}
+## Contents
 
-[Welcome to Forked](#welcome)
-[Getting Started](#getting_started)
+[Welcome to Forked](#welcome-to-forked)
+[Getting Started](#getting-started)
 [Essentials](#essentials)
 [Formatting](#formatting)
-[Actions and Conditions](#actions)
-[Built-in Commands](#commands)
+[Actions and Conditions](#actions-and-conditions)
+[Built-in Commands]((#built-in-commands))
 [Examples](#examples)
 
-## Getting Started {#getting_started}
+## Getting Started
 
 First things first. You need DragonRuby Game Toolkit to use Forked:
 
-[Get DragonRuby](#dragonruby)
+[Get DragonRuby](#dragonruby-game-toolkit)
 
 Then you can install Forked:
 
@@ -34,16 +34,16 @@ Then you can install Forked:
 
 Now you can run Forked and start writing your story.
 
-[Start Writing](#write)
+[Start Writing](#writing-and-editing-the-story)
 
 ---
 
 [Next: Essentials](#essentials)  
-[Back: Welcome to Forked](#welcome)  
+[Back: Welcome to Forked](#welcome-to-forked)  
 [Contents](#contents)
 
 
-## DragonRuby Game Toolkit {#dragonruby}
+## DragonRuby Game Toolkit
 
 If you're reading this, you probably already own DragonRuby and you probably also have it installed and working.
 
@@ -52,9 +52,9 @@ If not, you can find more information about DragonRuby at https://dragonruby.itc
 Be sure to visit the DragonRuby Discord for help or just to hang out with the super-friendly community: http://discord.dragonruby.org.
 
 ---
-[Back: Getting Started](#getting_started)
+[Back: Getting Started](#getting-started)
 
-## Installation {#installation}
+## Installation
 To install Forked, you should start with a freshly unzipped DragonRuby project.
 
 Download the Forked project from GitHub and move the files into your DragonRuby project.
@@ -66,9 +66,9 @@ Now run DragonRuby: double-click on the DragonRuby executable (`dragonruby.exe` 
 By default, Forked will open this manual to help you get started. Since you're already reading this manual, congratulations on a job well done.
 
 ---
-[Back: Getting Started](#getting_started)
+[Back: Getting Started](#getting-started)
 
-## Writing and Editing the Story {#write}
+## Writing and Editing the Story
 
 Open up the `app/story.md` file in any text editor and you'll see the contents of this manual. When you look at the examples, you'll also be able to see the code that created them.
 
@@ -86,26 +86,26 @@ Then you can start writing your story:
 
 ---
 
-[Back: Getting Started](#getting_started)
+[Back: Getting Started](#getting-started)
 
-## Essentials {#essentials}
+## Essentials
 
 There are only a few things you really need to know to write a branching story with Forked.
 
-[Set The Story Title](#story_title)
-[Divide the Story into Chunks](#story_chunk)
-[Give Each Chunk a Heading](#heading_line)
-[Add Some Text](#adding_text)
+[Set The Story Title](#the-story-title)
+[Divide the Story into Chunks](#story-chunks)
+[Give Each Chunk a Heading](#heading-lines)
+[Add Some Text](#adding-text)
 [Link Chunks to Each Other with Triggers](#triggers)
 
 Once you've covered that, you can write a simple branching story and share it with the world.
 
 ---
 [Next: Formatting](#formatting)
-[Back: Getting Started](#getting_started)
+[Back: Getting Started](#getting-started)
 [Contents](#contents)
 
-## The Story Title {#story_title}
+## The Story Title
 Every story needs a title and, in Forked, they are written like this:
 
 ~~~
@@ -119,10 +119,10 @@ You can have only one title in your story file and it should be at the top.
 That's all for titles.
 
 ---
-[Next: Story Chunks](#story_chunk)
+[Next: Story Chunks]((#story-chunk))
 [Back to Essentials](#essentials)
 
-## Story Chunks {#story_chunk}
+## Story Chunks
 In Forked, stories are divided into sections called chunks. All the text you can see in this window is one chunk of the story.
 
 With Forked, you can easily link chunks together so the player can click a button and go to a different chunk. You've already seen this happening.
@@ -130,34 +130,34 @@ With Forked, you can easily link chunks together so the player can click a butto
 And you'll see it happen again when you click one of the buttons below.
 
 ---
-[Next: The Heading Line](#heading_line)
-[Back: The Story Title](#story_title)
+[Next: The Heading Line]((#heading-line))
+[Back: The Story Title]((#story-title))
 [Back to Essentials](#essentials)
 
-## Heading Lines {#heading_line}
+## Heading Lines
 The first line of a chunk is the heading line. It's what lets Forked know that a new chunk is beginning.
 
 ~~~
-## The Day I Was Born {#birth}
+## The Day I Was Born
 ~~~
 
 The heading line begins with two hash symbols ##. 
 
 Next is the text of the heading (The Day I Was Born). This will be shown at the top of the screen when the chunk is displayed. This text is optional and if it is left out, Forked will show the story title instead.
 
-Finally, there is the Chunk ID {#birth}. This identifies the chunk so Forked knows how to find it. It begins with a hash # followed by a unique name, without any spaces. It is wrapped in curly brackets, also known as braces {}.
+Finally, there is the Chunk ID. This identifies the chunk so Forked knows how to find it. It begins with a hash # followed by a unique name, without any spaces. It is wrapped in curly brackets, also known as braces {}.
 
 ---
-[Next: Adding Text](#adding_text)
-[Back: Story Chunks](#story_chunk)
+[Next: Adding Text](#adding-text)
+[Back: Story Chunks]((#story-chunk))
 [Back to Essentials](#essentials)
 
-## Adding Text {#adding_text}
+## Adding Text
 
 Now that you have your heading line, you can start writing text underneath it.
 
 ~~~
-## The Day I Was Born {#birth} 
+## The Day I Was Born 
 
 My story begins on the day of my birth, though I do not remember much of that occasion.
 
@@ -168,10 +168,10 @@ In Forked, you write text in paragraphs separated by a blank line.
 
 ---
 [Next: Triggers](#triggers)
-[Back: Heading Lines](#heading_line)
+[Back: Heading Lines]((#heading-line))
 [Back to Essentials](#essentials)
 
-## Triggers {#triggers}
+## Triggers
 To allow the player to move from one chunk to another, we can use Triggers.
 
 ~~~
@@ -191,10 +191,10 @@ If the trigger action is empty, Forked will display a non-clickable button like 
 [This matter is now closed]()
 
 ---
-[Back: Adding Text](#adding_text)
+[Back: Adding Text](#adding-text)
 [Back to Essentials](#essentials)
 
-## Formatting {#formatting}
+## Formatting
 
 Now that you know how to write a story, we can do a few things about the way it looks.
 
@@ -202,7 +202,7 @@ Simple formatting:
 [Styling Text](#inline-text-styles)
 [Blockquotes](#blockquotes)
 [Code Blocks](#code-blocks)
-[Horizontal Rules](#rules)
+[Horizontal Rules](#horizontal-rules)
 
 Related: For more advanced formatting:
 [Themes]()
@@ -210,7 +210,7 @@ Related: For more advanced formatting:
 Expect to see more formatting options added in future.
 
 ---
-[Next: Actions](#actions)
+[Next: Actions](#actions-and-conditions)
 [Back: Essentials](#essentials)
 [Contents](#contents)
 
@@ -234,7 +234,7 @@ This line has `some code` in it
 ---
 [Back to Formatting](#formatting)
 
-## Blockquotes {#blockquotes}
+## Blockquotes
 Blockquotes put your text in a box:
 > The Maharajah's Star is a diamond of great renown.
 
@@ -257,7 +257,7 @@ If you put several blockquotes one after the other, they appear as a single bloc
 ---
 [Back to Formatting](#formatting)
 
-## Code Blocks {#code-blocks}
+## Code Blocks
 Code blocks, as you have already seen in this manual, are used to show code:
 ~~~
 bag_add "The Maharajah's Star"
@@ -277,7 +277,7 @@ Not every story will need to have code blocks. It's super-useful for manuals tho
 ---
 [Back to Formatting](#formatting)
 
-## Horizontal Rules {#rules}
+## Horizontal Rules
 You can draw a horizontal line anywhere in your story like this one:
 
 ---
@@ -296,9 +296,9 @@ This manual uses horizontal rules to separate the content from the navigational 
 ---
 [Back to Formatting](#formatting)
 
-## Themes {#themes}
+## Themes
 
-## Actions and Conditions {#actions}
+## Actions and Conditions
 Actions get things done. They are short pieces of code that you can put directly into your story to perform some common tasks. You can use actions to tell Forked to do something, remember something, count something, time something, roll dice, go to another chunk, and other things besides.
 
 There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displayed like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.
@@ -307,16 +307,16 @@ There are three ways to use actions. Chunk Actions perform tasks when the chunk 
 
 [Trigger Actions](#trigger-actions)
 
-[Conditions](#conditions-1)
+[Conditions](#conditional-text-part-1)
 Related: Forked includes a number of useful commands you can use with actions.
-[Built-in Commands](#commands)
+[Built-in Commands]((#built-in-commands))
 
 ---
-[Next: Commands](#commands)
+[Next: Commands]((#built-in-commands))
 [Back: Formatting](#formatting)
 [Contents](#contents)
 
-## Chunk Actions {#chunk-actions}
+## Chunk Actions
 
 You can drop an action into a chunk like this:
 
@@ -338,9 +338,9 @@ You can put commands on multiple lines, like this:
 ~~~
 ---
 [Next: Trigger Actions](#trigger-actions)
-[Back to Actions](#actions)
+[Back to Actions](#actions-and-conditions)
 
-## Trigger Actions {#trigger-actions}
+## Trigger Actions
 
 Sometimes you will want a trigger to perform some kind of action instead of navigating to another chunk.
 
@@ -361,11 +361,11 @@ You can put commands on multiple lines:
 ~~~
 The `jump` command lets you navigate to another chunk from a trigger action.
 ---
-[Next: Conditional Text](#conditions-1)
+[Next: Conditional Text](#conditional-text-part-1)
 [Back: Chunk Actions](#chunk-actions)
-[Back to Actions](#actions)
+[Back to Actions](#actions-and-conditions)
 
-## Conditional Text Part 1 {#conditions-1}
+## Conditional Text Part 1
 Sometimes you may want to show, hide or change text depending on the situation. Forked gives you a couple of ways to do this. The first lets you insert words or short pieces of text into the story.
 ~~~
 Any fool knows that 
@@ -382,11 +382,11 @@ One of the useful tools included with Forked is `memo` and it lets you remember 
 We'll learn more about `memo` and other included commands later.
 
 ---
-[Next: Conditions Part 2](#conditions-2)
+[Next: Conditions Part 2](#conditional-text-part-2)
 [Back: Trigger Actions](#trigger-actions)
-[Back to Actions](#actions)
+[Back to Actions](#actions-and-conditions)
 
-## Conditional Text Part 2 {#conditions-2}
+## Conditional Text Part 2
 In the previous chunk, we saw how short text can be inserted into the story. For longer texts as well as triggers and blockquotes, we can write them out and use conditions to decide if they should be displayed.
 
 ~~~
@@ -410,23 +410,23 @@ But if they have the submarine, they see more text:
 They will also see a nice new button to help them start their under-sea voyage.
 
 ---
-[Back: Conditions Part 1](#conditions-1)
-[Back to Actions](#actions)
+[Back: Conditions Part 1](#conditional-text-part-1)
+[Back to Actions](#actions-and-conditions)
 
-## Built-in Commands {#commands}
+## Built-in Commands
 Forked contains some built-in commands to help you perform some useful or common tasks.
 
-[Commands: Bag (Inventory Management)](#bag)
-[Commands: Memo (Information Storage)](#memo)
-[Commands: Timer (Countdown Timers)](#timer)
-[Commands: Counter (Number Tracking)](#counter)
+[Commands: Bag (Inventory Management)](#commands-bag-inventory-management)
+[Commands: Memo (Information Storage)](#commands-memo-information-storage)
+[Commands: Timer (Countdown Timers)](#commands-timer-countdown-timers)
+[Commands: Counter (Number Tracking)](#commands-counters-number-tracking)
 
 ---
 [Next: Examples](#examples)
-[Back: Actions](#actions)
+[Back: Actions](#actions-and-conditions)
 [Contents](#contents)
 
-## Commands: Bag (Inventory Management) {#bag}
+## Commands: Bag (Inventory Management)
 
 The `bag` is where you keep track of the things your player collects during the game. For example, they may pick up a parcel of exotic spices to transport to Europe via submarine. You can add items to the bag like this:
 
@@ -453,9 +453,9 @@ bag_clear
 [See Example](#example-inventory)
 
 ---
-[Back to Commands](#commands)
+[Back to Commands]((#built-in-commands))
 
-## Commands: Memo (Information Storage) {#memo}
+## Commands: Memo (Information Storage)
 
 `memo` is for remembering information like, did the player meet the person of their dreams and fall in love? Did they run away from the evil pastry chef or stand their ground and fight? To remember something:
 
@@ -481,9 +481,9 @@ memo_clear
 ~~~
 
 ---
-[Back to Commands](#commands)
+[Back to Commands]((#built-in-commands))
 
-## Commands: Timer (Countdown Timers) {#timer}
+## Commands: Timer (Countdown Timers)
 
 `timer` lets you create a countdown timer. You can check the timer to see if it's done and perform some other action if it is. For example, your player may only have a few seconds to defuse the saboteur's bomb and save the submarine crew:
 
@@ -509,9 +509,9 @@ timer_remove "submarine explosion"
 ~~~
 
 ---
-[Back to Commands](#commands)
+[Back to Commands]((#built-in-commands))
 
-## Commands: Counters (Number Tracking) {#counter}
+## Commands: Counters (Number Tracking)
 
 `counter` helps you keep track of the number of times something happens. It may be important in your story that the player gains five exquisite Persian rugs by winning games of croquet. To create a new counter:
 
@@ -537,22 +537,22 @@ counter_check "number of rugs"
 ~~~
 
 ---
-[Back to Commands](#commands)
+[Back to Commands]((#built-in-commands))
 
 
-## Examples {#examples}
+## Examples
 
-[Setting the Display Theme](#example-theme)
-[Countdown Timer](#example-timer)
+[Setting the Display Theme](#example-setting-the-display-theme)
+[Countdown Timer](#example-countdown-timer)
 [Background Image](#example-background-image)
-[Roll Dice](#example-roll-dice)
+[Roll Dice](#example-roll-the-dice)
 [Inventory](#example-inventory)
 
 ---
-[Back: Built-in Commands](#commands)
+[Back: Built-in Commands]((#built-in-commands))
 [Contents](#contents)
 
-## Example: Setting the Display Theme {#example-theme}
+## Example: Setting the Display Theme
 
 Change the presentation of the story.
 
@@ -566,7 +566,7 @@ You can edit the display theme to change the colour scheme. Open the file `app/t
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
-## Example: Countdown Timer {#example-timer}
+## Example: Countdown Timer
 <!-- Check to see if the "oxygen" timer has been created yet
 and if it has not, show the button that will create (add) it -->
 <:
@@ -605,7 +605,7 @@ if it has not finished counting down, show how many seconds are left -->
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
-## Example: Background Image {#example-background-image}
+## Example: Background Image
 This example displays a background image behind the story.
 
 The simplest way to do that is to add a conditional block and use the `background_image` command with the path to your image file.
@@ -625,7 +625,7 @@ background_image "sprites/background.png"
 [Back to Contents](#contents)
 
 
-## Example: Roll the Dice {#example-roll-dice}
+## Example: Roll the Dice
 Are you feeling lucky?
 
 The `roll` command lets you add some randomness to your game.
@@ -661,7 +661,7 @@ end
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
-## Example: Inventory {#example-inventory}
+## Example: Inventory
 
 Forked gives you a bag to hold the player's inventory.
 
