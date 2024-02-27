@@ -119,7 +119,7 @@ You can have only one title in your story file and it should be at the top.
 That's all for titles.
 
 ---
-[Next: Story Chunks]((#story-chunk))
+[Next: Story Chunks](#story-chunk)
 [Back to Essentials](#essentials)
 
 ## Story Chunks
@@ -130,8 +130,8 @@ With Forked, you can easily link chunks together so the player can click a butto
 And you'll see it happen again when you click one of the buttons below.
 
 ---
-[Next: The Heading Line]((#heading-line))
-[Back: The Story Title]((#story-title))
+[Next: The Heading Line](#heading-line)
+[Back: The Story Title](#story-title)
 [Back to Essentials](#essentials)
 
 ## Heading Lines
@@ -149,7 +149,7 @@ Finally, there is the Chunk ID. This identifies the chunk so Forked knows how to
 
 ---
 [Next: Adding Text](#adding-text)
-[Back: Story Chunks]((#story-chunk))
+[Back: Story Chunks](#story-chunk)
 [Back to Essentials](#essentials)
 
 ## Adding Text
@@ -168,7 +168,7 @@ In Forked, you write text in paragraphs separated by a blank line.
 
 ---
 [Next: Triggers](#triggers)
-[Back: Heading Lines]((#heading-line))
+[Back: Heading Lines](#heading-line)
 [Back to Essentials](#essentials)
 
 ## Triggers
@@ -309,10 +309,10 @@ There are three ways to use actions. Chunk Actions perform tasks when the chunk 
 
 [Conditions](#conditional-text-part-1)
 Related: Forked includes a number of useful commands you can use with actions.
-[Built-in Commands]((#built-in-commands))
+[Built-in Commands](#built-in-commands)
 
 ---
-[Next: Commands]((#built-in-commands))
+[Next: Commands](#built-in-commands)
 [Back: Formatting](#formatting)
 [Contents](#contents)
 
@@ -453,7 +453,7 @@ bag_clear
 [See Example](#example-inventory)
 
 ---
-[Back to Commands]((#built-in-commands))
+[Back to Commands](#built-in-commands)
 
 ## Commands: Memo (Information Storage)
 
@@ -481,7 +481,7 @@ memo_clear
 ~~~
 
 ---
-[Back to Commands]((#built-in-commands))
+[Back to Commands](#built-in-commands)
 
 ## Commands: Timer (Countdown Timers)
 
@@ -509,7 +509,7 @@ timer_remove "submarine explosion"
 ~~~
 
 ---
-[Back to Commands]((#built-in-commands))
+[Back to Commands](#built-in-commands)
 
 ## Commands: Counters (Number Tracking)
 
@@ -537,7 +537,7 @@ counter_check "number of rugs"
 ~~~
 
 ---
-[Back to Commands]((#built-in-commands))
+[Back to Commands](#built-in-commands)
 
 
 ## Examples
@@ -549,7 +549,7 @@ counter_check "number of rugs"
 [Inventory](#example-inventory)
 
 ---
-[Back: Built-in Commands]((#built-in-commands))
+[Back: Built-in Commands](#built-in-commands)
 [Contents](#contents)
 
 ## Example: Setting the Display Theme
