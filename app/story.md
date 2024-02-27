@@ -143,9 +143,7 @@ The first line of a chunk is the heading line. It's what lets Forked know that a
 
 The heading line begins with two hash symbols ##. 
 
-Next is the text of the heading (The Day I Was Born). This will be shown at the top of the screen when the chunk is displayed. This text is optional and if it is left out, Forked will show the story title instead.
-
-Finally, there is the Chunk ID. This identifies the chunk so Forked knows how to find it. It begins with a hash # followed by a unique name, without any spaces. It is wrapped in curly brackets, also known as braces {}.
+Next is the text of the heading (The Day I Was Born). This will be shown at the top of the screen when the chunk is displayed.
 
 ---
 [Next: Adding Text](#adding-text)
@@ -172,23 +170,24 @@ In Forked, you write text in paragraphs separated by a blank line.
 [Back to Essentials](#essentials)
 
 ## Triggers
-To allow the player to move from one chunk to another, we can use Triggers.
+To allow the player to move from one chunk to another, we can use Triggers. Triggers are displayed as buttons and can be clicked to perform actions, such as navigate to a different chunk in the story.
 
 ~~~
-[Learn more about my birth](#crocodile_parenting)
-[Let's get to the adventures!](#crocodile_hunters)
+[Learn more about my birth](#crocodile-parenting)
 ~~~
 
-Triggers have two parts, the trigger text, which is surrounded by two square brackets [] and the trigger action, surrounded by two round brackets ().
+Triggers have two parts, the trigger text (`Learn more about my birth`), surrounded by two square brackets `[]` and the trigger action (`#crocodile-parenting`), surrounded by two round brackets `()`.
 
-Triggers are displayed as buttons labeled with the trigger text. You can see some trigger buttons at the bottom of the screen right now. 
+The trigger action is the text of the header you want to link to in the form of a "slug". The slug is the same text as the header but it can only include lowercase letters, hyphens (`-`) and underscores (`_`). Spaces must be replaced with hyphens (`-`).
 
-Clicking a trigger button will perform its trigger action. In both the examples above, the action is a chunk_id and clicking the trigger will tell Forked to navigate to the specified chunk.
+Clicking the `Learn more about my birth` trigger in the example above will take the player to the chunk with the heading `## Crocodile Parenting`.
 
 As well as navigating to other chunks, trigger actions can run Ruby code. We'll see more about that later.
 
-If the trigger action is empty, Forked will display a non-clickable button like the next button below:
-[This matter is now closed]()
+If the trigger action is empty, Forked will display a non-clickable button:
+```md
+[You cannot click on this button]()
+```
 
 ---
 [Back: Adding Text](#adding-text)
