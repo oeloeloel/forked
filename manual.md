@@ -159,6 +159,23 @@ Now you know how to create a simple branching story and link from one part to an
 
 Now that you know how to write a story, we can do a few things about the way it looks.
 
+### Inline Styles
+
+Make text appear *in italics* by putting asterisks `*` aroung it:
+
+~~~md
+*This text is in italics*
+**This text is bold**
+***This text is in bold italics***
+~~~
+
+Note that you can also use underscores `_` instead of asterisks.
+
+Make text appear as `code` by putting backticks `` ` `` around it:
+
+~~~md
+This line has `some code` in it
+~~~
 
 ### Blockquotes
 Blockquotes put your text in a box:
