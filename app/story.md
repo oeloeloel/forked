@@ -199,6 +199,7 @@ If the trigger action is empty, Forked will display a non-clickable button like 
 Now that you know how to write a story, we can do a few things about the way it looks.
 
 Simple formatting:
+[Styling Text](#inline-text-styles)
 [Blockquotes](#blockquotes)
 [Code Blocks](#code-blocks)
 [Horizontal Rules](#rules)
@@ -212,6 +213,26 @@ Expect to see more formatting options added in future.
 [Next: Actions](#actions)
 [Back: Essentials](#essentials)
 [Contents](#contents)
+
+## Inline Text Styles
+
+Make text appear *in italics* by putting asterisks `*` aroung it:
+
+~~~md
+*This text is in italics.* **This text is bold.** ***This text is in bold italics.***
+~~~
+*This text is in italics.* **This text is bold.** ***This text is in bold italics.***
+
+Note that you can also use underscores `_` instead of asterisks.
+
+Make text appear as `code` by putting backticks ` around it:
+
+~~~md
+This line has `some code` in it
+~~~
+This line has `some code` in it
+---
+[Back to Formatting](#formatting)
 
 ## Blockquotes {#blockquotes}
 Blockquotes put your text in a box:
