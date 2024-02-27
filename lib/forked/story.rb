@@ -326,7 +326,7 @@ Tell Akz to write a better error message."
       # don't evalulate empty commands
       return if command.strip == ("\"\"")
 
-      puts "Evaluating: #{command}" if state.forked.forked_show_eval
+      # puts "Evaluating: #{command}"
       eval(command)
     end
 
