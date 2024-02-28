@@ -215,7 +215,7 @@ module Forked
         when :blockquote
           next_y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
         when :button
-          next_y_pos = display_button(y_pos, item, previous_element_type, content, i)
+          next_y_pos = display_button(y_pos, item, content, i)
           highlight_selected_option
         end
 
@@ -226,14 +226,14 @@ module Forked
       end
     end
 
-    def display_button(y_pos, item, previous_element_type, content, i)
+    def display_button(y_pos, item, content, i)
       button = data.style.button  
       display = data.style.display
       button_box = data.style.button_box
       inactive_button_box = data.style.inactive_button_box
       
       # if previous element is also a button, use spacing_between instead of spacing_after
-      if content[i - 1].type == :button
+      if @last_printed_element_type == :button
         y_pos += button.spacing_after * button.size_px
         y_pos -= button.spacing_between * button.size_px
       end
