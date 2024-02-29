@@ -57,9 +57,7 @@ module Forked
       # allow story to run one-time setup code that needs to be
       # setup regardless of where we start the story after a reload
       if state.forked.story.actions
-        state.forked.story.actions.each do |a|
-          evaluate args, a
-        end
+        evaluate args, state.forked.story.actions.join
       end
 
       follow args
@@ -232,6 +230,7 @@ module Forked
     def process_new_chunk
       unless state.forked.current_chunk.actions.empty?
         state.forked.current_chunk.actions.each do |a|
+          
           evaluate args, a
         end
       end
@@ -292,7 +291,7 @@ Tell Akz to write a better error message."
 
           result = evaluate(args, element[:condition])
           if result.nil? || result == false
-            element[:type] = :blank
+            element[:type] = :hidden
           end
         end
       end
@@ -560,6 +559,26 @@ Tell Akz to write a better error message."
       "data/#{save_type.to_s}-#{state.forked.story_id}#{devmode}.txt"
     end
 
+    ################
+    # FORKED TESTING
+    ################
+
+    def forked_test(expect: nil, print_subject: false)
+      test_mark = []
+          outputs.primitives.each_with_index { |prim, i|
+          if prim[:text] && prim[:text].strip == "<! start test !>"
+            test_mark << i + 1
+          elsif prim[:text] && prim[:text].strip == "<! end test !>"
+            test_mark << i - 1
+          end
+        }
+      return "Test does not contain two marks" if test_mark.count < 2
+
+      subject = outputs.primitives[test_mark[0]..test_mark[1]] 
+      putz subject if print_subject
+      result = expect == subject
+      result ? "Test passed" : "Test failed"
+    end
   end
 end
 
