@@ -1,6 +1,4 @@
-
-
-## Next Version
+## Current Version
 
 ### Version 0.0.8
 * **Added Inline Styles**: Text can be marked up to appear as bold, italic, bold-italic or code styles using simple markdown. Styled text is surrounded by a matching pair of symbols:
@@ -11,7 +9,6 @@
 * Fixed issue with spacing between buttons when buttons are separated by a blank line
 * Fixed issuew with spacing between buttons when buttons are separated by hidden content
 
-## Current Version
 
 ### Version 0.0.7
 
