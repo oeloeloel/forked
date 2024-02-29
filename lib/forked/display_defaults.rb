@@ -180,13 +180,13 @@ end
 
 def default_italic_style
   default_paragraph.merge(
-    font: 'fonts/roboto/boboto-italic.ttf',
+    font: 'fonts/roboto/roboto-italic.ttf',
   )
 end
 
 def default_bold_italic_style
   default_paragraph.merge(
-    font: 'fonts/roboto/roboto-boldItalic.ttf',
+    font: 'fonts/roboto/roboto-bolditalic.ttf',
   )
 end
 

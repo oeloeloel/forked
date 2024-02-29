@@ -3,6 +3,7 @@ module Forked
   # manages the story data
   class Story
     attr_gtk
+    attr_accessor :display
 
     def data
       state.forked ||= state.new_entity('forked')
@@ -56,9 +57,7 @@ module Forked
       # allow story to run one-time setup code that needs to be
       # setup regardless of where we start the story after a reload
       if state.forked.story.actions
-        state.forked.story.actions.each do |a|
-          evaluate args, a
-        end
+        evaluate args, state.forked.story.actions.join
       end
 
       follow args
@@ -79,7 +78,7 @@ module Forked
       split.each do |p|
         if p.start_with? "story "
           file = p.split(' ')[1]
-          putz "Forked: Loading story file #{file} from command line argument"
+          puts "Forked: Loading story file #{file} from command line argument"
           return file
         end
       end
@@ -231,6 +230,7 @@ module Forked
     def process_new_chunk
       unless state.forked.current_chunk.actions.empty?
         state.forked.current_chunk.actions.each do |a|
+          
           evaluate args, a
         end
       end
@@ -265,11 +265,9 @@ Tell Akz to write a better error message."
     def present(args)
 
       display_lines = state.forked.current_lines.copy
-
       display_lines.each do |element|
         # deal first with content that contains atoms
         if element[:atoms]
-
           element[:atoms].each_with_index do |atom, j|
             next unless atom[:condition] &&
                         atom[:condition].class == String &&
@@ -277,9 +275,14 @@ Tell Akz to write a better error message."
             result = evaluate(args, atom[:condition])
             # if it's a non-empty string, display the result
             if result.class == String && !result.empty?
-              element[:atoms][j][:text] = "#{result} "
-            elsif result.nil? || result == false
-              element[:atoms][j][:text] = ''
+              # String Interpolation
+              ### CONTROVERSIAL
+              # Add space after the result
+              result += ' '
+              element[:atoms][j][:text] = "#{result}"
+            elsif !result
+              # if the result is falsey, don't display
+              element[:atoms][j][:text] = '' #j > 0 ? ' ' : ''
             end
           end
         else
@@ -288,7 +291,7 @@ Tell Akz to write a better error message."
 
           result = evaluate(args, element[:condition])
           if result.nil? || result == false
-            element[:type] = :blank
+            element[:type] = :hidden
           end
         end
       end
@@ -322,7 +325,7 @@ Tell Akz to write a better error message."
       # don't evalulate empty commands
       return if command.strip == ("\"\"")
 
-      puts "Evaluating: #{command}" if state.forked.forked_show_eval
+      # puts "Evaluating: #{command}"
       eval(command)
     end
 
@@ -556,6 +559,26 @@ Tell Akz to write a better error message."
       "data/#{save_type.to_s}-#{state.forked.story_id}#{devmode}.txt"
     end
 
+    ################
+    # FORKED TESTING
+    ################
+
+    def forked_test(expect: nil, print_subject: false)
+      test_mark = []
+          outputs.primitives.each_with_index { |prim, i|
+          if prim[:text] && prim[:text].strip == "<! start test !>"
+            test_mark << i + 1
+          elsif prim[:text] && prim[:text].strip == "<! end test !>"
+            test_mark << i - 1
+          end
+        }
+      return "Test does not contain two marks" if test_mark.count < 2
+
+      subject = outputs.primitives[test_mark[0]..test_mark[1]] 
+      putz subject if print_subject
+      result = expect == subject
+      result ? "Test passed" : "Test failed"
+    end
   end
 end
 

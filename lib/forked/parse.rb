@@ -8,10 +8,23 @@ module Forked
         raise 'FORKED: The story file is missing.' if story_file.nil?
         raise 'FORKED: The story file is empty.' if story_file.empty?
 
+        # for parsing inline styles
+        @style_marks = [
+          { symbol: :bold_italic, mark: "***" },
+          { symbol: :bold_italic, mark: "___" },
+          
+          { symbol: :bold, mark: "**" },
+          { symbol: :bold, mark: "__"},
+          { symbol: :italic, mark: "*" },
+          { symbol: :italic, mark: "_" },
+          { symbol: :code, mark: "`" }
+        ]
+
         # Empty story
         story = make_story_hash
 
         context = [:title] # if we're in the middle of something
+        style_context = [] # tracking inline styles
 
         # Elements understood by the parser:
         # [x] :blockquote (physical div)
@@ -28,11 +41,12 @@ module Forked
         # [x] c-style line comments (stripped and ignored)
         # [x] html-style comments (stripped and ignored)
         # [x] :rule (horizontal rule)
-        # :action (single line code)
-        # :code (present with code format < 1 line)
-        # :bold (inline strong style)
-        # :italic (inline emphasis style)
-        # :bold italic (inline strong + emphasis style)
+        # [x] :action (single line code)
+        # [x] :code (present with code format < 1 line)
+        # [x] :bold (inline strong style)
+        # [x] :italic (inline emphasis style)
+        # [x] :bold italic (inline strong + emphasis style)
+        # :inline trigger
 
         story_lines = story_file.lines
         line_no = -1
@@ -115,6 +129,11 @@ module Forked
 
           # PARAGRAPH
           parse_paragraph(line, context, story, line_no)
+
+          # MEANINGFUL BLANK LINE
+          result = parse_blank(line, context, story, line_no)
+          next if result
+          # putz "Line: #{line_no + 1} '#{line}', #{context}"
         end
 
         story
@@ -153,6 +172,24 @@ module Forked
         true
       end
 
+      # if a line is totally blank, add it as a `:blank` element
+      # only add one :blank - runs of blanks are not meaningful
+      # display will ignore the blank
+      # display will not treat two of the same block level
+      # elements as contiguous if they are separated by a blank
+      def parse_blank(line, context, story, line_no)
+        # apply to blank lines and NO CONTEXT IS OPEN
+        return if !line.strip.empty? ||
+                  !context.empty?
+        
+        # check last element type
+        prev_type = story&.[](:chunks)[-1][:content]&.[](-1)[:type]
+
+        # if blank is meaningful after last element, add it
+        # for now, blank is only meaningful after button
+        story[:chunks][-1][:content] << make_blank_hash if prev_type == :button
+      end
+
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
       def parse_preformatted_line(line, context, story, _line_no)
@@ -163,10 +200,9 @@ module Forked
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         line.delete_prefix!('@@')
-
         para = make_paragraph_hash
         atm = make_atom_hash
-        atm[:text] = line
+        atm[:text] = line.chomp
         para[:atoms] << atm
         story[:chunks][-1][:content] << para
 
@@ -190,7 +226,7 @@ module Forked
         context_state = handle_paragraph_context(line, context)
         # if the line ends with `\`, hard wrap
         if line.strip[-1] == '\\'
-          # end the line with a newline
+          # terminate the line with a newline
           # add an nbsp to prevent empty lines from collapsing
           line = line.delete_suffix('\\') + " \n"
         end
@@ -209,31 +245,70 @@ module Forked
         if context_state == :open
           # if text is a placeholder for interpolation, blank it
 
+          atoms = []
           if line == '@#$%INTERPOLATION@#$%'
             conditional = true
             line = ''
+            atoms << make_atom_hash()
           end
 
-          atom = make_atom_hash
-          atom[:text] = line
+          ######
+          # APPLY INLINE STYLES HERE
+          ######
+
+          
+          while !line.empty?
+            first_idx1 = 10000000
+            first_idx2 = first_idx1
+            first_mark = {}
+            
+            @style_marks.each do |m|
+              next unless idx1 = line.index(m.mark)
+              next unless idx1 < first_idx1
+              next unless idx2 = line.index(m.mark, idx1 + 1)
+
+              first_idx1 = idx1
+              first_idx2 = idx2
+              first_mark = m
+            end
+
+            if first_mark.empty?
+              atoms << make_atom_hash(line)
+              line = ''
+            else
+              left_text = line[0...first_idx1]
+              marked_text = line[first_idx1 + first_mark[:mark].length...first_idx2]
+
+              line = line[first_idx2 + first_mark[:mark].length..-1]
+
+              atoms << make_atom_hash(left_text) unless left_text.empty?
+              atoms << make_atom_hash(marked_text, [first_mark[:symbol]])
+            end
+          end
+
+          ######
+          # INLINE STYLES DONE
+          ######
           
           # if prev item is not a paragraph, make a new paragraph
           prev_item = story[:chunks][-1][:content][-1]
           unless prev_item[:type] == :paragraph
             story[:chunks][-1][:content] << make_paragraph_hash
           end
-            
-          story[:chunks][-1][:content][-1][:atoms] << atom
+          # add a space to the last new atom
+          atoms[-1].text += ' ' unless atoms.empty? || atoms[-1].text.end_with?("\n")
+          story[:chunks][-1][:content][-1][:atoms] += atoms
         end
-
-        # add condition
-        # conditional context is open
         
         if context.include?(:condition_block) || conditional
           condition = story[:chunks][-1][:conditions][-1]
           prev_item = story[:chunks][-1][:content][-1]
           if prev_item[:atoms]
-            prev_item[:atoms][-1][:condition] = condition
+            if !prev_item[:atoms].empty?
+              prev_item[:atoms][-1][:condition] = condition
+            else
+              prev_item[:atoms] << make_atom_hash('', [], condition)
+            end
           else
             prev_item[:condition] = condition
           end
@@ -722,6 +797,18 @@ Please add a title to the top of the Story File. Example:
           story[:chunks][-1][:content][-1].action += line
           return true
         end
+      end 
+
+      def l_split(line, delimiter)
+        return unless idx = line.index(delimiter)
+        
+        [line[0...idx], line[idx + delimiter.length...line.length]]
+      end
+
+      def make_blank_hash
+        {
+          type: :blank
+        } 
       end
 
       def make_slug(line)
@@ -767,11 +854,11 @@ Please add a title to the top of the Story File. Example:
         }
       end
 
-      def make_atom_hash
+      def make_atom_hash(text = '', styles = [], condition = [])
         {
-          text: '',
-          styles: [],
-          condition: [],
+          text: text,
+          styles: styles,
+          condition: condition
         }
       end
 

@@ -22,7 +22,7 @@ module Forked
     end
 
     def defaults
-      data.config = config_defaults # display defaults
+      data.style = config_defaults # display defaults
       data.options = []             # current options (buttons) in chunk
       apply_theme(@theme)           # set the current theme
 
@@ -37,11 +37,11 @@ module Forked
     end
 
     def apply_theme(theme)
-      data.config = config_defaults
+      data.style = config_defaults
       return unless theme
 
       theme.each do |k, v|
-        data.config[k].merge!(v)
+        data.style[k].merge!(v)
       end
       highlight_selected_option
     end
@@ -178,7 +178,7 @@ module Forked
       return unless data.options && data.selected_option && data.selected_option >= 0
       opt = data.options[data.selected_option]
       return unless opt
-      opt.merge!(data.config.rollover_button_box)
+      opt.merge!(data.style.rollover_button_box)
     end
 
     def unhighlight_selected_option
@@ -187,7 +187,7 @@ module Forked
       if data.selected_option >= data.options.count
         return 
       end
-      data.options[data.selected_option].merge!(data.config.button_box)
+      data.options[data.selected_option].merge!(data.style.button_box)
     end
 
     def update(content, navigated)
@@ -196,37 +196,47 @@ module Forked
       data.primitives = []
       data.options = []
 
-      y_pos = data.config.display.margin_top.from_top
+      y_pos = data.style.display.margin_top.from_top
+      next_y_pos = y_pos
 
       content.each_with_index do |item, i|
         previous_element_type = content[i - 1][:type] 
+        @last_element_type = content[i - 1][:type]  
+        @last_printed_element_type ||= :none
 
         case item[:type]
         when :heading
-          y_pos = display_heading(y_pos, item, previous_element_type)
+          next_y_pos = display_heading(y_pos, item, previous_element_type)
         when :rule
-          y_pos = display_rule(y_pos, item, previous_element_type)
+          next_y_pos = display_rule(y_pos, item, previous_element_type)
         when :paragraph
-          y_pos = display_paragraph(y_pos, item, previous_element_type)
+          next_y_pos = display_paragraph(y_pos, item)
         when :code_block
-          y_pos = display_code_block(y_pos, item, previous_element_type)
+          next_y_pos = display_code_block(y_pos, item, previous_element_type)
         when :blockquote
-          y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
+          next_y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
         when :button
-          y_pos = display_button(y_pos, item, previous_element_type, content, i)
-          highlight_selected_option        
+          next_y_pos = display_button(y_pos, item, content, i)
+          highlight_selected_option
+        when :blank
+        else
         end
+
+        if !(next_y_pos - y_pos).zero? || item[:type] == :blank
+          @last_printed_element_type = item[:type]
+        end
+        y_pos = next_y_pos
       end
     end
 
-    def display_button(y_pos, item, previous_element_type, content, i)
-      button = data.config.button  
-      display = data.config.display
-      button_box = data.config.button_box
-      inactive_button_box = data.config.inactive_button_box
+    def display_button(y_pos, item, content, i)
+      button = data.style.button  
+      display = data.style.display
+      button_box = data.style.button_box
+      inactive_button_box = data.style.inactive_button_box
       
       # if previous element is also a button, use spacing_between instead of spacing_after
-      if content[i - 1].type == :button
+      if @last_printed_element_type == :button
         y_pos += button.spacing_after * button.size_px
         y_pos -= button.spacing_between * button.size_px
       end
@@ -241,7 +251,7 @@ module Forked
       if !item.action.empty?
         option = {
           x: display.margin_left,
-          y: y_pos - button_h,
+          y: (y_pos - button_h).to_i,
           w: text_w + button_box.padding_left + button_box.padding_right,
           h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
           action: item.action
@@ -253,9 +263,9 @@ module Forked
       else
         data.primitives << {
           x: display.margin_left,
-          y: y_pos - button_h,
+          y: (y_pos - button_h).to_i,
           w: text_w + button_box.padding_left + button_box.padding_right,
-          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
+          h: (button.size_px + button_box.padding_top + button_box.padding_bottom).to_i,
 
         }.sprite!(inactive_button_box)
 
@@ -264,7 +274,7 @@ module Forked
 
       data.primitives << {
         x: display.margin_left + button_box.padding_left,
-        y: y_pos,
+        y: y_pos.to_i,
         text: item.text,
       }.label!(button)
 
@@ -272,15 +282,15 @@ module Forked
       y_pos -= button.size_px * button.spacing_after
     end
 
-    def display_paragraph(y_pos, item, previous_element_type)
-      paragraph = data.config.paragraph
-      display = data.config.display
+    def display_paragraph(y_pos, item)
+      paragraph = data.style.paragraph
+      display = data.style.display
       paragraph.size_px = args.gtk.calcstringbox('X', paragraph.size_enum, paragraph.font)[1]
 
       x_pos = 0
       new_y_pos = y_pos
 
-      if previous_element_type == :paragraph
+      if @last_printed_element_type == :paragraph
         # paragraph follows paragraph, so undo the added 'spacing after'
         new_y_pos += paragraph.size_px * paragraph.spacing_after
         # paragraph follows paragraph, so add 'spacing between'
@@ -289,12 +299,11 @@ module Forked
       
       args.state.forked.forked_display_last_element_empty = false
 
-      empty_paragraph = true
+      empty_paragraph = true # until proven false
       item.atoms.each_with_index do |atom, i|
-
         # if we're at the end of the paragraph and no atoms have had any text
         # mark it as empty so we know not to remove added 'spacing after'
-        empty_paragraph = false if atom[:text] != ''
+        empty_paragraph = false if atom[:text].strip != ''
         if i == item.atoms.size - 1 && empty_paragraph
           args.state.forked.forked_display_last_element_empty = true
           # if previous element was a paragraph, remove the between spacing
@@ -305,11 +314,11 @@ module Forked
 
         font_style = get_font_style(atom.styles)
         default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
-        words = atom.text.split(' ')
+        words = split_preserve_one_space(atom.text)
         line_frag = ''
-
         until words.empty?
-          word = words[0]
+          word = words[0] 
+
           new_frag = line_frag + word
           new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
           if new_x_pos > display.w
@@ -323,16 +332,16 @@ module Forked
             new_y_pos -= paragraph.size_px * paragraph.line_spacing
             
           else
-            line_frag = new_frag + ' '
+            ### CHANGED
+            line_frag = new_frag #+ ' '
             words.shift
           end
 
           next unless words.empty?
-
           loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
           lab = loc.merge(make_paragraph_label(line_frag, font_style))
           data.primitives << lab
-          x_pos = new_x_pos + default_space_w
+          x_pos = new_x_pos #+ default_space_w
           line_frag = ''
           if atom.text[-1] == "\n"
             x_pos = 0
@@ -364,9 +373,49 @@ module Forked
       empty_paragraph ? y_pos : new_y_pos
     end
 
+    ## split string (str) on space
+    ## preserve a maximum of one consecutive space
+    def split_preserve_one_space(str)
+      arr = []
+      while str.length > 0
+        if idx = str.index(' ')
+          capture = str[0...idx + 1]
+          # prevent runs of spaces
+          # unless capture == ' ' && arr&.[](-1)&.[](-1) == ' '
+          unless capture == ' ' && arr[-1]&.end_with?(" ")
+            arr << capture
+          end
+          str = str [idx + 1..-1]
+        else
+          # if the string does not or no longer contains a space
+          arr << str
+          str = ''
+        end
+      end
+      arr
+    end
+
+    ## split string (str) on space
+    ## preserve spaces
+    def split_preserve_space(str)
+      arr = []
+      while str.length > 0
+        idx = str.index(' ')
+        if idx
+          cap = str[0...idx + 1] 
+          arr << cap
+          str = str [idx + 1..-1]
+        else
+          arr << str
+          str = ''
+        end
+      end
+      arr
+    end
+
     def display_heading(y_pos, item, previous_element_type)
-      heading = data.config.heading
-      display = data.config.display
+      heading = data.style.heading
+      display = data.style.display
       heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
 
       data.primitives << {
@@ -379,8 +428,8 @@ module Forked
     end
 
     def display_rule(y_pos, item, previous_element_type)
-      rule = data.config.rule
-      display = data.config.display
+      rule = data.style.rule
+      display = data.style.display
       weight = rule.weight
       weight = item.weight if item.weight
       
@@ -395,9 +444,9 @@ module Forked
     end
 
     def display_code_block(y_pos, item, previous_element_type)
-      code_block = data.config.code_block
-      display = data.config.display
-      code_block_box = data.config.code_block_box
+      code_block = data.style.code_block
+      display = data.style.display
+      code_block_box = data.style.code_block_box
 
       text_array = wrap_lines_code_block(
         item.text, code_block.font, code_block.size_enum,
@@ -412,7 +461,7 @@ module Forked
 
       data.primitives << {
         x: display.margin_left,
-        y: temp_y_pos - box_height,
+        y: (temp_y_pos - box_height).to_i,
         w: display.w,
         h: box_height,
       }.sprite!(code_block_box)
@@ -422,7 +471,7 @@ module Forked
 
         label = {
           x: display.margin_left + code_block_box.padding_left,
-          y: temp_y_pos,
+          y: temp_y_pos.to_i,
           text: line,
         }.label!(code_block)
 
@@ -438,9 +487,9 @@ module Forked
     def display_blockquote(y_pos, item, previous_element_type, content, i)
       next if item[:text].empty?
 
-      blockquote = data.config.blockquote
-      display = data.config.display
-      blockquote_box = data.config.blockquote_box
+      blockquote = data.style.blockquote
+      display = data.style.display
+      blockquote_box = data.style.blockquote_box
 
       # if previous element is also a blockquote, use spacing_between instead of spacing_after
       if content[i - 1][:type] == :blockquote
@@ -458,7 +507,7 @@ module Forked
 
       data.primitives << {
         x: display.margin_left,
-        y: y_pos - box_height,
+        y: (y_pos - box_height).to_i,
         w: display.w,
         h: box_height,
       }.sprite!(blockquote_box)
@@ -468,7 +517,7 @@ module Forked
       data.primitives << text_array.map do |line|
         label = {
           x: display.margin_left + blockquote_box.padding_left,
-          y: temp_y_pos,
+          y: temp_y_pos.to_i,
           text: line,
         }.label!(blockquote)
 
@@ -484,15 +533,17 @@ module Forked
 
     def get_font_style styles
       if styles.include?(:bold) && styles.include?(:italic)
-        data.config.bold_italic
+        data.style.bold_italic
+      elsif styles.include? :bold_italic
+        data.style.bold_italic
       elsif styles.include? :bold
-        data.config.bold
+        data.style.bold
       elsif styles.include? :italic
-        data.config.italic
+        data.style.italic
       elsif styles.include? :code
-        data.config.code
+        data.style.code
       else
-        data.config.paragraph
+        data.style.paragraph
       end
     end
 
@@ -632,7 +683,7 @@ module Forked
     end
 
     def render
-      outputs.background_color = data.config.display.background_color.values
+      outputs.background_color = data.style.display.background_color.values
       args.outputs.primitives << data.primitives
     end
   end
