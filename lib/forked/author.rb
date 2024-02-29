@@ -60,6 +60,13 @@ module Forked
           "current chunk id: #{args.state.forked.current_chunk[:id]}",
           "current chunk heading: #{args.state.forked.current_chunk[:content][0].text}",
           "",
+          'Shortcuts',
+          '---------',
+          'hold f, press u: Toggle Author Mode on/off',
+          'n: go to next chunk in story file',
+          'h: go to previous chunk in story file',
+          'hold q: open the Author Mode Sidebar',
+          '',
         ]
 
         hist = $story.history_get.reverse
