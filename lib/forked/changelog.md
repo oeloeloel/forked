@@ -1,17 +1,14 @@
-
-
-## Next Version
+## Current Version
 
 ### Version 0.0.8
 * **Added Inline Styles**: Text can be marked up to appear as bold, italic, bold-italic or code styles using simple markdown. Styled text is surrounded by a matching pair of symbols:
-  * *Italic text*: marked by a pair of single *asterisks* or *underscores*
-  * **Bold text**: marked by a pair of double **asterisks** or __underscores__
-  * ***Bold-italic text***: marked by a pair of triple ***asterisks*** or ___underscores___
+  * *Italic text*: marked by a pair of single `*asterisks*` or `_underscores_`
+  * **Bold text**: marked by a pair of double `**asterisks**` or `__underscores__`
+  * ***Bold-italic text***: marked by a pair of triple `***asterisks***` or `___underscores___`
   * `Code`: marked by a pair of single `backticks`
 * Fixed issue with spacing between buttons when buttons are separated by a blank line
 * Fixed issuew with spacing between buttons when buttons are separated by hidden content
 
-## Current Version
 
 ### Version 0.0.7
 
