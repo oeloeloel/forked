@@ -100,6 +100,26 @@ which can span multiple lines -->
 
 ## Formatting
 
+*Italic text*
+```md
+*italic text*
+```
+
+**Bold text**
+```md
+**bold text**
+```
+
+***Bold Italic text***
+```md
+***bold italic text***
+```
+
+`code span`
+```md
+`code span`
+```
+
 ### Blockquote:
 By default, blockquotes display text inside a box.
 Blockquotes can run over more than one line. To separate blockquotes, include a blank line between them.
