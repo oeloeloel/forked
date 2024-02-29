@@ -201,6 +201,7 @@ module Forked
 
       content.each_with_index do |item, i|
         previous_element_type = content[i - 1][:type] 
+        @last_element_type = content[i - 1][:type]  
         @last_printed_element_type ||= :none
 
         case item[:type]
@@ -217,9 +218,11 @@ module Forked
         when :button
           next_y_pos = display_button(y_pos, item, content, i)
           highlight_selected_option
+        when :blank
+        else
         end
 
-        unless (next_y_pos - y_pos).zero?
+        if !(next_y_pos - y_pos).zero? || item[:type] == :blank
           @last_printed_element_type = item[:type]
         end
         y_pos = next_y_pos
@@ -248,7 +251,7 @@ module Forked
       if !item.action.empty?
         option = {
           x: display.margin_left,
-          y: y_pos - button_h,
+          y: (y_pos - button_h).to_i,
           w: text_w + button_box.padding_left + button_box.padding_right,
           h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
           action: item.action
