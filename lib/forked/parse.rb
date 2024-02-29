@@ -42,10 +42,10 @@ module Forked
         # [x] html-style comments (stripped and ignored)
         # [x] :rule (horizontal rule)
         # [x] :action (single line code)
-        # :code (present with code format < 1 line)
-        # :bold (inline strong style)
-        # :italic (inline emphasis style)
-        # :bold italic (inline strong + emphasis style)
+        # [x] :code (present with code format < 1 line)
+        # [x] :bold (inline strong style)
+        # [x] :italic (inline emphasis style)
+        # [x] :bold italic (inline strong + emphasis style)
         # :inline trigger
 
         story_lines = story_file.lines
