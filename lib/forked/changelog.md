@@ -48,8 +48,6 @@ Note that: DragonRuby recommends that passing command line arguments to the Drag
 * Bugfix: Using the mouse to navigate to a chunk without any triggers would cause the mouse cursor to stay as finger instead of reverting to arrow
 
 
-## Older Versions:
-
 ### Version 0.0.6
 
 * Added save feature. Author can save the player's navigation history, inventory, etc. from within the story file using the `save_game` command:
