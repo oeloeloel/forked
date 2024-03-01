@@ -575,7 +575,7 @@ Tell Akz to write a better error message."
       return "Test does not contain two marks" if test_mark.count < 2
 
       subject = outputs.primitives[test_mark[0]..test_mark[1]] 
-      putz subject if print_subject
+      puts subject if print_subject
       result = expect == subject
       result ? "Test passed" : "Test failed"
     end
