@@ -730,7 +730,9 @@ Please add a title to the top of the Story File. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         # first identify trigger, capture button text and action
-        if line.strip.start_with?('[') && line.include?('](')
+        if line.strip.start_with?('[') && 
+           line.include?('](') &&
+           line.strip.end_with?(')')
           line = line.strip.delete_prefix!('[')
 
           line.split(']', 2).then do |trigger, action|
