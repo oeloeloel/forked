@@ -420,7 +420,7 @@ module Forked
 
       data.primitives << {
         x: display.margin_left,
-        y: y_pos,
+        y: y_pos.to_i,
         text: item.text,
       }.label!(heading)
 
@@ -435,7 +435,7 @@ module Forked
       
       data.primitives << {
         x: display.margin_left,
-        y: y_pos,
+        y: y_pos.to_i,
         w: display.w,
         h: weight
       }.sprite!(rule)
