@@ -12,7 +12,6 @@ module Forked
         @style_marks = [
           { symbol: :bold_italic, mark: "***" },
           { symbol: :bold_italic, mark: "___" },
-          
           { symbol: :bold, mark: "**" },
           { symbol: :bold, mark: "__"},
           { symbol: :italic, mark: "*" },
@@ -638,7 +637,10 @@ end
       def expand_single_line_condition(line, context, story, line_no, story_lines)
         if line.strip.start_with?('<: ') && line.strip.end_with?(' :>')
           line.strip!
-          line.delete_prefix!('<: ').delete_suffix!(' :>').strip!
+          line.delete_prefix!('<:').delete_suffix!(':>')
+          line.strip!
+          return if line.empty?
+          
           arr = ['<:']
           line_split = line.split(' :: ')
           line_split.each_with_index do |seg, i|
@@ -732,7 +734,11 @@ Please add a title to the top of the Story File. Example:
         # first identify trigger, capture button text and action
         if line.strip.start_with?('[') && 
            line.include?('](') &&
-           line.strip.end_with?(')')
+          #  line.strip.end_with?(')')
+
+          # check for existence of `)` after `](` and 
+          # return if `)` does not end the line
+
           line = line.strip.delete_prefix!('[')
 
           line.split(']', 2).then do |trigger, action|
