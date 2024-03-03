@@ -9,7 +9,6 @@ With Forked, you can learn how to write a simple interactive story in a few minu
 
 ---
 [Next: Getting Started](#getting-started)
-
 [Contents](#contents)
 
 ## Contents
@@ -303,9 +302,7 @@ Actions get things done. They are short pieces of code that you can put directly
 There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displayed like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.
 
 [Chunk Actions](#chunk-actions)
-
 [Trigger Actions](#trigger-actions)
-
 [Conditions](#conditional-text-part-1)
 Related: Forked includes a number of useful commands you can use with actions.
 [Built-in Commands](#built-in-commands)
@@ -546,6 +543,7 @@ counter_check "number of rugs"
 [Background Image](#example-background-image)
 [Roll Dice](#example-roll-the-dice)
 [Inventory](#example-inventory)
+[Memorizing Info](#example-memorizing-info)
 
 ---
 [Back: Built-in Commands](#built-in-commands)
@@ -688,6 +686,21 @@ Your inventory currently contains:
 :>
 
 [Turn your bag upside down and shake it out](: bag_clear :)
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+## Example: Memorizing info
+
+:: memo_add "favourite colour", "a great mystery" ::
+
+At that time, everyone in European society was speculating about the Dauphine's favourite colour. It was, of course,
+<: (memo_check "favourite colour") + '.' :>
+
+[The Dauphine's favourite colour was Moroccan Pink](: memo_add "favourite colour", "Moroccan Pink" :)
+[The Dauphine's favourite colour was Cerulean Blue](: memo_add "favourite colour", "Cerulean Blue" :)
+[The Dauphine's favourite colour was Etruscan Brown](: memo_add "favourite colour", "Etruscan Brown" :)
 
 ---
 [Back to Examples](#examples)
