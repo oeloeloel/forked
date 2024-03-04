@@ -9,15 +9,7 @@ module Forked
         raise 'FORKED: The story file is empty.' if story_file.empty?
 
         # for parsing inline styles
-        @style_marks = [
-          { symbol: :bold_italic, mark: "***" },
-          { symbol: :bold_italic, mark: "___" },
-          { symbol: :bold, mark: "**" },
-          { symbol: :bold, mark: "__"},
-          { symbol: :italic, mark: "*" },
-          { symbol: :italic, mark: "_" },
-          { symbol: :code, mark: "`" }
-        ]
+        @style_marks = make_style_marks
 
         # Empty story
         story = make_story_hash
@@ -85,18 +77,6 @@ module Forked
           result = parse_heading(line, context, story, line_no)
           next if result
 
-          # Forked wants the first non blank line after the title
-          # to be a heading and will throw a wobbly if it isn't
-#           if context.include?(:heading) && !line.strip.empty?
-#             raise "FORKED: CONTENT BEFORE FIRST HEADING.
-
-# Forked expects to find a heading before finding any content.
-# Please add a heading line after the title and before any other content. Example:
-
-# `## The First Chapter {#start}`
-# "
-#           end
-
           ### RULE
           result = parse_rule(line, context, story, line_no)
           next if result
@@ -132,7 +112,6 @@ module Forked
           # MEANINGFUL BLANK LINE
           result = parse_blank(line, context, story, line_no)
           next if result
-          # putz "Line: #{line_no + 1} '#{line}', #{context}"
         end
 
         story
@@ -897,6 +876,18 @@ Please add a title to the top of the Story File. Example:
           text: '',
           action: ''
         }
+      end
+
+      def make_style_marks
+        [
+          { symbol: :bold_italic, mark: "***" },
+          { symbol: :bold_italic, mark: "___" },
+          { symbol: :bold, mark: "**" },
+          { symbol: :bold, mark: "__"},
+          { symbol: :italic, mark: "*" },
+          { symbol: :italic, mark: "_" },
+          { symbol: :code, mark: "`" }
+        ]
       end
 
       # given a string str and string delimiters left and right
