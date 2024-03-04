@@ -278,14 +278,16 @@ module Forked
           story[:chunks][-1][:content][-1][:atoms] += atoms
         end
         
+        # apply conditions to paragraph atoms
         if context.include?(:condition_block) || conditional
           condition = story[:chunks][-1][:conditions][-1]
           prev_item = story[:chunks][-1][:content][-1]
           if prev_item[:atoms]
             if !prev_item[:atoms].empty?
               prev_item[:atoms][-1][:condition] = condition
+              prev_item[:atoms][-1][:condition_segment] = @condition_segment_count
             else
-              prev_item[:atoms] << make_atom_hash('', [], condition)
+              prev_item[:atoms] << make_atom_hash('', [], condition, @condition_segment_count)
             end
           else
             prev_item[:condition] = condition
@@ -560,7 +562,6 @@ module Forked
 
             atm = make_atom_hash
             atm[:condition] = story[:chunks][-1][:conditions][-1]
-            
             # story[:chunks][-1][:content][-1][:atoms] << atm
 
             # story[:chunks][-1][:content][-1][:atoms]
@@ -571,17 +572,15 @@ if context.include?(:condition_code_block)
           return :interpolation
 end
           elsif context.include?(:condition_code_block)
-   
             context.delete(:condition_block)
           context.delete(:condition_code_block)
           return :interpolation
-            # return false
-            # story[:chunks][-1][:content] << para
           end
 
           # close conditon block and condition code block contexts
           context.delete(:condition_block)
           context.delete(:condition_code_block)
+          context.delete(:condition_segment)
           return true
         end
 
@@ -598,10 +597,18 @@ end
         # returned string AND the following conditional content. Right now,
         # it won't do both but only because that's how it happens to be.
 
+
         # closing only condition code block context
-        if line.strip == '::' && context.include?(:condition_code_block)
-          context.delete(:condition_code_block)
+        if line.strip == '::'
+          if context.include? :condition_code_block
+            context.delete(:condition_code_block)
+            context << (:condition_segment)
+            @condition_segment_count = 0
+            return true
+          elsif context.include? :condition_segment
+            @condition_segment_count += 1
           return true
+          end
         end
 
         # capture contents of condition code block
@@ -732,6 +739,7 @@ Please add a title to the top of the Story File. Example:
             if context.include?(:condition_block) || context.include?(:condition_block)
               condition = story[:chunks][-1][:conditions][-1]
               story[:chunks][-1][:content][-1][:condition] = condition
+              story[:chunks][-1][:content][-1][:condition_segment] = @condition_segment_count
             end
 
             ### identify and catch chunk id action (return)
@@ -841,11 +849,12 @@ Please add a title to the top of the Story File. Example:
         }
       end
 
-      def make_atom_hash(text = '', styles = [], condition = [])
+      def make_atom_hash(text = '', styles = [], condition = [], condition_segment = '')
         {
           text: text,
           styles: styles,
-          condition: condition
+          condition: condition,
+          condition_segment: condition_segment
         }
       end
 

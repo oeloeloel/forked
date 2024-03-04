@@ -284,8 +284,17 @@ Tell Akz to write a better error message."
               # Add space after the result
               result += ' '
               element[:atoms][j][:text] = "#{result}"
-            elsif !result
-              # if the result is falsey, don't display
+            elsif [true, false].include? result
+              display_segment = false
+              if atom[:condition_segment].to_i == 0 && result == true
+                display_segment = true
+              elsif atom[:condition_segment].to_i == 1 && result == false
+                display_segment = true
+              end
+
+              element[:atoms][j][:text] = '' if display_segment != true
+            else
+              # don't display
               element[:atoms][j][:text] = '' #j > 0 ? ' ' : ''
             end
           end
@@ -294,9 +303,21 @@ Tell Akz to write a better error message."
           next unless element && element[:condition]
 
           result = evaluate(args, element[:condition])
-          if result.nil? || result == false
-            element[:type] = :hidden
-          end
+
+          if [true, false].include? result
+              display_element = false
+              if element[:condition_segment].to_i == 0 && result == true
+                display_element = true
+              elsif element[:condition_segment].to_i == 1 && result == false
+                display_element = true
+              end
+
+              # element[:text] = '' if display_element != true
+              element[:type] = :hidden if display_element != true
+            else
+              # don't display
+              element[:type] = :hidden
+            end
         end
       end
 
