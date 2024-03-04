@@ -5,6 +5,10 @@ module Forked
     attr_gtk
     attr_accessor :display
 
+    def initialize sf
+      @story_file = sf
+    end
+
     def data
       state.forked ||= state.new_entity('forked')
     end
@@ -41,7 +45,7 @@ module Forked
       @refresh = true
       @hashed_display = 0
 
-      story_file = get_story_from_argv || STORY_FILE
+      story_file = get_story_from_argv || @story_file
 
       if story_file.end_with?('.json')
         state.forked.story = Forked.import_story_from_json(story_file)
