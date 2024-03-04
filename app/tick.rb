@@ -51,7 +51,7 @@ def tick args
   end
 
   # load the story file specified at the top of this page
-  $story ||= Forked::Story.new
+  $story ||= Forked::Story.new(STORY_FILE)
 
   # keep the story running every tick
   $story.args = args
