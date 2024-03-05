@@ -13,6 +13,10 @@
     If only you had a pocket calculator!
   :>
   ```
+* Added `load_story` command to load and switch to a different story from within the current story. See example of switching stories from a button click below. When the new story loads, data such as inventory, counters, memos, etc will be unloaded. If the new story has saved progress, it will be loaded.
+```
+[Read Memoirs of a Crocodile](: load_story 'app/memoirs-of-a-crocodile.md' :)
+```
 * Author Mode changes: (hold `f` + press `u` to enter author mode. Hold `q` to display the sidebar)
   * Added list of author mode shortcuts to author mode sidebar
   * Added shortcut to display FPS (debug label): `d` (for diagnostic)
