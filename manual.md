@@ -313,6 +313,22 @@ But if they have the submarine, they see more text:
 
 They will also see a nice new button to help them start their under-sea voyage.
 
+#### Alternative Options
+
+You may want to have alternative texts, depending on the result of condition. Say, for example, the player needs the portable submarine to escape the sinking ship. What happens if they don't have it?
+
+In the example below, if the player has the submarine, the block of text following the first `::` will display. If they do not have the submarine, the block of text following the second `::` will display.
+
+~~~
+<:
+bag_has? "portable submarine"
+::
+I deployed the portable submarine and hopped inside. Bidding adieu to the brave sailors, I set off for Mauritius.
+::
+Oh my life! Such bad luck! If only I had a portable submarine! Well, nothing for it but to swim to Mauritius.
+:>
+~~~
+
 
 [Back to Contents](#contents)
 
