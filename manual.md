@@ -511,6 +511,15 @@ If you want to disable autosaving for a story file you can do that from within t
 
 [Back to Contents](#contents)
 
+## Jumping to another story
+You can load and jump to another story from within the currently running story. When you do this, Forked will load the save file for the new story (if the save file exists) and continue that story from where it was last saved.
+
+This example shows how to jump to another story on the click of a button:
+
+```
+[Read Memoirs of a Crocodile](: load_story 'app/memoirs-of-a-crocodile.md' :)
+```
+
 ## Examples
 
 ### Example: Setting the Display Theme

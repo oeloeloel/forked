@@ -233,6 +233,10 @@ Forked automatically saves progress but, if you prefer, you can manually control
 | `autosave_off` | disables autosaving |
 | `autosave_on` | enables autosaving |
 
+| Misc Commands ||
+|-|-|
+| `load_story path_to_story_file` | Loads and navigates to a different story. Saved data such as memos, bag, counters, etc, are unloaded. If the story being loaded has a save file, it will be loaded and the story will continue from the save point. |
+
 ## Author Mode
 Author mode provides some features that may be useful while writing your story. Note that the shortcut keys may change in the future.
 
