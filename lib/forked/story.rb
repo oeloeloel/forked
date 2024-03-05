@@ -46,7 +46,10 @@ module Forked
       @hashed_display = 0
 
       story_file = get_story_from_argv || @story_file
+      load_story(story_file)
+    end
 
+    def load_story(story_file)
       if story_file.end_with?('.json')
         state.forked.story = Forked.import_story_from_json(story_file)
       else
