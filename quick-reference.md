@@ -239,10 +239,7 @@ Author mode provides some features that may be useful while writing your story. 
 | Shortcuts | Action |
 |-|-|
 | <nobr>`f` (hold) + `u`</nobr> | Toggle Author Mode on or off. When author mode is active, a red square appears in the bottom left corner of the screen. The following shortcuts become available when Author Mode is on. |
-| `q` (hold) | Display information sidebar. This displays |
-|     | 1. the current chunk ID and the text of the current chunk heading |
-|     | 2. the most recent 20 items in the player's navigation history |
-|     | 3. the contents of the player's bag |
+| `q` (hold) | Display information sidebar. This displays information such as the navigation history and the contents of the player's bag |
 | `n` | Navigate to the following chunk in the story file until the last chunk is displayed. |
 | `h` | Navigate to the preceding chunk in the story file until the first chunk is displayed. |
 | `d` (hold) | Display the current framerate (fps) |
