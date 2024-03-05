@@ -1,3 +1,24 @@
+
+### Version 0.0.9
+* Conditional content allows alternative content to be displayed if the result of the condition is false. E.g.:
+  ```
+  <!-- checks to see if the player has an item in their bag (inventory) -->
+  <:
+    bag_has? "pocket calculator"
+  ::
+    <!-- displayed if the item is in the player's bag -->
+    You quickly solve the problem. The square root of 169 is 13!
+  ::
+    <!-- displayed if the item is not in the player's bag -->
+    If only you had a pocket calculator!
+  :>
+  ```
+* Author Mode changes: (hold `f` + press `u` to enter author mode. Hold `q` to display the sidebar)
+  * Added list of author mode shortcuts to author mode sidebar
+  * Added shortcut to display FPS (debug label): `d` (for diagnostic)
+* Example: Added `memo` example to manuals
+* Bugfix: Empty string interpolation no longer causes exception
+
 ## Current Version
 
 ### Version 0.0.8
