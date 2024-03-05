@@ -34,9 +34,11 @@ module Forked
       fall_key = :n
       rise_key = :h
       left_sidebar_key = :q
+      framerate_key = :d # for diagnostic
       @story.jump(1) if k_d.send(fall_key)
       @story.jump(-1) if k_d.send(rise_key)
       args.state.forked.author_mode_sidebar = k_h.send(left_sidebar_key)
+      outputs.debug << "FPS: " + args.gtk.current_framerate_calc.round.to_s if k_h.send(framerate_key)
     end
 
     def calc
@@ -66,6 +68,7 @@ module Forked
           'n: go to next chunk in story file',
           'h: go to previous chunk in story file',
           'hold q: open the Author Mode Sidebar',
+          'hold d: display the current framerate',
           '',
         ]
 
