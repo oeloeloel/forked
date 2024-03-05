@@ -37,21 +37,19 @@ Be sure to visit the DragonRuby Discord for help or just to hang out with the su
 
 To install Forked, you should start with a freshly unzipped DragonRuby project.
 
-In the DragonRuby folder, open the `mygame` folder and create a new folder inside it called `lib`.
-
 [Download the Forked project from GitHub](https://github.com/oeloeloel/forked). In GitHub, click the green `<> Code` button and select `Download ZIP`. Unzip the downloaded file.
 
-If you are starting with a fresh DragonRuby project, drag the _contents_ of the downloaded folder to the `mygame` folder inside the DragonRuby project. Let it overwrite the existing files and folders.
+Copy the _contents_ of the downloaded folder into the `mygame` folder in the DragonRuby project. Let it overwrite the existing files and folders.
 
 Now run DragonRuby: double-click on the DragonRuby executable (dragonruby.exe on windows, dragonruby on macOS or Linux).
 
-By default, Forked will open a version of manual to help you get started.
+By default, Forked will open an interactive version of this manual to help you get started.
 
 Now you can start writing your story.
 
 ### Writing and Editing the Story
 
-Open up the `mygame/app/story.md` file in any text editor and you'll see the contents of a version of this manual. When you look at the examples, you'll also be able to see the code that created them.
+Open up the `mygame/app/story.md` file in any text editor and you'll see the contents of the interactive version of this manual. When you look at the examples, you'll also be able to see the code that created them.
 
 When you want to start a new story, create a new file in the `mygame/app` folder and call it whatever you want followed by the `.md` extension.
 
@@ -70,7 +68,7 @@ Then you can start writing your story:
 
 ## Essentials
 
-There are only a few things you really need to know to write a branching story with Forked.
+There are only a few things you *really* need to know to write a branching story with Forked.
 
 ### The Story Title
 Every story needs a title and, in Forked, they are written like this:
@@ -79,7 +77,7 @@ Every story needs a title and, in Forked, they are written like this:
 # Gentleman, Adventurer, Amphibian: A Memoir
 ~~~
 
-The title begins with a the `#` symbol (hash or pound), followed by the text of the title.
+The title begins with a the `#` symbol, followed by the text of the title.
 
 You can have only one title in your story file and it should be at the top.
 
@@ -602,7 +600,7 @@ Your inventory currently contains:
 [Pick up the potion of inconsequence](: bag_add "potion of inconsequence" :)
 [Pick up the Spear of Astrabliano](: bag_add "Spear of Astrabliano" :)
 [Pick up the Golden Crown of Impolior](: bag_add "Golden Crown of Impolior" :)
-@@
+
 <: 
   bag_has? "potion of inconsequence" 
 ::
@@ -618,7 +616,21 @@ Your inventory currently contains:
 ::
   [Melt down the Golden Crown of Impolior](: bag_remove "Golden Crown of Impolior" :)
 :>
-@@
+
 [Turn your bag upside down and shake it out](: bag_clear :)
 ```
+
+## Example: Memorizing info
+```
+:: memo_add "favourite colour", "a great mystery" ::
+
+At that time, everyone in European society was speculating about the Dauphine's favourite colour. It was, of course,
+<: (memo_check "favourite colour") + '.' :>
+
+[The Dauphine's favourite colour was Moroccan Pink](: memo_add "favourite colour", "Moroccan Pink" :)
+[The Dauphine's favourite colour was Cerulean Blue](: memo_add "favourite colour", "Cerulean Blue" :)
+[The Dauphine's favourite colour was Etruscan Brown](: memo_add "favourite colour", "Etruscan Brown" :)
+```
+
 [Back to Contents](#contents)
+
