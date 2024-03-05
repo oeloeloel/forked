@@ -47,6 +47,8 @@ module Forked
 
       story_file = get_story_from_argv || @story_file
       load_story(story_file)
+
+      state.forked.defaults_set = true
     end
 
     def load_story(story_file)
@@ -67,9 +69,9 @@ module Forked
         evaluate args, state.forked.story.actions.join
       end
 
-      follow args
+      
 
-      state.forked.defaults_set = true
+      follow args
 
       load_dynamic_state
       state.forked.dynamic.forked_history ||= [] 
