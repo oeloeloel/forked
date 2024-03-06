@@ -44,6 +44,7 @@ module Forked
       state.forked.defaults = Forked.forked_defaults
       @refresh = true
       @hashed_display = 0
+      args.state.forked.dynamic.forked_counter = {}
 
       story_file = get_story_from_argv || @story_file
       load_story(story_file)
@@ -69,7 +70,7 @@ module Forked
         evaluate args, state.forked.story.actions.join
       end
 
-      
+
 
       follow args
 
@@ -422,23 +423,27 @@ Tell Akz to write a better error message."
     end
 
     def counter_up name, value = 1
-      counter[name] += value
+      state.forked.dynamic.forked_counter[name] += value
     end
 
     def counter_down name, value = 1
-      counter[name] -= value
+      state.forked.dynamic.forked_counter[name] -= value
     end
 
     def counter_add name, value = 0
-      counter[name] = value
+      state.forked.dynamic.forked_counter[name] = value
     end
 
     def counter_remove name
-      counter.delete(name)
+      state.forked.dynamic.forked_counter.delete(name)
     end
 
     def counter_check name
-      counter[name]
+      state.forked.dynamic.forked_counter[name]
+    end
+
+    def counter_text name
+      state.forked.dynamic.forked_counter[name].to_s
     end
 
     def counter_clear
@@ -484,19 +489,23 @@ Tell Akz to write a better error message."
       state.forked.dynamic.forked_wallet ||= 0
     end
 
+    def wallet_text(prefix)
+      "#{prefix}#{state.forked.dynamic.forked_wallet}"
+    end
+
     # adds money to the wallet
     def wallet_plus num
-      wallet = wallet + num
+      state.forked.dynamic.forked_wallet += num
     end
 
     # removes money from the wallet
     def wallet_minus num
-      wallet = wallet - num
+      state.forked.dynamic.forked_wallet -= num
     end
 
     # removes all money from the wallet
     def wallet_clear
-      wallet = 0
+      state.forked.dynamic.forked_wallet = 0
     end
 
     ### Timers
