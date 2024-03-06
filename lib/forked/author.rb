@@ -92,11 +92,67 @@ module Forked
           "Bag",
           "------------------",
         ]
+        
+        if $story.bag.empty?
+          am_labels << "Nothing" 
+        else
+          am_labels += $story.bag.map_with_index { |h| h }
+        end
 
-        am_labels += $story.bag.map_with_index { |h| h }
+        am_labels += [
+          "",
+          "Memos",
+          "------------------", 
+        ]
+        
+        if $story.memo.empty?
+          am_labels << "None"
+        else
+          am_labels += $story.memo.map { |m| "#{m[0]}: #{m[1]}" }
+        end
 
+
+        am_labels += [
+          "",
+          "Counters",
+          "------------------", 
+        ]
+
+        if $story.counter.empty?
+          am_labels << "None"
+        else
+          am_labels += $story.counter.map { |c| "#{c[0]}: #{c[1]}" }
+        end
+
+
+        am_labels += [
+          "",
+          "Timers",
+          "------------------", 
+        ]
+
+        if $story.timer.empty?
+          am_labels << "None"
+        else
+          am_labels += $story.timer.map { |t|
+            name = t[0]
+
+            next "#{name}: Done" if $story.timer_done? name
+            val  = $story.timer_check name
+            sec  = $story.timer_seconds name
+            "#{name}: #{sec} secs / #{val} ticks"
+          }
+        end
+
+        am_labels += [
+          "",
+          "Wallet",
+          "------------------",
+        ]
+
+        am_labels << "$" + $story.wallet.to_s
+        
         y_loc = 0
-
         am_prims += am_labels.map_with_index do |text, i|
           prim = { 
             x: 1, y: y_loc.from_top,
