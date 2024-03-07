@@ -86,12 +86,11 @@ module Forked
         hist = $story.history_get.reverse
 
         am_labels += [
-        "Navigation History (#{hist.size})",
+        "Navigation History (#{hist.size - 9}-#{hist.size}/#{hist.size})",
           "------------------"
         ]
 
-        am_labels += hist[0..10].map_with_index { |h, i|
-          
+        am_labels += hist[0...10].map_with_index { |h, i|
           str = ""
           str += "## #{h[2]} " if h[2]
           str += "{#{h[1]}}" if h[1]
