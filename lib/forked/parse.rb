@@ -648,7 +648,8 @@ end
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         if line.strip.start_with?('#') && !line.strip.start_with?('##')
-          line.strip.delete_prefix('#').strip
+          line.strip!
+          line.delete_prefix!('#').strip!
         elsif !line.strip.empty?
           raise "FORKED: CONTENT BEFORE TITLE.
 
