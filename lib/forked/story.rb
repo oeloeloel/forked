@@ -64,6 +64,8 @@ module Forked
       state.forked.title = state.forked.story[:title]
       state.forked.story_id = state.forked.title.hash
 
+      $gtk.set_window_title(state.forked.title) if $gtk.version.to_f >= 5.20
+
       # allow story to run one-time setup code that needs to be
       # setup regardless of where we start the story after a reload
       if state.forked.story.actions
@@ -112,6 +114,7 @@ module Forked
     end
 
     def heading_set new_heading
+      putz "new_heading"
       state.forked.current_chunk[:content][0][:text] = new_heading
     end
 
@@ -154,6 +157,7 @@ module Forked
 
     # navigates to the chunk with the provided index number
     def navigate(idx)
+      putz "navigate#{idx}"
       if idx.nil?
         raise "FORKED: TARGET NOT FOUND. "\
         "Cannot navigate to the specified chunk."
@@ -279,9 +283,9 @@ Tell Akz to write a better error message."
         # deal first with content that contains atoms
         if element[:atoms]
           element[:atoms].each_with_index do |atom, j|
-            next unless atom[:condition] &&
+            next unless (atom[:condition] &&
                         atom[:condition].class == String &&
-                        !atom[:condition].empty?
+                        !atom[:condition].empty?)
             result = evaluate(args, atom[:condition])
             # if it's a non-empty string, display the result
             if result.class == String && !result.empty?
