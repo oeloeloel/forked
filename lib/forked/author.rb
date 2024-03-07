@@ -31,7 +31,6 @@ module Forked
       @rise_key = :h
       @left_sidebar_key = :q
       @framerate_key = :d # for diagnostic 
-      putz "FALLIE #{@fall_key}"
     end
 
     def check_inputs
