@@ -13,7 +13,7 @@ module Forked
     end
 
     def tick
-      defaults unless args.state.forked.defaults_set
+      defaults unless args.state.forked.author_defaults_set
       check_inputs
       calc
       render
@@ -21,6 +21,17 @@ module Forked
 
     def defaults
       args.state.forked.author_mode = false
+      define_keys
+
+      args.state.forked.author_defaults_set = true
+    end
+
+    def define_keys
+      @fall_key = :n
+      @rise_key = :h
+      @left_sidebar_key = :q
+      @framerate_key = :d # for diagnostic 
+      putz "FALLIE #{@fall_key}"
     end
 
     def check_inputs
@@ -31,14 +42,15 @@ module Forked
       k_d = args.inputs.keyboard.key_down
       k_h = args.inputs.keyboard.key_held
 
-      fall_key = :n
-      rise_key = :h
-      left_sidebar_key = :q
-      framerate_key = :d # for diagnostic
-      @story.jump(1) if k_d.send(fall_key)
-      @story.jump(-1) if k_d.send(rise_key)
-      args.state.forked.author_mode_sidebar = k_h.send(left_sidebar_key)
-      outputs.debug << "FPS: " + args.gtk.current_framerate_calc.round.to_s if k_h.send(framerate_key)
+      nav(1) if k_d.send(@fall_key)
+      nav.jump(-1) if k_d.send(@rise_key)
+      args.state.forked.author_mode_sidebar = k_h.send(@left_sidebar_key)
+      outputs.debug << "FPS: " + args.gtk.current_framerate_calc.round.to_s if k_h.send(@framerate_key)
+    end
+
+    def nav by
+      @story.jump(by)
+      @story.save_game
     end
 
     def calc
