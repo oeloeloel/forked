@@ -42,7 +42,7 @@ module Forked
       k_h = args.inputs.keyboard.key_held
 
       nav(1) if k_d.send(@fall_key)
-      nav.jump(-1) if k_d.send(@rise_key)
+      nav(-1) if k_d.send(@rise_key)
       args.state.forked.author_mode_sidebar = k_h.send(@left_sidebar_key)
       outputs.debug << "FPS: " + args.gtk.current_framerate_calc.round.to_s if k_h.send(@framerate_key)
     end
