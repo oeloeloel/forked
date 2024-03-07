@@ -114,7 +114,6 @@ module Forked
     end
 
     def heading_set new_heading
-      putz "new_heading"
       state.forked.current_chunk[:content][0][:text] = new_heading
     end
 
@@ -157,7 +156,6 @@ module Forked
 
     # navigates to the chunk with the provided index number
     def navigate(idx)
-      putz "navigate#{idx}"
       if idx.nil?
         raise "FORKED: TARGET NOT FOUND. "\
         "Cannot navigate to the specified chunk."
