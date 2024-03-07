@@ -363,8 +363,12 @@ Tell Akz to write a better error message."
     end
 
     def change_theme theme
-      @display.apply_theme(theme)
-      @refresh = true
+      if @display
+        @display.apply_theme(theme)
+        @refresh = true
+      else
+        THEME = theme
+      end
     end
 
     #################
