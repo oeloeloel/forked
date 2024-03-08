@@ -236,6 +236,7 @@ Forked automatically saves progress but, if you prefer, you can manually control
 | Misc Commands ||
 |-|-|
 | `load_story path_to_story_file` | Loads and navigates to a different story. Saved data such as memos, bag, counters, etc, are unloaded. If the story being loaded has a save file, it will be loaded and the story will continue from the save point. |
+| `change_theme DARK_MODE` | Changes the theme. The current built-in themes are `DARK_MODE` (selected), `LIGHT_MODE`, `KIFASS_THEME` and `TWENTY_SECOND_THEME`.|
 
 ## Author Mode
 Author mode provides some features that may be useful while writing your story. Note that the shortcut keys may change in the future.
