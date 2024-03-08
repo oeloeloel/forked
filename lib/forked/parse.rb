@@ -38,6 +38,7 @@ module Forked
         # [x] :italic (inline emphasis style)
         # [x] :bold italic (inline strong + emphasis style)
         # :inline trigger
+        # [ ] :image
 
         story_lines = story_file.lines
         line_no = -1
@@ -88,6 +89,10 @@ module Forked
           ### TRIGGER
           # currently works for newstyle colon and old-style backtick trigger actions
           result = parse_trigger(line, context, story, line_no)
+          next if result
+
+          ### IMAGE
+          result = parse_image(line, context, story, line_no)
           next if result
 
           ### CONDITION BLOCK
@@ -795,6 +800,41 @@ Please add a title to the top of the Story File. Example:
         end
       end 
 
+      def parse_image(line, context, story, line_no)
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        # first identify image, capture alt text and path
+        if line.strip.start_with?('![') && 
+           line.include?('](') &&
+           line.strip.end_with?(')')
+
+          line = line.strip.delete_prefix!('![')
+
+          line.split(']', 2).then do |alt, path|
+            alt.strip!
+            path.strip!
+
+            # if this content is conditional, add the condition to the current element
+
+            if context.include?(:condition_block) || context.include?(:condition_block)
+              condition = story[:chunks][-1][:conditions][-1]
+              story[:chunks][-1][:content][-1][:condition] = condition
+              story[:chunks][-1][:content][-1][:condition_segment] = @condition_segment_count
+            end
+
+            ### identify and catch url (return)
+            path.delete_prefix!('(')
+            path.delete_suffix!(')')
+            
+            img = make_image_hash
+            img[:path] = path
+            story[:chunks][-1][:content] << img
+          end
+        end
+      end 
+
       def l_split(line, delimiter)
         return unless idx = line.index(delimiter)
         
@@ -885,6 +925,14 @@ Please add a title to the top of the Story File. Example:
           type: :button,
           text: '',
           action: ''
+        }
+      end
+
+      
+      def make_image_hash
+        {
+          type: :image,
+          path: ''
         }
       end
 
