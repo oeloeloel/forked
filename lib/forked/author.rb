@@ -49,7 +49,7 @@ module Forked
 
     def nav by
       @story.jump(by)
-      @story.save_game
+      @story.save_game if state.forked.defaults[:autosave]
     end
 
     def calc
