@@ -92,6 +92,10 @@ module Forked
           file = p.split(' ')[1]
           puts "Forked: Loading story file #{file} from command line argument"
           return file
+        elsif p.start_with? "ftest "
+          file = '/lib/forked/forked-tests/' + p.split(' ')[1]
+          puts "Forked: Loading test file #{file} from command line argument"
+          return file
         end
       end
       nil
