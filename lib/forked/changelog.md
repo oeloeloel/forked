@@ -17,11 +17,22 @@
 ```
 [Read Memoirs of a Crocodile](: load_story 'app/memoirs-of-a-crocodile.md' :)
 ```
+* When a story is loaded, the game title bar displays the name of the current story
 * Author Mode changes: (hold `f` + press `u` to enter author mode. Hold `q` to display the sidebar)
   * Added list of author mode shortcuts to author mode sidebar
   * Added shortcut to display FPS (debug label): `d` (for diagnostic)
-* Example: Added `memo` example to manuals
+  * Added lists of `memos`, `counters`, `timers`, and `wallet` contents to sidebar
+* Theme can be set from inside the story file, immediately after the story is loaded *regardless* of whether the game is continued from a save file. Use the `change_theme` command after the story title and before the first chunk.
+```
+# The Title of My Story
+:: change_theme(KIFASS_THEME) ::
+
+## This is the first chunk
+```
+* Navigating through chunks using keyboard shortcuts in Author Mode now autosaves progress.
+* Examples: Added `memo`, `counter`, `wallet` examples to manuals
 * Bugfix: Empty string interpolation no longer causes exception
+
 
 ## Current Version
 
