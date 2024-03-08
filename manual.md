@@ -645,7 +645,7 @@ Your inventory currently contains:
 [Turn your bag upside down and shake it out](: bag_clear :)
 ```
 
-## Example: Memorizing info
+### Example: Memorizing info
 ```
 :: memo_add "favourite colour", "a great mystery" ::
 
@@ -657,5 +657,80 @@ At that time, everyone in European society was speculating about the Dauphine's 
 [The Dauphine's favourite colour was Etruscan Brown](: memo_add "favourite colour", "Etruscan Brown" :)
 ```
 
+### Example: Keeping Count
+
+`counter` helps you to keep track of simple numbers. How many times did the player press a button? Maybe something different happens each time they press it?
+```
+<!-- make a new counter called 'button presses' -->
+:: counter_add 'button presses' ::
+
+<!-- the button makes the counter go up by 1 -->
+[Press the Big Red Button](: counter_up 'button presses' :)
+
+<!-- display the number of times the button has been pressed -->
+Number of button presses:
+<: counter_text 'button presses' :>
+
+<!-- this message displays if the number of button presses is 1 or more -->
+<:
+(counter_check 'button presses') >= 1
+::
+You press the button and nothing happens. Maybe it's stuck.
+:>
+
+<!-- two or more presses -->
+<:
+(counter_check 'button presses') >= 2
+::
+You press the button more firmly. It seems to shift a little but without any result.
+:>
+
+<!-- three or more -->
+<:
+(counter_check 'button presses') >= 3
+::
+You give the button a good slap. You hear a tired whirring sound.
+:>
+
+<!-- four or more -->
+<:
+(counter_check 'button presses') >= 4
+::
+You ball up your fist and thump the button with all your strength. A small panel whirs opens in the control console and immediately closes, too quickly for you to see what was inside.
+:>
+
+<!-- five or more -->
+<:
+(counter_check 'button presses') >= 5
+::
+You take the rubber mallet from your backpack and whack the button for all you are worth. The panel opens and stays open. Inside is a small green button labelled "Cancel Nuclear Strike". The button is flashing.
+
+<!-- reset the counter to 0 -->
+[Cancel Nuclear Strike](: counter_add 'button presses', 0 :)
+:>
+```
+
+### Example: Financial Management
+
+The `wallet` keeps track of the player's wealth. This is a single number that can be added to and subtracted from as your player picks up or spends dollars, gold coins, gems or whatever currency is used in your game world.
+```
+The `wallet` currently contains
+<: wallet_text '$' :>
+
+<!-- Add 11 to the wallet when clicked -->
+[Earn $11](: wallet_plus 11 :)
+<:
+<!-- check to see if funds are available -->
+<!-- do we have 7 or more to spend? -->
+wallet >= 7
+::
+<!-- only show this button if funds are available  -->
+<!-- remove 7 from the wallet -->
+[Spend $7](: wallet_minus 7 :)
+:>
+
+<!-- Empty your wallet out -->
+[Clear Wallet](: wallet_clear :)
+```
 [Back to Contents](#contents)
 
