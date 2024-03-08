@@ -29,7 +29,7 @@
 
 ## This is the first chunk
 ```
-* Navigating through chunks using keyboard shortcuts in Author Mode now autosaves progress.
+* Navigating through chunks using Author Mode shortcuts now autosaves progress (if autosave is enabled)
 * Examples: Added `memo`, `counter`, `wallet` examples to manuals
 * Bugfix: Empty string interpolation no longer causes exception
 
