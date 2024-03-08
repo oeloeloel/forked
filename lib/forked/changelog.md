@@ -1,5 +1,9 @@
 
 ### Version 0.0.9
+* Added support for images. The following will display the image `sprites/image.png`. Note: it is necessary to specify the width and height of the image.
+```
+![](sprites/image.png {w: 80, h: 80})
+```
 * Conditional content allows alternative content to be displayed if the result of the condition is false. E.g.:
   ```
   <!-- checks to see if the player has an item in their bag (inventory) -->
