@@ -712,7 +712,7 @@ At that time, everyone in European society was speculating about the Dauphine's 
 
 `counter` helps you to keep track of simple numbers. How many times did the player press a button? Maybe something different happens each time they press it?
 
-<!-- make a new counter called 'nuclear button' -->
+<!-- make a new counter called 'button presses' -->
 :: counter_add 'button presses' ::
 
 <!-- the button makes the counter go up by 1 -->
