@@ -178,6 +178,7 @@ Wallet can be used to store numbers. This could be useful to keep track of how m
 |`wallet`| Returns the amount of coins, dollars, schekels, etc. in the player's wallet |
 |`wallet_plus 10` | Adds 10 to the player's wallet |
 |`wallet_minus 5` | Removes 5 from the player's wallet |
+|`wallet_text '$'`| Returns the amount in the wallet as text, with an optional currency symbol prefix |
 |`wallet_clear`| Discards all the player's money |
 
 Timer can be used to time events in the game. This could be useful if the player has to make a quick decision, before the air in their space-suit runs out. You can can create and delete timers, check if they're done or see how much time is remaining, in ticks or in seconds.
