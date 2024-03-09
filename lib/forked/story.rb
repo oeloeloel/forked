@@ -499,8 +499,8 @@ Tell Akz to write a better error message."
       state.forked.dynamic.forked_wallet ||= 0
     end
 
-    def wallet_text(prefix)
-      "#{prefix}#{state.forked.dynamic.forked_wallet}"
+    def wallet_text(prefix = '', suffix = '')
+      "#{prefix}#{state.forked.dynamic.forked_wallet}#{suffix}"
     end
 
     # adds money to the wallet
