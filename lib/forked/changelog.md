@@ -1,4 +1,4 @@
-
+## Current Version
 ### Version 0.0.9
 * Added support for images. The following will display the image `sprites/image.png`. Note: the width and height of the image must be specified (defaults to w: 80, h: 80)
 ```
@@ -37,8 +37,6 @@
 * Examples: Added `memo`, `counter`, `wallet` examples to manuals
 * Bugfix: Empty string interpolation no longer causes exception
 
-
-## Current Version
 
 ### Version 0.0.8
 * **Added Inline Styles**: Text can be marked up to appear as bold, italic, bold-italic or code styles using simple markdown. Styled text is surrounded by a matching pair of symbols:
