@@ -1,6 +1,6 @@
 
 ### Version 0.0.9
-* Added support for images. The following will display the image `sprites/image.png`. Note: it is necessary to specify the width and height of the image.
+* Added support for images. The following will display the image `sprites/image.png`. Note: the width and height of the image must be specified (defaults to w: 80, h: 80)
 ```
 ![](sprites/image.png {w: 80, h: 80})
 ```
