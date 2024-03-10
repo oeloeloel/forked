@@ -595,7 +595,7 @@ if it has not finished counting down, show how many seconds are left -->
       "Oxygen level: #{timer_seconds "oxygen"}"
     end 
   else
-    "Oxygen level: maximum"
+    "Oxygen level: maximum. \nEverything is fine."
   end
   ```
 :>
