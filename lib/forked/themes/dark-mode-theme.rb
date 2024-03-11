@@ -1,4 +1,4 @@
-DARK_MODE = {
+DARK_MODE = config_defaults.merge!({
   display: {
     background_color: { r: 35, g: 35, b: 35 },
   },
@@ -53,4 +53,4 @@ DARK_MODE = {
   code: {
     r: 153, g: 204, b: 102,
   }
-}
+})
