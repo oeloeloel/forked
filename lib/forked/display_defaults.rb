@@ -14,6 +14,8 @@ def config_defaults
     button_box: default_button_box,
     rollover_button: default_rollover_button,
     rollover_button_box: default_rollover_button_box,
+    clicked_button: default_clicked_button,
+    clicked_button_box: default_clicked_button_box,
     inactive_button: default_inactive_button,
     inactive_button_box: default_inactive_button_box,
     bold: default_bold_style,
@@ -157,6 +159,18 @@ end
 def default_rollover_button_box
   default_button_box.merge(
     r: 51, g: 102, b: 102,
+  )
+end
+
+def default_clicked_button
+  default_button.merge(
+    r: 255, g: 0, b: 0,
+  )
+end
+
+def default_clicked_button_box
+  default_button_box.merge(
+    r: 0, g: 255, b: 255,
   )
 end
 
