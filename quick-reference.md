@@ -178,6 +178,7 @@ Wallet can be used to store numbers. This could be useful to keep track of how m
 |`wallet`| Returns the amount of coins, dollars, schekels, etc. in the player's wallet |
 |`wallet_plus 10` | Adds 10 to the player's wallet |
 |`wallet_minus 5` | Removes 5 from the player's wallet |
+|`wallet_text '$'`| Returns the amount in the wallet as text, with an optional currency symbol prefix |
 |`wallet_clear`| Discards all the player's money |
 
 Timer can be used to time events in the game. This could be useful if the player has to make a quick decision, before the air in their space-suit runs out. You can can create and delete timers, check if they're done or see how much time is remaining, in ticks or in seconds.
@@ -233,15 +234,18 @@ Forked automatically saves progress but, if you prefer, you can manually control
 | `autosave_off` | disables autosaving |
 | `autosave_on` | enables autosaving |
 
+| Misc Commands ||
+|-|-|
+| `load_story path_to_story_file` | Loads and navigates to a different story. Saved data such as memos, bag, counters, etc, are unloaded. If the story being loaded has a save file, it will be loaded and the story will continue from the save point. |
+| `change_theme DARK_MODE` | Changes the theme. The current built-in themes are `DARK_MODE` (selected), `LIGHT_MODE`, `KIFASS_THEME` and `TWENTY_SECOND_THEME`.|
+
 ## Author Mode
 Author mode provides some features that may be useful while writing your story. Note that the shortcut keys may change in the future.
 
 | Shortcuts | Action |
 |-|-|
-| Hold `f` and press `u` | Toggle Author Mode on or off. When author mode is active, a red square appears in the bottom left corner of the screen. The following shortcuts become available when Author Mode is on. |
-| `q` | Display information sidebar. This displays |
-|     | 1. the current chunk ID and the text of the current chunk heading |
-|     | 2. the most recent 20 items in the player's navigation history |
-|     | 3. the contents of the player's bag |
+| <nobr>`f` (hold) + `u`</nobr> | Toggle Author Mode on or off. When author mode is active, a red square appears in the bottom left corner of the screen. The following shortcuts become available when Author Mode is on. |
+| `q` (hold) | Display information sidebar. This displays information such as the navigation history and the contents of the player's bag |
 | `n` | Navigate to the following chunk in the story file until the last chunk is displayed. |
 | `h` | Navigate to the preceding chunk in the story file until the first chunk is displayed. |
+| `d` (hold) | Display the current framerate (fps) |

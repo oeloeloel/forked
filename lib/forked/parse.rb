@@ -9,16 +9,7 @@ module Forked
         raise 'FORKED: The story file is empty.' if story_file.empty?
 
         # for parsing inline styles
-        @style_marks = [
-          { symbol: :bold_italic, mark: "***" },
-          { symbol: :bold_italic, mark: "___" },
-          
-          { symbol: :bold, mark: "**" },
-          { symbol: :bold, mark: "__"},
-          { symbol: :italic, mark: "*" },
-          { symbol: :italic, mark: "_" },
-          { symbol: :code, mark: "`" }
-        ]
+        @style_marks = make_style_marks
 
         # Empty story
         story = make_story_hash
@@ -47,6 +38,7 @@ module Forked
         # [x] :italic (inline emphasis style)
         # [x] :bold italic (inline strong + emphasis style)
         # :inline trigger
+        # [ ] :image
 
         story_lines = story_file.lines
         line_no = -1
@@ -86,18 +78,6 @@ module Forked
           result = parse_heading(line, context, story, line_no)
           next if result
 
-          # Forked wants the first non blank line after the title
-          # to be a heading and will throw a wobbly if it isn't
-#           if context.include?(:heading) && !line.strip.empty?
-#             raise "FORKED: CONTENT BEFORE FIRST HEADING.
-
-# Forked expects to find a heading before finding any content.
-# Please add a heading line after the title and before any other content. Example:
-
-# `## The First Chapter {#start}`
-# "
-#           end
-
           ### RULE
           result = parse_rule(line, context, story, line_no)
           next if result
@@ -109,6 +89,10 @@ module Forked
           ### TRIGGER
           # currently works for newstyle colon and old-style backtick trigger actions
           result = parse_trigger(line, context, story, line_no)
+          next if result
+
+          ### IMAGE
+          result = parse_image(line, context, story, line_no)
           next if result
 
           ### CONDITION BLOCK
@@ -133,7 +117,6 @@ module Forked
           # MEANINGFUL BLANK LINE
           result = parse_blank(line, context, story, line_no)
           next if result
-          # putz "Line: #{line_no + 1} '#{line}', #{context}"
         end
 
         story
@@ -300,14 +283,16 @@ module Forked
           story[:chunks][-1][:content][-1][:atoms] += atoms
         end
         
+        # apply conditions to paragraph atoms
         if context.include?(:condition_block) || conditional
           condition = story[:chunks][-1][:conditions][-1]
           prev_item = story[:chunks][-1][:content][-1]
           if prev_item[:atoms]
             if !prev_item[:atoms].empty?
               prev_item[:atoms][-1][:condition] = condition
+              prev_item[:atoms][-1][:condition_segment] = @condition_segment_count
             else
-              prev_item[:atoms] << make_atom_hash('', [], condition)
+              prev_item[:atoms] << make_atom_hash('', [], condition, @condition_segment_count)
             end
           else
             prev_item[:condition] = condition
@@ -582,7 +567,6 @@ module Forked
 
             atm = make_atom_hash
             atm[:condition] = story[:chunks][-1][:conditions][-1]
-            
             # story[:chunks][-1][:content][-1][:atoms] << atm
 
             # story[:chunks][-1][:content][-1][:atoms]
@@ -593,17 +577,15 @@ if context.include?(:condition_code_block)
           return :interpolation
 end
           elsif context.include?(:condition_code_block)
-   
             context.delete(:condition_block)
           context.delete(:condition_code_block)
           return :interpolation
-            # return false
-            # story[:chunks][-1][:content] << para
           end
 
           # close conditon block and condition code block contexts
           context.delete(:condition_block)
           context.delete(:condition_code_block)
+          context.delete(:condition_segment)
           return true
         end
 
@@ -620,10 +602,18 @@ end
         # returned string AND the following conditional content. Right now,
         # it won't do both but only because that's how it happens to be.
 
+
         # closing only condition code block context
-        if line.strip == '::' && context.include?(:condition_code_block)
-          context.delete(:condition_code_block)
+        if line.strip == '::'
+          if context.include? :condition_code_block
+            context.delete(:condition_code_block)
+            context << (:condition_segment)
+            @condition_segment_count = 0
+            return true
+          elsif context.include? :condition_segment
+            @condition_segment_count += 1
           return true
+          end
         end
 
         # capture contents of condition code block
@@ -638,7 +628,10 @@ end
       def expand_single_line_condition(line, context, story, line_no, story_lines)
         if line.strip.start_with?('<: ') && line.strip.end_with?(' :>')
           line.strip!
-          line.delete_prefix!('<: ').delete_suffix!(' :>').strip!
+          line.delete_prefix!('<:').delete_suffix!(':>')
+          line.strip!
+          return if line.empty?
+          
           arr = ['<:']
           line_split = line.split(' :: ')
           line_split.each_with_index do |seg, i|
@@ -660,7 +653,8 @@ end
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         if line.strip.start_with?('#') && !line.strip.start_with?('##')
-          line.strip.delete_prefix('#').strip
+          line.strip!
+          line.delete_prefix!('#').strip!
         elsif !line.strip.empty?
           raise "FORKED: CONTENT BEFORE TITLE.
 
@@ -730,7 +724,13 @@ Please add a title to the top of the Story File. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         # first identify trigger, capture button text and action
-        if line.strip.start_with?('[') && line.include?('](')
+        if line.strip.start_with?('[') && 
+           line.include?('](') &&
+          #  line.strip.end_with?(')')
+
+          # check for existence of `)` after `](` and 
+          # return if `)` does not end the line
+
           line = line.strip.delete_prefix!('[')
 
           line.split(']', 2).then do |trigger, action|
@@ -745,6 +745,7 @@ Please add a title to the top of the Story File. Example:
             if context.include?(:condition_block) || context.include?(:condition_block)
               condition = story[:chunks][-1][:conditions][-1]
               story[:chunks][-1][:content][-1][:condition] = condition
+              story[:chunks][-1][:content][-1][:condition_segment] = @condition_segment_count
             end
 
             ### identify and catch chunk id action (return)
@@ -796,6 +797,41 @@ Please add a title to the top of the Story File. Example:
           end
           story[:chunks][-1][:content][-1].action += line
           return true
+        end
+      end 
+
+      def parse_image(line, context, story, line_no)
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        # first identify image, capture alt text and path
+        if line.strip.start_with?('![') && 
+           line.include?('](') &&
+           line.strip.end_with?(')')
+
+          line = line.strip.delete_prefix!('![')
+
+          line.split(']', 2).then do |alt, path|
+            alt.strip!
+            path.strip!
+
+            # if this content is conditional, add the condition to the current element
+
+            if context.include?(:condition_block) || context.include?(:condition_block)
+              condition = story[:chunks][-1][:conditions][-1]
+              story[:chunks][-1][:content][-1][:condition] = condition
+              story[:chunks][-1][:content][-1][:condition_segment] = @condition_segment_count
+            end
+
+            ### identify and catch url (return)
+            path.delete_prefix!('(')
+            path.delete_suffix!(')')
+            
+            img = make_image_hash
+            img[:path] = path
+            story[:chunks][-1][:content] << img
+          end
         end
       end 
 
@@ -854,11 +890,12 @@ Please add a title to the top of the Story File. Example:
         }
       end
 
-      def make_atom_hash(text = '', styles = [], condition = [])
+      def make_atom_hash(text = '', styles = [], condition = [], condition_segment = '')
         {
           text: text,
           styles: styles,
-          condition: condition
+          condition: condition,
+          condition_segment: condition_segment
         }
       end
 
@@ -889,6 +926,26 @@ Please add a title to the top of the Story File. Example:
           text: '',
           action: ''
         }
+      end
+
+      
+      def make_image_hash
+        {
+          type: :image,
+          path: ''
+        }
+      end
+
+      def make_style_marks
+        [
+          { symbol: :bold_italic, mark: "***" },
+          { symbol: :bold_italic, mark: "___" },
+          { symbol: :bold, mark: "**" },
+          { symbol: :bold, mark: "__"},
+          { symbol: :italic, mark: "*" },
+          { symbol: :italic, mark: "_" },
+          { symbol: :code, mark: "`" }
+        ]
       end
 
       # given a string str and string delimiters left and right

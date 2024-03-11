@@ -5,6 +5,10 @@ module Forked
     attr_gtk
     attr_accessor :display
 
+    def initialize sf
+      @story_file = sf
+    end
+
     def data
       state.forked ||= state.new_entity('forked')
     end
@@ -40,9 +44,15 @@ module Forked
       state.forked.defaults = Forked.forked_defaults
       @refresh = true
       @hashed_display = 0
+      args.state.forked.dynamic.forked_counter = {}
 
-      story_file = get_story_from_argv || STORY_FILE
+      story_file = get_story_from_argv || @story_file
+      load_story(story_file)
 
+      state.forked.defaults_set = true
+    end
+
+    def load_story(story_file)
       if story_file.end_with?('.json')
         state.forked.story = Forked.import_story_from_json(story_file)
       else
@@ -54,15 +64,17 @@ module Forked
       state.forked.title = state.forked.story[:title]
       state.forked.story_id = state.forked.title.hash
 
+      $gtk.set_window_title(state.forked.title) if $gtk.version.to_f >= 5.20
+
       # allow story to run one-time setup code that needs to be
       # setup regardless of where we start the story after a reload
       if state.forked.story.actions
         evaluate args, state.forked.story.actions.join
       end
 
-      follow args
 
-      state.forked.defaults_set = true
+
+      follow args
 
       load_dynamic_state
       state.forked.dynamic.forked_history ||= [] 
@@ -79,6 +91,10 @@ module Forked
         if p.start_with? "story "
           file = p.split(' ')[1]
           puts "Forked: Loading story file #{file} from command line argument"
+          return file
+        elsif p.start_with? "ftest "
+          file = '/lib/forked/forked-tests/' + p.split(' ')[1]
+          puts "Forked: Loading test file #{file} from command line argument"
           return file
         end
       end
@@ -269,9 +285,9 @@ Tell Akz to write a better error message."
         # deal first with content that contains atoms
         if element[:atoms]
           element[:atoms].each_with_index do |atom, j|
-            next unless atom[:condition] &&
+            next unless (atom[:condition] &&
                         atom[:condition].class == String &&
-                        !atom[:condition].empty?
+                        !atom[:condition].empty?)
             result = evaluate(args, atom[:condition])
             # if it's a non-empty string, display the result
             if result.class == String && !result.empty?
@@ -280,8 +296,17 @@ Tell Akz to write a better error message."
               # Add space after the result
               result += ' '
               element[:atoms][j][:text] = "#{result}"
-            elsif !result
-              # if the result is falsey, don't display
+            elsif [true, false].include? result
+              display_segment = false
+              if atom[:condition_segment].to_i == 0 && result == true
+                display_segment = true
+              elsif atom[:condition_segment].to_i == 1 && result == false
+                display_segment = true
+              end
+
+              element[:atoms][j][:text] = '' if display_segment != true
+            else
+              # don't display
               element[:atoms][j][:text] = '' #j > 0 ? ' ' : ''
             end
           end
@@ -290,9 +315,21 @@ Tell Akz to write a better error message."
           next unless element && element[:condition]
 
           result = evaluate(args, element[:condition])
-          if result.nil? || result == false
-            element[:type] = :hidden
-          end
+
+          if [true, false].include? result
+              display_element = false
+              if element[:condition_segment].to_i == 0 && result == true
+                display_element = true
+              elsif element[:condition_segment].to_i == 1 && result == false
+                display_element = true
+              end
+
+              # element[:text] = '' if display_element != true
+              element[:type] = :hidden if display_element != true
+            else
+              # don't display
+              element[:type] = :hidden
+            end
         end
       end
 
@@ -330,8 +367,12 @@ Tell Akz to write a better error message."
     end
 
     def change_theme theme
-      @display.apply_theme(theme)
-      @refresh = true
+      if @display
+        @display.apply_theme(theme)
+        @refresh = true
+      else
+        THEME = theme
+      end
     end
 
     #################
@@ -392,23 +433,27 @@ Tell Akz to write a better error message."
     end
 
     def counter_up name, value = 1
-      counter[name] += value
+      state.forked.dynamic.forked_counter[name] += value
     end
 
     def counter_down name, value = 1
-      counter[name] -= value
+      state.forked.dynamic.forked_counter[name] -= value
     end
 
     def counter_add name, value = 0
-      counter[name] = value
+      state.forked.dynamic.forked_counter[name] = value
     end
 
     def counter_remove name
-      counter.delete(name)
+      state.forked.dynamic.forked_counter.delete(name)
     end
 
     def counter_check name
-      counter[name]
+      state.forked.dynamic.forked_counter[name]
+    end
+
+    def counter_text name
+      state.forked.dynamic.forked_counter[name].to_s
     end
 
     def counter_clear
@@ -454,19 +499,23 @@ Tell Akz to write a better error message."
       state.forked.dynamic.forked_wallet ||= 0
     end
 
+    def wallet_text(prefix = '', suffix = '')
+      "#{prefix}#{state.forked.dynamic.forked_wallet}#{suffix}"
+    end
+
     # adds money to the wallet
     def wallet_plus num
-      wallet = wallet + num
+      state.forked.dynamic.forked_wallet += num
     end
 
     # removes money from the wallet
     def wallet_minus num
-      wallet = wallet - num
+      state.forked.dynamic.forked_wallet -= num
     end
 
     # removes all money from the wallet
     def wallet_clear
-      wallet = 0
+      state.forked.dynamic.forked_wallet = 0
     end
 
     ### Timers
@@ -575,7 +624,7 @@ Tell Akz to write a better error message."
       return "Test does not contain two marks" if test_mark.count < 2
 
       subject = outputs.primitives[test_mark[0]..test_mark[1]] 
-      putz subject if print_subject
+      puts "Subject:\n#{subject}" if print_subject
       result = expect == subject
       result ? "Test passed" : "Test failed"
     end

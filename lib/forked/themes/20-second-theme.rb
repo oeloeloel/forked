@@ -1,8 +1,10 @@
 YELLOW_BRIGHT = { r: 0xff, g: 0xce, b: 0x27 }
 YELLOW_PALE =   { r: 0xdf, g: 0xce, b: 0x77 }
 PURPLE =        { r: 0x2f, g: 0x2f, b: 0x54 }
+PALE_PURPLE   = { r: 0x4f, g: 0x4f, b: 0x74 }
 BLUE   =        { r: 0x97, g: 0xbf, b: 0xe8 }
 WHITE  =        { r: 255,  g: 255,  b: 255  }
+YELLOW_DARK   = { r: 0x65, g: 0x60, b: 0x55 } 
 
 TWENTY_SECOND_THEME = {
   display: {
@@ -23,10 +25,10 @@ TWENTY_SECOND_THEME = {
     spacing_after: 0.4,
   },
   code_block: {
-    r: 179, g: 204, b: 127,
+    **BLUE
   },
   code_block_box: {
-    r: 63, g: 67, b: 51,
+    **PALE_PURPLE
   },
   blockquote: {
     **PURPLE,
@@ -54,7 +56,7 @@ TWENTY_SECOND_THEME = {
     r: 51, g: 51, b: 51,
   },
   inactive_button_box: {
-    r: 102, g: 102, b: 102, 
+    **YELLOW_DARK
   },
   bold: {
     font: 'fonts/mali/mali-bold.ttf',
@@ -73,7 +75,7 @@ TWENTY_SECOND_THEME = {
   },
   code: {
     font: 'fonts/mali/mali-semibold.ttf',
-        size_enum: 2,
-    r: 153, g: 204, b: 102,
+    size_enum: 2,
+    **BLUE
   }
 }

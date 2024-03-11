@@ -9,7 +9,6 @@ With Forked, you can learn how to write a simple interactive story in a few minu
 
 ---
 [Next: Getting Started](#getting-started)
-
 [Contents](#contents)
 
 ## Contents
@@ -303,9 +302,7 @@ Actions get things done. They are short pieces of code that you can put directly
 There are three ways to use actions. Chunk Actions perform tasks when the chunk gets displayed like, for example, adding an item to the inventory. Trigger actions make something happen when a player clicks a button like, for example, remembering a choice. Conditions  make decisions like which text to display or which buttons should be visible.
 
 [Chunk Actions](#chunk-actions)
-
 [Trigger Actions](#trigger-actions)
-
 [Conditions](#conditional-text-part-1)
 Related: Forked includes a number of useful commands you can use with actions.
 [Built-in Commands](#built-in-commands)
@@ -546,6 +543,9 @@ counter_check "number of rugs"
 [Background Image](#example-background-image)
 [Roll Dice](#example-roll-the-dice)
 [Inventory](#example-inventory)
+[Memorizing Info](#example-memorizing-info)
+[Keeping Count](#example-keeping-count)
+[Financial Management](#example-financial-management)
 
 ---
 [Back: Built-in Commands](#built-in-commands)
@@ -595,7 +595,7 @@ if it has not finished counting down, show how many seconds are left -->
       "Oxygen level: #{timer_seconds "oxygen"}"
     end 
   else
-    "Oxygen level: maximum"
+    "Oxygen level: maximum. \nEverything is fine."
   end
   ```
 :>
@@ -688,6 +688,103 @@ Your inventory currently contains:
 :>
 
 [Turn your bag upside down and shake it out](: bag_clear :)
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+## Example: Memorizing info
+
+:: memo_add "favourite colour", "a great mystery" ::
+
+At that time, everyone in European society was speculating about the Dauphine's favourite colour. It was, of course,
+<: (memo_check "favourite colour") + '.' :>
+
+[The Dauphine's favourite colour was Moroccan Pink](: memo_add "favourite colour", "Moroccan Pink" :)
+[The Dauphine's favourite colour was Cerulean Blue](: memo_add "favourite colour", "Cerulean Blue" :)
+[The Dauphine's favourite colour was Etruscan Brown](: memo_add "favourite colour", "Etruscan Brown" :)
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+## Example: Keeping Count
+
+`counter` helps you to keep track of simple numbers. How many times did the player press a button? Maybe something different happens each time they press it?
+
+<!-- make a new counter called 'button presses' -->
+:: counter_add 'button presses' ::
+
+<!-- the button makes the counter go up by 1 -->
+[Press the Big Red Button](: counter_up 'button presses' :)
+
+<!-- display the number of times the button has been pressed -->
+Number of button presses:
+<: counter_text 'button presses' :>
+
+<!-- this message displays if the number of button presses is 1 or more -->
+<:
+(counter_check 'button presses') >= 1
+::
+You press the button and nothing happens. Maybe it's stuck.
+:>
+
+<!-- two or more presses -->
+<:
+(counter_check 'button presses') >= 2
+::
+You press the button more firmly. It seems to shift a little but without any result.
+:>
+
+<!-- three or more -->
+<:
+(counter_check 'button presses') >= 3
+::
+You give the button a good slap. You hear a tired whirring sound.
+:>
+
+<!-- four or more -->
+<:
+(counter_check 'button presses') >= 4
+::
+You ball up your fist and thump the button with all your strength. A small panel whirs opens in the control console and immediately closes, too quickly for you to see what was inside.
+:>
+
+<!-- five or more -->
+<:
+(counter_check 'button presses') >= 5
+::
+You take the rubber mallet from your backpack and whack the button for all you are worth. The panel opens and stays open. Inside is a small green button labelled "Cancel Nuclear Strike". The button is flashing.
+
+<!-- reset the counter to 0 -->
+[Cancel Nuclear Strike](: counter_add 'button presses', 0 :)
+:>
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
+## Example: Financial Management
+
+The `wallet` keeps track of the player's wealth. This is a single number that can be added to and subtracted from as your player picks up or spends dollars, gold coins, gems or whatever currency is used in your game world.
+
+The `wallet` currently contains
+<: wallet_text '$' :>
+
+<!-- Add 11 to the wallet when clicked -->
+[Earn $11](: wallet_plus 11 :)
+<:
+<!-- check to see if funds are available -->
+<!-- do we have 7 or more to spend? -->
+wallet >= 7
+::
+<!-- only show this button if funds are available  -->
+<!-- remove 7 from the wallet -->
+[Spend $7](: wallet_minus 7 :)
+:>
+
+<!-- Empty your wallet out -->
+[Clear Wallet](: wallet_clear :)
 
 ---
 [Back to Examples](#examples)

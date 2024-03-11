@@ -1,4 +1,42 @@
 ## Current Version
+### Version 0.0.9
+* Added support for images. The following will display the image `sprites/image.png`. Note: the width and height of the image must be specified (defaults to w: 80, h: 80)
+```
+![](sprites/image.png {w: 80, h: 80})
+```
+* Conditional content allows alternative content to be displayed if the result of the condition is false. E.g.:
+  ```
+  <!-- checks to see if the player has an item in their bag (inventory) -->
+  <:
+    bag_has? "pocket calculator"
+  ::
+    <!-- displayed if the item is in the player's bag -->
+    You quickly solve the problem. The square root of 169 is 13!
+  ::
+    <!-- displayed if the item is not in the player's bag -->
+    If only you had a pocket calculator!
+  :>
+  ```
+* Added `load_story` command to load and switch to a different story from within the current story. See example of switching stories from a button click below. When the new story loads, data such as inventory, counters, memos, etc will be unloaded. If the new story has saved progress, it will be loaded.
+```
+[Read Memoirs of a Crocodile](: load_story 'app/memoirs-of-a-crocodile.md' :)
+```
+* When a story is loaded, the game title bar displays the name of the current story
+* Author Mode changes: (hold `f` + press `u` to enter author mode. Hold `q` to display the sidebar)
+  * Added list of author mode shortcuts to author mode sidebar
+  * Added shortcut to display FPS (debug label): `d` (for diagnostic)
+  * Added lists of `memos`, `counters`, `timers`, and `wallet` contents to sidebar
+* Theme can be set from inside the story file, immediately after the story is loaded *regardless* of whether the game is continued from a save file. Use the `change_theme` command after the story title and before the first chunk.
+```
+# The Title of My Story
+:: change_theme(KIFASS_THEME) ::
+
+## This is the first chunk
+```
+* Navigating through chunks using Author Mode shortcuts now autosaves progress (if autosave is enabled)
+* Examples: Added `memo`, `counter`, `wallet` examples to manuals
+* Bugfix: Empty string interpolation no longer causes exception
+
 
 ### Version 0.0.8
 * **Added Inline Styles**: Text can be marked up to appear as bold, italic, bold-italic or code styles using simple markdown. Styled text is surrounded by a matching pair of symbols:

@@ -37,21 +37,19 @@ Be sure to visit the DragonRuby Discord for help or just to hang out with the su
 
 To install Forked, you should start with a freshly unzipped DragonRuby project.
 
-In the DragonRuby folder, open the `mygame` folder and create a new folder inside it called `lib`.
-
 [Download the Forked project from GitHub](https://github.com/oeloeloel/forked). In GitHub, click the green `<> Code` button and select `Download ZIP`. Unzip the downloaded file.
 
-If you are starting with a fresh DragonRuby project, drag the _contents_ of the downloaded folder to the `mygame` folder inside the DragonRuby project. Let it overwrite the existing files and folders.
+Copy the _contents_ of the downloaded folder into the `mygame` folder in the DragonRuby project. Let it overwrite the existing files and folders.
 
 Now run DragonRuby: double-click on the DragonRuby executable (dragonruby.exe on windows, dragonruby on macOS or Linux).
 
-By default, Forked will open a version of manual to help you get started.
+By default, Forked will open an interactive version of this manual to help you get started.
 
 Now you can start writing your story.
 
 ### Writing and Editing the Story
 
-Open up the `mygame/app/story.md` file in any text editor and you'll see the contents of a version of this manual. When you look at the examples, you'll also be able to see the code that created them.
+Open up the `mygame/app/story.md` file in any text editor and you'll see the contents of the interactive version of this manual. When you look at the examples, you'll also be able to see the code that created them.
 
 When you want to start a new story, create a new file in the `mygame/app` folder and call it whatever you want followed by the `.md` extension.
 
@@ -70,7 +68,7 @@ Then you can start writing your story:
 
 ## Essentials
 
-There are only a few things you really need to know to write a branching story with Forked.
+There are only a few things you *really* need to know to write a branching story with Forked.
 
 ### The Story Title
 Every story needs a title and, in Forked, they are written like this:
@@ -79,7 +77,7 @@ Every story needs a title and, in Forked, they are written like this:
 # Gentleman, Adventurer, Amphibian: A Memoir
 ~~~
 
-The title begins with a the `#` symbol (hash or pound), followed by the text of the title.
+The title begins with a the `#` symbol, followed by the text of the title.
 
 You can have only one title in your story file and it should be at the top.
 
@@ -315,6 +313,22 @@ But if they have the submarine, they see more text:
 
 They will also see a nice new button to help them start their under-sea voyage.
 
+#### Alternative Options
+
+You may want to have alternative texts, depending on the result of condition. Say, for example, the player needs the portable submarine to escape the sinking ship. What happens if they don't have it?
+
+In the example below, if the player has the submarine, the block of text following the first `::` will display. If they do not have the submarine, the block of text following the second `::` will display.
+
+~~~
+<:
+bag_has? "portable submarine"
+::
+I deployed the portable submarine and hopped inside. Bidding adieu to the brave sailors, I set off for Mauritius.
+::
+Oh my life! Such bad luck! If only I had a portable submarine! Well, nothing for it but to swim to Mauritius.
+:>
+~~~
+
 
 [Back to Contents](#contents)
 
@@ -497,6 +511,15 @@ If you want to disable autosaving for a story file you can do that from within t
 
 [Back to Contents](#contents)
 
+## Jumping to another story
+You can load and jump to another story from within the currently running story. When you do this, Forked will load the save file for the new story (if the save file exists) and continue that story from where it was last saved.
+
+This example shows how to jump to another story on the click of a button:
+
+```
+[Read Memoirs of a Crocodile](: load_story 'app/memoirs-of-a-crocodile.md' :)
+```
+
 ## Examples
 
 ### Example: Setting the Display Theme
@@ -602,7 +625,7 @@ Your inventory currently contains:
 [Pick up the potion of inconsequence](: bag_add "potion of inconsequence" :)
 [Pick up the Spear of Astrabliano](: bag_add "Spear of Astrabliano" :)
 [Pick up the Golden Crown of Impolior](: bag_add "Golden Crown of Impolior" :)
-@@
+
 <: 
   bag_has? "potion of inconsequence" 
 ::
@@ -618,7 +641,96 @@ Your inventory currently contains:
 ::
   [Melt down the Golden Crown of Impolior](: bag_remove "Golden Crown of Impolior" :)
 :>
-@@
+
 [Turn your bag upside down and shake it out](: bag_clear :)
 ```
+
+### Example: Memorizing info
+```
+:: memo_add "favourite colour", "a great mystery" ::
+
+At that time, everyone in European society was speculating about the Dauphine's favourite colour. It was, of course,
+<: (memo_check "favourite colour") + '.' :>
+
+[The Dauphine's favourite colour was Moroccan Pink](: memo_add "favourite colour", "Moroccan Pink" :)
+[The Dauphine's favourite colour was Cerulean Blue](: memo_add "favourite colour", "Cerulean Blue" :)
+[The Dauphine's favourite colour was Etruscan Brown](: memo_add "favourite colour", "Etruscan Brown" :)
+```
+
+### Example: Keeping Count
+
+`counter` helps you to keep track of simple numbers. How many times did the player press a button? Maybe something different happens each time they press it?
+```
+<!-- make a new counter called 'button presses' -->
+:: counter_add 'button presses' ::
+
+<!-- the button makes the counter go up by 1 -->
+[Press the Big Red Button](: counter_up 'button presses' :)
+
+<!-- display the number of times the button has been pressed -->
+Number of button presses:
+<: counter_text 'button presses' :>
+
+<!-- this message displays if the number of button presses is 1 or more -->
+<:
+(counter_check 'button presses') >= 1
+::
+You press the button and nothing happens. Maybe it's stuck.
+:>
+
+<!-- two or more presses -->
+<:
+(counter_check 'button presses') >= 2
+::
+You press the button more firmly. It seems to shift a little but without any result.
+:>
+
+<!-- three or more -->
+<:
+(counter_check 'button presses') >= 3
+::
+You give the button a good slap. You hear a tired whirring sound.
+:>
+
+<!-- four or more -->
+<:
+(counter_check 'button presses') >= 4
+::
+You ball up your fist and thump the button with all your strength. A small panel whirs opens in the control console and immediately closes, too quickly for you to see what was inside.
+:>
+
+<!-- five or more -->
+<:
+(counter_check 'button presses') >= 5
+::
+You take the rubber mallet from your backpack and whack the button for all you are worth. The panel opens and stays open. Inside is a small green button labelled "Cancel Nuclear Strike". The button is flashing.
+
+<!-- reset the counter to 0 -->
+[Cancel Nuclear Strike](: counter_add 'button presses', 0 :)
+:>
+```
+
+### Example: Financial Management
+
+The `wallet` keeps track of the player's wealth. This is a single number that can be added to and subtracted from as your player picks up or spends dollars, gold coins, gems or whatever currency is used in your game world.
+```
+The `wallet` currently contains
+<: wallet_text '$' :>
+
+<!-- Add 11 to the wallet when clicked -->
+[Earn $11](: wallet_plus 11 :)
+<:
+<!-- check to see if funds are available -->
+<!-- do we have 7 or more to spend? -->
+wallet >= 7
+::
+<!-- only show this button if funds are available  -->
+<!-- remove 7 from the wallet -->
+[Spend $7](: wallet_minus 7 :)
+:>
+
+<!-- Empty your wallet out -->
+[Clear Wallet](: wallet_clear :)
+```
 [Back to Contents](#contents)
+

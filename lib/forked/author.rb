@@ -13,7 +13,7 @@ module Forked
     end
 
     def tick
-      defaults unless args.state.forked.defaults_set
+      defaults unless args.state.forked.author_defaults_set
       check_inputs
       calc
       render
@@ -21,6 +21,16 @@ module Forked
 
     def defaults
       args.state.forked.author_mode = false
+      define_keys
+
+      args.state.forked.author_defaults_set = true
+    end
+
+    def define_keys
+      @fall_key = :n
+      @rise_key = :h
+      @left_sidebar_key = :q
+      @framerate_key = :d # for diagnostic 
     end
 
     def check_inputs
@@ -31,12 +41,15 @@ module Forked
       k_d = args.inputs.keyboard.key_down
       k_h = args.inputs.keyboard.key_held
 
-      fall_key = :n
-      rise_key = :h
-      left_sidebar_key = :q
-      @story.jump(1) if k_d.send(fall_key)
-      @story.jump(-1) if k_d.send(rise_key)
-      args.state.forked.author_mode_sidebar = k_h.send(left_sidebar_key)
+      nav(1) if k_d.send(@fall_key)
+      nav(-1) if k_d.send(@rise_key)
+      args.state.forked.author_mode_sidebar = k_h.send(@left_sidebar_key)
+      outputs.debug << "FPS: " + args.gtk.current_framerate_calc.round.to_s if k_h.send(@framerate_key)
+    end
+
+    def nav by
+      @story.jump(by)
+      @story.save_game if state.forked.defaults[:autosave]
     end
 
     def calc
@@ -66,18 +79,18 @@ module Forked
           'n: go to next chunk in story file',
           'h: go to previous chunk in story file',
           'hold q: open the Author Mode Sidebar',
+          'hold d: display the current framerate',
           '',
         ]
 
         hist = $story.history_get.reverse
 
         am_labels += [
-        "Navigation History (#{hist.size})",
+        "Navigation History (#{hist.size - 9}-#{hist.size}/#{hist.size})",
           "------------------"
         ]
 
-        am_labels += hist[0..10].map_with_index { |h, i|
-          
+        am_labels += hist[0...10].map_with_index { |h, i|
           str = ""
           str += "## #{h[2]} " if h[2]
           str += "{#{h[1]}}" if h[1]
@@ -89,11 +102,67 @@ module Forked
           "Bag",
           "------------------",
         ]
+        
+        if $story.bag.empty?
+          am_labels << "Nothing" 
+        else
+          am_labels += $story.bag.map_with_index { |h| h }
+        end
 
-        am_labels += $story.bag.map_with_index { |h| h }
+        am_labels += [
+          "",
+          "Memos",
+          "------------------", 
+        ]
+        
+        if $story.memo.empty?
+          am_labels << "None"
+        else
+          am_labels += $story.memo.map { |m| "#{m[0]}: #{m[1]}" }
+        end
 
+
+        am_labels += [
+          "",
+          "Counters",
+          "------------------", 
+        ]
+
+        if $story.counter.empty?
+          am_labels << "None"
+        else
+          am_labels += $story.counter.map { |c| "#{c[0]}: #{c[1]}" }
+        end
+
+
+        am_labels += [
+          "",
+          "Timers",
+          "------------------", 
+        ]
+
+        if $story.timer.empty?
+          am_labels << "None"
+        else
+          am_labels += $story.timer.map { |t|
+            name = t[0]
+
+            next "#{name}: Done" if $story.timer_done? name
+            val  = $story.timer_check name
+            sec  = $story.timer_seconds name
+            "#{name}: #{sec} secs / #{val} ticks"
+          }
+        end
+
+        am_labels += [
+          "",
+          "Wallet",
+          "------------------",
+        ]
+
+        am_labels << "$" + $story.wallet.to_s
+        
         y_loc = 0
-
         am_prims += am_labels.map_with_index do |text, i|
           prim = { 
             x: 1, y: y_loc.from_top,

@@ -19,7 +19,8 @@ def config_defaults
     bold: default_bold_style,
     italic: default_italic_style,
     bold_italic: default_bold_italic_style,
-    code: default_code_style
+    code: default_code_style,
+    image: default_image_style
   }
 end
 
@@ -195,6 +196,14 @@ def default_code_style # inline code
     font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
     r: 102, g: 51, b: 153,
   )
+end
+
+def default_image_style
+  {
+    spacing_after: 20,
+    anchor_x: 0.5,
+    x: $args.grid.w.half,
+  }
 end
 
 $gtk.reset
