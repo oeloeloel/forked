@@ -151,6 +151,12 @@ This is the first line\
 This is the second line
 ```
 
+### Images
+Add images to your story. It is necessary to specify the width (`w`) and height (`h`) to display the image, otherwise it will be displayed at 80x80.
+```
+![](sprites/image.png {w: 80, h: 80})
+```
+
 ## Available Action Commands
 Forked provides built-in commands to use in chunk actions, trigger actions or conditions.
 The commands are experimental and may change in the future.
