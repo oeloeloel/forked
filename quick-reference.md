@@ -152,7 +152,7 @@ This is the second line
 ```
 
 ### Images
-Add images to your story. It is necessary to specify the width (`w`) and height (`h`) to display the image, otherwise it will be displayed at 80x80.
+Add images to your story. It is necessary to specify the width (`w`) and height (`h`) that you want to display the image, otherwise it will be displayed at 80x80.
 ```
 ![](sprites/image.png {w: 80, h: 80})
 ```
