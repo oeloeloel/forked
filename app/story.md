@@ -623,6 +623,27 @@ background_image "sprites/background.png"
 [Back to Examples](#examples)
 [Back to Contents](#contents)
 
+## Example: Image
+To display an image within the text of the story:
+
+~~~
+![](sprites/blue.png {w: 80, h: 80})
+~~~
+
+Replace `sprites/image.png` with the correct path and filename for your image. Forked will display the image at a default size (80px by 80px) so to make the image display at the size you want, you will need to enter the width (`w`) and height (`h`) values.
+
+The image specified above displays like this:
+
+<:
+true
+::
+![](sprites/blue.png {w: 80, h: 80})
+:>
+
+---
+[Back to Examples](#examples)
+[Back to Contents](#contents)
+
 
 ## Example: Roll the Dice
 Are you feeling lucky?
