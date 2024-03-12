@@ -34,6 +34,8 @@ module Forked
       data.mouse_cursor = :arrow # set the default cursor
 
       data.defaults_set = true # and don't come back
+
+      putz data.style
     end
 
     def apply_theme(theme)
@@ -96,15 +98,42 @@ module Forked
 
       return if data.options.nil? || data.options.empty?
 
-      activate_selected_option if keyboard_activate || controller_activate || mouse_activate
+      # check to see if activation option is engaged by
+      # 1. the mouse is held down while over a button
+      #   Display clicked state
+      # 2. the activation key or button is held while a selection is active
+
+      # check to see if activation has been performed
+      # 1. mouse is released while over a button
+      # 2. activation key is released while a selection is active
+
+      if keyboard_engage || controller_engage || mouse_engage
+        show_clicked_option_down_state if args.tick_count.div(60).even?
+      end
+      # hide_clicked_option_down_state if keyboard_disengage || controller_disengage || mouse_disengage
+
+      if keyboard_activate || controller_activate || mouse_activate
+        hide_clicked_option_down_state
+        activate_selected_option
+      end
     end
+
+    def keyboard_engage
+      kh = inputs.keyboard.key_held
+      data.keyboard_input_defaults[:activate].any? { |k| kh.send(k) }
+    end
+
+    # def keyboard_disengage
+    #   kh = inputs.keyboard.key_held
+    #   data.keyboard_input_defaults[:activate].any? { |k| kh.send(k) }
+    # end
 
     def keyboard_activate
-      kd = inputs.keyboard.key_down
-      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
+      ku = inputs.keyboard.key_up
+      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) } 
     end
 
-    def controller_activate
+    def controller_engage
       c1 = inputs.controller_one
 
       if c1.connected
@@ -112,9 +141,22 @@ module Forked
       end 
     end
 
+    def controller_activate
+      c1 = inputs.controller_one
+
+      if c1.connected
+        data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) }
+      end 
+    end
+
+    def mouse_engage
+      inputs.mouse.down
+    end
+
     def mouse_activate
       inputs.mouse.up
     end
+
 
     def keyboard_select
       kd = inputs.keyboard.key_down
@@ -172,6 +214,15 @@ module Forked
 
       $story.follow(args, data.options[data.selected_option])
 
+    end
+
+    def show_clicked_option_down_state
+      return unless data.options
+
+      opt = data.options[data.selected_option]
+      return unless opt
+
+      opt.merge!(data.style.clicked_button_box)
     end
 
     def highlight_selected_option
