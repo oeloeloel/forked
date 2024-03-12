@@ -64,7 +64,9 @@ module Forked
       state.forked.title = state.forked.story[:title]
       state.forked.story_id = state.forked.title.hash
 
-      $gtk.set_window_title(state.forked.title) if $gtk.version.to_f >= 5.20
+      # $gtk.set_window_title is (re)added in DR 5.20
+      major, minor = $gtk.version.split(".").map { _1.to_i }
+      $gtk.set_window_title(state.forked.title) if (major >= 5 && minor >= 20)
 
       # allow story to run one-time setup code that needs to be
       # setup regardless of where we start the story after a reload
