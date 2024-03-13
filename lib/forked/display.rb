@@ -46,42 +46,87 @@ module Forked
       highlight_selected_option
     end
 
-    def update_selection(navigated = nil)
-      # return if data.options.nil? || data.options.empty? 
-
-      select = case(inputs.last_active)
+    def check_button_selected
+      case(inputs.last_active)
       when :keyboard
         keyboard_select
       when :controller
         controller_select
       when :mouse
-        m_select = true
         mouse_select
       end
+    end
+
+    def check_activation_start
+      case(inputs.last_active)
+      when :keyboard
+        keyboard_activate_start
+      when :controller
+        controller_activate_start
+      when :mouse
+        mouse_activate_start
+      end 
+    end
+
+    def check_activation_end
+      case(inputs.last_active)
+      when :keyboard
+        keyboard_activate_end
+      when :controller
+        controller_activate_end
+      when :mouse
+        mouse_activate_end
+      end 
+    end
+
+    def mouse_select
+      rollover = -1 
+      data.options.each_with_index do |option, idx|
+        next if option.action.empty? 
+
+        if option.intersect_rect?(inputs.mouse.point)
+          rollover = idx
+          break
+        end
+      end
+
+      rollover if rollover != data.selected_option
+    end
+
+    def update_selection(navigated = nil)
+      return if data.options.nil? || data.options.empty? 
+      
+      inp = inputs.last_active
+
+      # check if input is selecting a button
+      select = check_button_selected
 
       # if we came here from a navigation command,
       # deselect the buttons (the selection is not valid)
       # otherwise, maintain the same selection (we just executed some code)
       data.selected_option = -1 if navigated
-      
-      # if an option has been selected
-      # and the selection is not the same as the previous selection
-      if (select || m_select) && select != data.selected_option
-        # remove the highlight from the previous selection
+
+      # check if input is activating a button
+      active = true if data.selected_option != -1 && check_activation_start
+
+      # check if input is deactivating a button
+      clicked = true if data.selected_option != -1 && check_activation_end
+
+      if select
         unhighlight_selected_option if data.selected_option >= 0
-        # set the currently selected option to the new selection
         data.selected_option = select
-        # add a highlight to the currently selected option
         highlight_selected_option if data.selected_option >= 0
-        # if the selection was made by mouse
-        # and is not -1 (no selection)
-        if m_select && data.selected_option >= 0
+        if inputs.last_active == :mouse && data.selected_option >= 0
           # try to change to the hand cursor
           next_cursor = :hand
         else
           # try to change to the arrow cursor
           next_cursor = :arrow
         end
+      end
+
+      if active
+        highlight_active_option
       end
 
       # set the cursor if it has changed
@@ -96,15 +141,21 @@ module Forked
 
       return if data.options.nil? || data.options.empty?
 
-      activate_selected_option if keyboard_activate || controller_activate || mouse_activate
+      activate_selected_option if keyboard_activate_end || controller_activate_end || mouse_activate_end
     end
 
-    def keyboard_activate
+    def keyboard_activate_start
       kd = inputs.keyboard.key_down
       data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
     end
 
-    def controller_activate
+    def keyboard_activate_end
+      ku = inputs.keyboard.key_up
+      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) } 
+    end
+  
+
+    def controller_activate_start
       c1 = inputs.controller_one
 
       if c1.connected
@@ -112,7 +163,20 @@ module Forked
       end 
     end
 
-    def mouse_activate
+    def controller_activate_end
+      c1 = inputs.controller_one
+
+      if c1.connected
+        data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) }
+      end 
+    end
+
+
+    def mouse_activate_start
+      inputs.mouse.down
+    end
+
+    def mouse_activate_end
       inputs.mouse.up
     end
 
@@ -140,21 +204,6 @@ module Forked
       end 
 
       nil
-    end
-
-    def mouse_select
-      rollover = -1 
-      data.options.each_with_index do |option, idx|
-        
-        next if option.action.empty? 
-
-        if option.intersect_rect?(inputs.mouse.point)
-          rollover = idx
-          break
-        end
-      end
-
-      rollover
     end
 
     def relative_to_absolute_selection(index)
@@ -188,6 +237,13 @@ module Forked
         return 
       end
       data.options[data.selected_option].merge!(data.style.button_box)
+    end
+
+    def highlight_active_option
+      return unless data.options && data.selected_option && data.selected_option >= 0
+      opt = data.options[data.selected_option]
+      return unless opt
+      opt.merge!(data.style.active_button_box)
     end
 
     def update(content, navigated)
@@ -232,6 +288,7 @@ module Forked
     end
 
     def display_button(y_pos, item, content, i)
+
       button = data.style.button  
       display = data.style.display
       button_box = data.style.button_box
