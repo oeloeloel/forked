@@ -29,16 +29,16 @@ DARK_MODE = {
   button_box: {
     r: 204, g: 204, b: 204,
   },
-  rollover_button: {
+  selected_button: {
     r: 51, g: 51, b: 51, 
   },
-  rollover_button_box: {
+  selected_button_box: {
     r: 204, g: 153, b: 153, 
   },
-  inactive_button: {
+  disabled_button: {
     r: 51, g: 51, b: 51,
   },
-  inactive_button_box: {
+  disabled_button_box: {
     r: 102, g: 102, b: 102, 
   },
   bold: {

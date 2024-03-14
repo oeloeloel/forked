@@ -227,7 +227,7 @@ module Forked
       return unless data.options && data.selected_option && data.selected_option >= 0
       opt = data.options[data.selected_option]
       return unless opt
-      opt.merge!(data.style.rollover_button_box)
+      opt.merge!(data.style.selected_button_box)
     end
 
     def unhighlight_selected_option
@@ -292,7 +292,7 @@ module Forked
       button = data.style.button  
       display = data.style.display
       button_box = data.style.button_box
-      inactive_button_box = data.style.inactive_button_box
+      disabled_button_box = data.style.disabled_button_box
       
       # if previous element is also a button, use spacing_between instead of spacing_after
       if @last_printed_element_type == :button
@@ -326,7 +326,7 @@ module Forked
           w: text_w + button_box.padding_left + button_box.padding_right,
           h: (button.size_px + button_box.padding_top + button_box.padding_bottom).to_i,
 
-        }.sprite!(inactive_button_box)
+        }.sprite!(disabled_button_box)
 
         y_pos -= button_box.padding_top
       end

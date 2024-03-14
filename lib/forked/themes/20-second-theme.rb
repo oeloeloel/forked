@@ -46,16 +46,16 @@ TWENTY_SECOND_THEME = {
   button_box: {
     **YELLOW_PALE
   },
-  rollover_button: {
+  selected_button: {
     r: 51, g: 51, b: 51, 
   },
-  rollover_button_box: {
+  selected_button_box: {
     **YELLOW_BRIGHT
   },
-  inactive_button: {
+  disabled_button: {
     r: 51, g: 51, b: 51,
   },
-  inactive_button_box: {
+  disabled_button_box: {
     **YELLOW_DARK
   },
   bold: {

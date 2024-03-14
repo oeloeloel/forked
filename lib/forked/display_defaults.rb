@@ -12,12 +12,12 @@ def config_defaults
     blockquote_image: default_blockquote_image,
     button: default_button,
     button_box: default_button_box,
-    rollover_button: default_rollover_button,
-    rollover_button_box: default_rollover_button_box,
+    selected_button: default_selected_button,
+    selected_button_box: default_selected_button_box,
     active_button: default_active_button,
     active_button_box: default_active_button_box,
-    inactive_button: default_inactive_button,
-    inactive_button_box: default_inactive_button_box,
+    disabled_button: default_disabled_button,
+    disabled_button_box: default_disabled_button_box,
     bold: default_bold_style,
     italic: default_italic_style,
     bold_italic: default_bold_italic_style,
@@ -150,13 +150,13 @@ def default_button_box
   )
 end
 
-def default_rollover_button
+def default_selected_button
   default_button.merge(
     r: 204, g: 204, b: 204,
   )
 end
 
-def default_rollover_button_box
+def default_selected_button_box
   default_button_box.merge(
     r: 51, g: 102, b: 102,
   )
@@ -176,13 +176,13 @@ def default_active_button_box
   )
 end
 
-def default_inactive_button
+def default_disabled_button
   default_button.merge(
     r: 204, g: 204, b: 204,
   )
 end
 
-def default_inactive_button_box
+def default_disabled_button_box
   default_button_box.merge!(
     r: 153, g: 153, b: 153,
   )
