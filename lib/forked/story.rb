@@ -109,6 +109,10 @@ module Forked
       load_story(@story_file)
     end
 
+    ##################
+    # INPUT PROCESSING
+    ##################
+
     ## input for Forked
     def check_input
       # toggle author mode
@@ -119,15 +123,11 @@ module Forked
       end
     end
 
-    ### Chunk content
+    ############
+    # NAVIGATION
+    ############
 
-    def heading
-      state.forked.current_chunk[:content][0][:text]
-    end
 
-    def heading_set new_heading
-      state.forked.current_chunk[:content][0][:text] = new_heading
-    end
 
     ### Navigation
 
@@ -209,6 +209,10 @@ module Forked
       end
     end
 
+    ####################
+    # NAVIGATION HISTORY
+    ####################
+
     def history_get
       state.forked.dynamic.forked_history ||= [] 
       state.forked.dynamic.forked_history.map do |h|
@@ -236,7 +240,13 @@ module Forked
       state.forked.dynamic.forked_history = []
     end
 
-    ### Actions
+    ###################
+    # CORE PROCESSING 
+    # - LOAD STORY
+    # - PROCESS ACTIONS
+    # - PROCESS CHUNK
+    # - PREPARE FOR PRESENTATION
+    ###################
 
     def process_action(args, action)
       if action.class == String
@@ -367,7 +377,7 @@ Tell Akz to write a better error message."
     end
 
     #####################
-    # EXECUTION
+    # RUBY EXECUTION
     #####################
 
     def evaluate(args, command)
@@ -378,6 +388,12 @@ Tell Akz to write a better error message."
       eval(command)
     end
 
+    #################
+    # Commands
+    #################
+
+    ### Theme
+
     def change_theme theme
       if @display
         @display.apply_theme(theme)
@@ -387,13 +403,15 @@ Tell Akz to write a better error message."
       end
     end
 
-    def clear_dynamic_data
-      state.forked.dynamic = state.new_entity('dynamic')
+    ### Chunk content
+
+    def heading
+      state.forked.current_chunk[:content][0][:text]
     end
 
-    #################
-    # Commands
-    #################
+    def heading_set new_heading
+      state.forked.current_chunk[:content][0][:text] = new_heading
+    end
 
     ### BAG (player inventory)
 
@@ -583,6 +601,14 @@ Tell Akz to write a better error message."
       num_dice, num_sides = dice.split('d', 2)
       num_dice.to_i.times { result += rand(num_sides.to_i) + 1 }
       result
+    end
+
+    ##############
+    # DATA STORAGE
+    ##############
+    
+    def clear_dynamic_data
+      state.forked.dynamic = state.new_entity('dynamic')
     end
 
 
