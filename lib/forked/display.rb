@@ -36,6 +36,10 @@ module Forked
       data.defaults_set = true # and don't come back
     end
 
+    ########
+    # THEMES
+    ########
+
     def apply_theme(theme)
       data.style = config_defaults
       return unless theme
@@ -46,40 +50,94 @@ module Forked
       highlight_selected_option
     end
 
+    ###
+    # BUTTON INPUT HANDLING
+    ###
+
+    ### GET INPUT
+
+    def input
+      update_selection
+      return if data.options.nil? || data.options.empty?
+
+      activate_selected_option if check_keyboard_activation_end || check_controller_activation_end || check_mouse_activation_end
+    end
+
+    ### CHECKS
+
     def check_button_selected
       case(inputs.last_active)
       when :keyboard
-        keyboard_select
+        get_keyboard_selection
       when :controller
-        controller_select
+        get_controller_selection
       when :mouse
-        mouse_select
+        get_mouse_selection
       end
     end
 
     def check_activation_start
       case(inputs.last_active)
       when :keyboard
-        keyboard_activate_start
+        check_keyboard_activation_start
       when :controller
-        controller_activate_start
+        check_controller_activation_start
       when :mouse
-        mouse_activate_start
+        check_mouse_activation_start
       end 
     end
 
     def check_activation_end
       case(inputs.last_active)
       when :keyboard
-        keyboard_activate_end
+        check_keyboard_activation_end
       when :controller
-        controller_activate_end
+        check_controller_activation_end
       when :mouse
-        mouse_activate_end
+        check_mouse_activation_end
       end 
     end
 
-    def mouse_select
+     def check_keyboard_activation_start
+      kd = inputs.keyboard.key_down
+      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
+    end
+
+    def check_keyboard_activation_end
+      ku = inputs.keyboard.key_up
+      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) } 
+    end
+  
+
+    def check_controller_activation_start
+      c1 = inputs.controller_one
+
+      if c1.connected
+        data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
+      end 
+    end
+
+    def check_controller_activation_end
+      c1 = inputs.controller_one
+
+      if c1.connected
+        data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) }
+      end 
+    end
+
+
+    def check_mouse_activation_start
+      inputs.mouse.down
+    end
+
+    def check_mouse_activation_end
+      inputs.mouse.up
+    end
+
+
+    ### GET PLAYER SELECTION
+
+    def get_mouse_selection
       rollover = -1 
       data.options.each_with_index do |option, idx|
         next if option.action.empty? 
@@ -92,6 +150,35 @@ module Forked
 
       rollover if rollover != data.selected_option
     end
+
+
+    def get_keyboard_selection
+      kd = inputs.keyboard.key_down
+
+      if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
+        return relative_to_absolute_selection(1)
+      elsif data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) } 
+        return relative_to_absolute_selection(-1)
+      end
+
+      nil
+    end
+
+    def get_controller_selection
+      c1 = inputs.controller_one
+
+      if c1.connected
+        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) } 
+          return relative_to_absolute_selection(1)
+        elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
+          return relative_to_absolute_selection(-1)
+        end
+      end 
+
+      nil
+    end
+
+    ### UPDATE SELECTION
 
     def update_selection(navigated = nil)
       return if data.options.nil? || data.options.empty? 
@@ -136,92 +223,7 @@ module Forked
       end
     end
 
-    def input
-      update_selection
-
-      return if data.options.nil? || data.options.empty?
-
-      activate_selected_option if keyboard_activate_end || controller_activate_end || mouse_activate_end
-    end
-
-    def keyboard_activate_start
-      kd = inputs.keyboard.key_down
-      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
-    end
-
-    def keyboard_activate_end
-      ku = inputs.keyboard.key_up
-      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) } 
-    end
-  
-
-    def controller_activate_start
-      c1 = inputs.controller_one
-
-      if c1.connected
-        data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
-      end 
-    end
-
-    def controller_activate_end
-      c1 = inputs.controller_one
-
-      if c1.connected
-        data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) }
-      end 
-    end
-
-
-    def mouse_activate_start
-      inputs.mouse.down
-    end
-
-    def mouse_activate_end
-      inputs.mouse.up
-    end
-
-    def keyboard_select
-      kd = inputs.keyboard.key_down
-
-      if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
-        return relative_to_absolute_selection(1)
-      elsif data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) } 
-        return relative_to_absolute_selection(-1)
-      end
-
-      nil
-    end
-
-    def controller_select
-      c1 = inputs.controller_one
-
-      if c1.connected
-        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) } 
-          return relative_to_absolute_selection(1)
-        elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
-          return relative_to_absolute_selection(-1)
-        end
-      end 
-
-      nil
-    end
-
-    def relative_to_absolute_selection(index)
-
-      sel_opt = data.selected_option
-      if data.selected_option < 0 || data.selected_option.nil?
-        sel_opt = index.positive? ? data.options.size - 1 : 0
-      end
-      sel_opt += index
-      sel_opt = sel_opt.clamp_wrap(0, data.options.size - 1)
-    end
-
-    def activate_selected_option
-      return unless data.selected_option >= 0
-
-      $story.follow(args, data.options[data.selected_option])
-
-    end
+    ### DISPLAY SELECTION CHANGES
 
     def highlight_selected_option
       return unless data.options && data.selected_option && data.selected_option >= 0
@@ -245,6 +247,32 @@ module Forked
       return unless opt
       opt.merge!(data.style.active_button_box)
     end
+
+    ### PERFORM OPTION
+
+        def activate_selected_option
+      return unless data.selected_option >= 0
+
+      $story.follow(args, data.options[data.selected_option])
+
+    end
+
+    ### HELPER
+
+    def relative_to_absolute_selection(index)
+
+      sel_opt = data.selected_option
+      if data.selected_option < 0 || data.selected_option.nil?
+        sel_opt = index.positive? ? data.options.size - 1 : 0
+      end
+      sel_opt += index
+      sel_opt = sel_opt.clamp_wrap(0, data.options.size - 1)
+    end
+
+    ################
+    # UPDATE DISPLAY
+    ################
+
 
     def update(content, navigated)
       update_selection(navigated)
@@ -286,6 +314,12 @@ module Forked
         y_pos = next_y_pos
       end
     end
+
+    #######################
+    # DISPLAY ELEMENT TYPES
+    #######################
+
+    ### BUTTON
 
     def display_button(y_pos, item, content, i)
 
@@ -340,6 +374,8 @@ module Forked
       y_pos -= button.size_px + button_box.padding_bottom
       y_pos -= button.size_px * button.spacing_after
     end
+
+    ### PARAGRAPH
 
     def display_paragraph(y_pos, item)
       paragraph = data.style.paragraph
@@ -432,45 +468,7 @@ module Forked
       empty_paragraph ? y_pos : new_y_pos
     end
 
-    ## split string (str) on space
-    ## preserve a maximum of one consecutive space
-    def split_preserve_one_space(str)
-      arr = []
-      while str.length > 0
-        if idx = str.index(' ')
-          capture = str[0...idx + 1]
-          # prevent runs of spaces
-          # unless capture == ' ' && arr&.[](-1)&.[](-1) == ' '
-          unless capture == ' ' && arr[-1]&.end_with?(" ")
-            arr << capture
-          end
-          str = str [idx + 1..-1]
-        else
-          # if the string does not or no longer contains a space
-          arr << str
-          str = ''
-        end
-      end
-      arr
-    end
-
-    ## split string (str) on space
-    ## preserve spaces
-    def split_preserve_space(str)
-      arr = []
-      while str.length > 0
-        idx = str.index(' ')
-        if idx
-          cap = str[0...idx + 1] 
-          arr << cap
-          str = str [idx + 1..-1]
-        else
-          arr << str
-          str = ''
-        end
-      end
-      arr
-    end
+    ### HEADING
 
     def display_heading(y_pos, item, previous_element_type)
       heading = data.style.heading
@@ -485,6 +483,8 @@ module Forked
 
       y_pos -= heading.size_px * heading.spacing_after
     end
+
+    ### RULE
 
     def display_rule(y_pos, item, previous_element_type)
       rule = data.style.rule
@@ -533,6 +533,8 @@ module Forked
       y_pos -= (h + image.spacing_after)
     end
 
+    ### CODE BLOCK
+
     def display_code_block(y_pos, item, previous_element_type)
       code_block = data.style.code_block
       display = data.style.display
@@ -573,6 +575,8 @@ module Forked
       y_pos -= box_height
       y_pos -= code_block.size_px * code_block.spacing_after
     end
+
+    ### BLOCKQUOTE
 
     def display_blockquote(y_pos, item, previous_element_type, content, i)
       next if item[:text].empty?
@@ -621,6 +625,18 @@ module Forked
 
     end
 
+
+
+
+
+
+
+
+
+    ################
+    # STYLE HANDLING
+    ################
+
     def get_font_style styles
       if styles.include?(:bold) && styles.include?(:italic)
         data.style.bold_italic
@@ -637,12 +653,20 @@ module Forked
       end
     end
 
+    ############
+    # PRIMITIVES
+    ############
+
     # make a one line label in the specified style
     def make_paragraph_label text, font_style
       {
         text: text,
       }.label!(data.display.paragraph).merge!(font_style)
     end
+
+    ###############
+    # TEXT HANDLING
+    ###############
 
     def wrap_lines_code_block str, font, size_px, width
       wrapped_text = []
@@ -771,6 +795,50 @@ module Forked
 
       wrapped_text
     end
+
+    ## split string (str) on space
+    ## preserve a maximum of one consecutive space
+    def split_preserve_one_space(str)
+      arr = []
+      while str.length > 0
+        if idx = str.index(' ')
+          capture = str[0...idx + 1]
+          # prevent runs of spaces
+          # unless capture == ' ' && arr&.[](-1)&.[](-1) == ' '
+          unless capture == ' ' && arr[-1]&.end_with?(" ")
+            arr << capture
+          end
+          str = str [idx + 1..-1]
+        else
+          # if the string does not or no longer contains a space
+          arr << str
+          str = ''
+        end
+      end
+      arr
+    end
+
+    ## split string (str) on space
+    ## preserve spaces
+    def split_preserve_space(str)
+      arr = []
+      while str.length > 0
+        idx = str.index(' ')
+        if idx
+          cap = str[0...idx + 1] 
+          arr << cap
+          str = str [idx + 1..-1]
+        else
+          arr << str
+          str = ''
+        end
+      end
+      arr
+    end
+
+    ########
+    # RENDER
+    ########
 
     def render
       outputs.background_color = data.style.display.background_color.values
