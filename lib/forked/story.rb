@@ -46,8 +46,8 @@ module Forked
       @hashed_display = 0
       args.state.forked.dynamic.forked_counter = {}
 
-      story_file = get_story_from_argv || @story_file
-      load_story(story_file)
+      @story_file = get_story_from_argv || @story_file
+      load_story(@story_file)
 
       state.forked.defaults_set = true
     end
@@ -101,6 +101,12 @@ module Forked
         end
       end
       nil
+    end
+
+    def restart_story
+      clear_dynamic_data
+      clear_save_data
+      load_story(@story_file)
     end
 
     ## input for Forked
@@ -224,6 +230,10 @@ module Forked
       return history unless idx
 
       history[idx]
+    end
+
+    def history_clear
+      state.forked.dynamic.forked_history = []
     end
 
     ### Actions
@@ -375,6 +385,10 @@ Tell Akz to write a better error message."
       else
         THEME = theme
       end
+    end
+
+    def clear_dynamic_data
+      state.forked.dynamic = state.new_entity('dynamic')
     end
 
     #################
