@@ -45,8 +45,13 @@ module Forked
       return unless theme
 
       theme.each do |k, v|
+        next unless data.style[k]
+
         data.style[k].merge!(v)
       end
+
+      # TODO: this line might not be needed (seems like it's there 
+      # to ensure the current selection is highlighted after navigation)
       highlight_selected_option
     end
 
@@ -88,12 +93,14 @@ module Forked
         unhighlight_selected_option if data.selected_option >= 0
         data.selected_option = select
         highlight_selected_option if data.selected_option >= 0
-        if inputs.last_active == :mouse && data.selected_option >= 0
-          # try to change to the hand cursor
-          next_cursor = :hand
-        else
-          # try to change to the arrow cursor
-          next_cursor = :arrow
+        if inputs.last_active == :mouse
+          if data.selected_option >= 0
+            # try to change to the hand cursor
+            next_cursor = :hand
+          else
+            # try to change to the arrow cursor
+            next_cursor = :arrow
+          end
         end
       end
 
