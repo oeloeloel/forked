@@ -78,7 +78,7 @@ module Forked
       # check whether input is selecting a button
       select = check_button_selected
 
-      # we come here from a navigation command?
+      # did we come here from a navigation command?
       # deselect the buttons (the selection is not valid)
       # and return the cursor to arrow
       # otherwise, maintain the same selection (we just executed some code)
@@ -88,7 +88,18 @@ module Forked
       end
 
       # check whether input is activating a button
-      active = true if data.selected_option != -1 && check_activation_start
+      activating = true if data.selected_option != -1 && check_activation_start
+
+      # check whether input is deactivating a button
+      deactivating = data.selected_option != -1 && check_activation_end
+
+      # button is deactivating? (e.g. key/controller/mouse released)
+      # revert to selection highlighting
+      if deactivating
+        highlight_selected_option if data.selected_option >= 0
+      end
+
+
 
       # check whether input is deactivating a button
       clicked = true if data.selected_option != -1 && check_activation_end
@@ -108,7 +119,13 @@ module Forked
         end
       end
 
-      if active
+      # player clicked the button
+      if activating
+        highlight_active_option
+      end
+
+      # playe
+      if select != -1 && check_activation
         highlight_active_option
       end
 
@@ -143,6 +160,17 @@ module Forked
       end 
     end
 
+    def check_activation
+      case inputs.last_active
+        when :keyboard
+        check_keyboard_activation
+      when :controller
+        check_controller_activation
+      when :mouse
+        check_mouse_activation
+      end
+    end
+
     def check_activation_end
       case inputs.last_active
       when :keyboard
@@ -154,9 +182,14 @@ module Forked
       end 
     end
 
-     def check_keyboard_activation_start
+    def check_keyboard_activation_start
       kd = inputs.keyboard.key_down
       data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
+    end
+
+    def check_keyboard_activation
+      kh = inputs.keyboard.key_held
+      data.keyboard_input_defaults[:activate].any? { |k| kh.send(k) } 
     end
 
     def check_keyboard_activation_end
@@ -173,6 +206,14 @@ module Forked
       end 
     end
 
+    def check_controller_activation
+      c1 = inputs.controller_one
+
+      if c1.connected
+        data.controller_input_defaults[:activate].any? { |k| c1.key_held.send(k) }
+      end 
+    end
+
     def check_controller_activation_end
       c1 = inputs.controller_one
 
@@ -184,6 +225,11 @@ module Forked
 
     def check_mouse_activation_start
       inputs.mouse.down
+    end
+
+
+    def check_mouse_activation
+      inputs.mouse.held
     end
 
     def check_mouse_activation_end
