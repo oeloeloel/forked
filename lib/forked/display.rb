@@ -328,7 +328,7 @@ module Forked
       button_box = data.style.button_box
       disabled_button_box = data.style.disabled_button_box
       
-      # if previous element is also a button, use spacing_between instead of spacing_after
+      # previous element is also a button? use spacing_between instead of spacing_after
       if @last_printed_element_type == :button
         y_pos += button.spacing_after * button.size_px
         y_pos -= button.spacing_between * button.size_px
@@ -396,12 +396,12 @@ module Forked
 
       empty_paragraph = true # until proven false
       item.atoms.each_with_index do |atom, i|
-        # if we're at the end of the paragraph and no atoms have had any text
+        # when we're at the end of the paragraph and no atoms have had any text
         # mark it as empty so we know not to remove added 'spacing after'
         empty_paragraph = false if atom[:text].strip != ''
         if i == item.atoms.size - 1 && empty_paragraph
           args.state.forked.forked_display_last_element_empty = true
-          # if previous element was a paragraph, remove the between spacing
+          # previous element was a paragraph? remove the between spacing
           new_y_pos += paragraph.size_px * paragraph.spacing_between
           # add 'spacing after'. Next element might not be a paragraph.
           new_y_pos -= paragraph.size_px * paragraph.spacing_after
@@ -445,7 +445,7 @@ module Forked
             new_y_pos -= paragraph.size_px * paragraph.line_spacing
           end
 
-          # if we made it this far and this is the last atom, add
+          # we made it this far and this is the last atom? add
           # line spacing and 'spacing after'
           if i == item.atoms.size - 1
             new_y_pos -= paragraph.size_px * paragraph.line_spacing
@@ -453,7 +453,7 @@ module Forked
           end
         end
 
-        # if this is the last atom and it's empty but the paragraph is not empty
+        # this is the last atom and it's empty but the paragraph is not empty?
         # (interpolation will do this), apply paragraph spacing now because
         # we won't get there otherwise
         if  atom[:text] == '' &&
@@ -585,7 +585,7 @@ module Forked
       display = data.style.display
       blockquote_box = data.style.blockquote_box
 
-      # if previous element is also a blockquote, use spacing_between instead of spacing_after
+      # when previous element is also a blockquote, use spacing_between instead of spacing_after
       if content[i - 1][:type] == :blockquote
         y_pos += blockquote.spacing_after * blockquote.size_px
         y_pos -= blockquote.spacing_between * blockquote.size_px
@@ -671,10 +671,10 @@ module Forked
           sp = l.index(' ')
           if sp
             if sp.zero?
-              # if space is the first character
+              # space is the first character?
               # check width of line so far (fixed_width_line + frag)
               test_w = args.gtk.calcstringbox(fixed_width_line + frag, size_px, font)[0]
-              # if we're still inside the boundary
+              # we're still inside the boundary?
               if test_w < width
                 # add the current fragment to the line
                 fixed_width_line += frag
@@ -687,7 +687,7 @@ module Forked
                 fixed_width_line = frag.delete_prefix!(' ')
                 # empty the frag but add a space
                 frag = ' '
-              end
+              end # end test_w < width
 
               # empty frag and add a space
 
@@ -782,7 +782,7 @@ module Forked
           if words.empty?
             wrapped_text << fixed_width_line
           end
-        end
+        end # until
       end
 
       wrapped_text
@@ -796,17 +796,16 @@ module Forked
         if idx = str.index(' ')
           capture = str[0...idx + 1]
           # prevent runs of spaces
-          # unless capture == ' ' && arr&.[](-1)&.[](-1) == ' '
           unless capture == ' ' && arr[-1]&.end_with?(" ")
             arr << capture
           end
           str = str [idx + 1..-1]
         else
-          # if the string does not or no longer contains a space
+          # the string does not or no longer contains a space
           arr << str
           str = ''
         end
-      end
+      end # while
       arr
     end
 
@@ -824,7 +823,7 @@ module Forked
           arr << str
           str = ''
         end
-      end
+      end # while
       arr
     end
 
