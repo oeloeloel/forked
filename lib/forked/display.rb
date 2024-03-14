@@ -80,8 +80,12 @@ module Forked
 
       # we come here from a navigation command?
       # deselect the buttons (the selection is not valid)
+      # and return the cursor to arrow
       # otherwise, maintain the same selection (we just executed some code)
-      data.selected_option = -1 if navigated
+      if navigated
+        data.selected_option = -1 
+        next_cursor = :arrow
+      end
 
       # check whether input is activating a button
       active = true if data.selected_option != -1 && check_activation_start
