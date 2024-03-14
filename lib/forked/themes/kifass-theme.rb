@@ -41,6 +41,12 @@ KIFASS_THEME = {
   disabled_button_box: {
     r: 102, g: 102, b: 102, 
   },
+  active_button: {
+    r: 51, g: 51, b: 51, 
+  },
+  active_button_box: {
+    r: 0x14, g: 0x82, b: 0x94,
+  },
   bold: {
     r: 204, g: 204, b: 204,
   },

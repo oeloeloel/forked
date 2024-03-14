@@ -41,6 +41,12 @@ DARK_MODE = {
   disabled_button_box: {
     r: 102, g: 102, b: 102, 
   },
+  active_button: {
+    r: 51, g: 51, b: 51,
+  },
+  active_button_box: {
+    r: 255, g: 102, b: 102,
+  },
   bold: {
     r: 204, g: 204, b: 204,
   },

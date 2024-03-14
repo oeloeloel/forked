@@ -1,5 +1,6 @@
 YELLOW_BRIGHT = { r: 0xff, g: 0xce, b: 0x27 }
 YELLOW_PALE =   { r: 0xdf, g: 0xce, b: 0x77 }
+PALE_GREEN    = { r: 0x73, g: 0xB4, b: 0x9D }
 PURPLE =        { r: 0x2f, g: 0x2f, b: 0x54 }
 PALE_PURPLE   = { r: 0x4f, g: 0x4f, b: 0x74 }
 BLUE   =        { r: 0x97, g: 0xbf, b: 0xe8 }
@@ -57,6 +58,12 @@ TWENTY_SECOND_THEME = {
   },
   disabled_button_box: {
     **YELLOW_DARK
+  },
+  active_button: {
+    r: 51, g: 51, b: 51, 
+  },
+  active_button_box: {
+    **PALE_GREEN
   },
   bold: {
     font: 'fonts/mali/mali-bold.ttf',

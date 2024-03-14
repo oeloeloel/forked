@@ -163,7 +163,6 @@ def default_selected_button_box
 end
 
 
-
 def default_active_button
   default_button.merge(
     r: 204, g: 204, b: 204,
@@ -172,7 +171,7 @@ end
 
 def default_active_button_box
   default_button_box.merge(
-    r: 255, g: 102, b: 102,
+    r: 76, g: 51, b: 127,
   )
 end
 
