@@ -50,9 +50,9 @@ module Forked
       highlight_selected_option
     end
 
-    ###
-    # BUTTON INPUT HANDLING
-    ###
+    #######################
+    # PLAYER INPUT HANDLING
+    #######################
 
     ### GET INPUT
 
@@ -63,10 +63,55 @@ module Forked
       activate_selected_option if check_keyboard_activation_end || check_controller_activation_end || check_mouse_activation_end
     end
 
+    ### UPDATE SELECTION
+
+    def update_selection(navigated = nil)
+      return if data.options.nil? || data.options.empty? 
+      
+      inp = inputs.last_active
+
+      # check whether input is selecting a button
+      select = check_button_selected
+
+      # we come here from a navigation command?
+      # deselect the buttons (the selection is not valid)
+      # otherwise, maintain the same selection (we just executed some code)
+      data.selected_option = -1 if navigated
+
+      # check whether input is activating a button
+      active = true if data.selected_option != -1 && check_activation_start
+
+      # check whether input is deactivating a button
+      clicked = true if data.selected_option != -1 && check_activation_end
+
+      if select
+        unhighlight_selected_option if data.selected_option >= 0
+        data.selected_option = select
+        highlight_selected_option if data.selected_option >= 0
+        if inputs.last_active == :mouse && data.selected_option >= 0
+          # try to change to the hand cursor
+          next_cursor = :hand
+        else
+          # try to change to the arrow cursor
+          next_cursor = :arrow
+        end
+      end
+
+      if active
+        highlight_active_option
+      end
+
+      # set the cursor when it has changed
+      if next_cursor && next_cursor != data.mouse_cursor
+        gtk.set_system_cursor(next_cursor)
+        data.mouse_cursor = next_cursor
+      end
+    end
+
     ### CHECKS
 
     def check_button_selected
-      case(inputs.last_active)
+      case inputs.last_active
       when :keyboard
         get_keyboard_selection
       when :controller
@@ -77,7 +122,7 @@ module Forked
     end
 
     def check_activation_start
-      case(inputs.last_active)
+      case inputs.last_active
       when :keyboard
         check_keyboard_activation_start
       when :controller
@@ -88,7 +133,7 @@ module Forked
     end
 
     def check_activation_end
-      case(inputs.last_active)
+      case inputs.last_active
       when :keyboard
         check_keyboard_activation_end
       when :controller
@@ -176,51 +221,6 @@ module Forked
       end 
 
       nil
-    end
-
-    ### UPDATE SELECTION
-
-    def update_selection(navigated = nil)
-      return if data.options.nil? || data.options.empty? 
-      
-      inp = inputs.last_active
-
-      # check if input is selecting a button
-      select = check_button_selected
-
-      # if we came here from a navigation command,
-      # deselect the buttons (the selection is not valid)
-      # otherwise, maintain the same selection (we just executed some code)
-      data.selected_option = -1 if navigated
-
-      # check if input is activating a button
-      active = true if data.selected_option != -1 && check_activation_start
-
-      # check if input is deactivating a button
-      clicked = true if data.selected_option != -1 && check_activation_end
-
-      if select
-        unhighlight_selected_option if data.selected_option >= 0
-        data.selected_option = select
-        highlight_selected_option if data.selected_option >= 0
-        if inputs.last_active == :mouse && data.selected_option >= 0
-          # try to change to the hand cursor
-          next_cursor = :hand
-        else
-          # try to change to the arrow cursor
-          next_cursor = :arrow
-        end
-      end
-
-      if active
-        highlight_active_option
-      end
-
-      # set the cursor if it has changed
-      if next_cursor && next_cursor != data.mouse_cursor
-        gtk.set_system_cursor(next_cursor)
-        data.mouse_cursor = next_cursor
-      end
     end
 
     ### DISPLAY SELECTION CHANGES
@@ -624,14 +624,6 @@ module Forked
       y_pos -= blockquote.size_px * blockquote.spacing_after
 
     end
-
-
-
-
-
-
-
-
 
     ################
     # STYLE HANDLING
