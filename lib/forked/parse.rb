@@ -8,13 +8,13 @@ module Forked
         raise 'FORKED: The story file is missing.' if story_file.nil?
         raise 'FORKED: The story file is empty.' if story_file.empty?
 
-        # for parsing inline styles
+        # used when parsing inline styles
         @style_marks = make_style_marks
 
         # Empty story
         story = make_story_hash
 
-        context = [:title] # if we're in the middle of something
+        context = [:title] # we're looking for a title and nothing else right now
         style_context = [] # tracking inline styles
 
         # Elements understood by the parser:
@@ -117,12 +117,12 @@ module Forked
           # MEANINGFUL BLANK LINE
           result = parse_blank(line, context, story, line_no)
           next if result
-        end
+        end # while
 
         story
       end
 
-      # check to see if it is safe to proceed based on
+      # check to see whether it is safe to proceed based on
       # context rules
       def context_safe?(context, prohibited, mandatory)
         context_prohibited = array_intersect?(context, prohibited)
@@ -131,7 +131,7 @@ module Forked
         context_mandatory && !context_prohibited
       end
 
-      # true if arr1 and arr2 contain any overlapping elements
+      # true when arr1 and arr2 contain any overlapping elements
       def array_intersect?(arr1, arr2)
         arr1.intersection(arr2).any?
       end
@@ -146,7 +146,7 @@ module Forked
 
         story[:chunks][-1][:content] << make_rule_hash
 
-        # if this content is conditional, add the condition to the current element
+        # this content is conditional? add the condition to the current element
         if context.include?(:condition_block)  || context.include?(:condition_block)
           condition = story[:chunks][-1][:conditions][-1]
           story[:chunks][-1][:content][-1][:condition] = condition
@@ -155,7 +155,7 @@ module Forked
         true
       end
 
-      # if a line is totally blank, add it as a `:blank` element
+      # when a line is totally blank, add it as a `:blank` element
       # only add one :blank - runs of blanks are not meaningful
       # display will ignore the blank
       # display will not treat two of the same block level
@@ -168,7 +168,7 @@ module Forked
         # check last element type
         prev_type = story&.[](:chunks)[-1][:content]&.[](-1)[:type]
 
-        # if blank is meaningful after last element, add it
+        # blank is meaningful after last element? add it
         # for now, blank is only meaningful after button
         story[:chunks][-1][:content] << make_blank_hash if prev_type == :button
       end
@@ -816,7 +816,7 @@ Please add a title to the top of the Story File. Example:
             alt.strip!
             path.strip!
 
-            # if this content is conditional, add the condition to the current element
+            # this content is conditional? add the condition to the current element
 
             if context.include?(:condition_block) || context.include?(:condition_block)
               condition = story[:chunks][-1][:conditions][-1]
