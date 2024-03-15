@@ -136,16 +136,16 @@ module Forked
     end
 
     def find_chunk_index_from_id(chunk_id)
-      # find chunk by ID if it exists
+      # find chunk by ID when it exists
       ind = state.forked.story.chunks.index { |i| i[:id] == chunk_id }
       return ind if ind
       
-      # if ID does not exist, remove # and find slug if it exists
+      # when ID does not exist, remove # and find slug if it exists
       ci = chunk_id.delete_prefix('#')
       ind = state.forked.story.chunks.index { |i| i[:slug] == ci }
       return ind if ind
 
-      # if ID does not exist and slug does not exist, make some noise
+      #  ID does not exist and slug does not exist, make some noise
       raise "FORKED: Broken link. Unable to find the chunk `#{chunk_id}`"
     end
 
@@ -252,7 +252,7 @@ module Forked
     ###################
 
     def process_action(args, action)
-      if action.class == String
+      if action.is_a?(String)
         if action == '#'
           navigate_relative(1)
         elsif action.start_with?('#')
@@ -311,11 +311,11 @@ Tell Akz to write a better error message."
         if element[:atoms]
           element[:atoms].each_with_index do |atom, j|
             next unless (atom[:condition] &&
-                        atom[:condition].class == String &&
+                        atom[:condition].is_a?(String) &&
                         !atom[:condition].empty?)
             result = evaluate(args, atom[:condition])
-            # if it's a non-empty string, display the result
-            if result.class == String && !result.empty?
+            # when it's a non-empty string, display the result
+            if result.is_a?(String) && !result.empty?
               # String Interpolation
               ### CONTROVERSIAL
               # Add space after the result
@@ -349,7 +349,6 @@ Tell Akz to write a better error message."
                 display_element = true
               end
 
-              # element[:text] = '' if display_element != true
               element[:type] = :hidden if display_element != true
             else
               # don't display
