@@ -138,6 +138,14 @@ module Forked
 
       # draws a horizontal line
       def parse_rule(line, context, story, line_no)
+
+        # ESCAPE
+
+        if line.strip.start_with?('\---')
+          line.delete_prefix!('\\')
+          return
+        end
+
         return unless line.strip.start_with?('---')
 
         prohibited_contexts = [:title, :code_block]
@@ -162,6 +170,9 @@ module Forked
       # elements as contiguous if they are separated by a blank
       def parse_blank(line, context, story, line_no)
         # apply to blank lines and NO CONTEXT IS OPEN
+
+        # ESCAPE: Not needed
+
         return if !line.strip.empty? ||
                   !context.empty?
         
@@ -176,6 +187,13 @@ module Forked
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
       def parse_preformatted_line(line, context, story, _line_no)
+
+        # ESCAPE
+        if line.strip.start_with?('\@@')
+          line.delete_prefix!('\\')
+          return
+        end
+
         return unless line.strip.start_with?('@@')
 
         prohibited_contexts = [:title, :code_block]
@@ -204,11 +222,15 @@ module Forked
         # strip
         line.strip!
 
+        if line.strip.end_with?('\\\\')
+          line = escape_char(line, '\\')
+        end
+
         # anything that comes here is either a paragraph or a blank line.
         # handle context open/opening/closing
         context_state = handle_paragraph_context(line, context)
-        # if the line ends with `\`, hard wrap
-        if line.strip[-1] == '\\'
+        # when the line ends with `\`, hard wrap
+        if(line.strip[-1] == '\\')
           # terminate the line with a newline
           # add an nbsp to prevent empty lines from collapsing
           line = line.delete_suffix('\\') + " \n"
@@ -226,7 +248,6 @@ module Forked
         # new atom condition
         # context is open
         if context_state == :open
-          # if text is a placeholder for interpolation, blank it
 
           atoms = []
           if line == '@#$%INTERPOLATION@#$%'
@@ -235,10 +256,13 @@ module Forked
             atoms << make_atom_hash()
           end
 
+          line = unescape_char(line, '\\')
+          
           ######
           # APPLY INLINE STYLES HERE
           ######
 
+          line = escape(line, ['*', '_', '`'])
           
           while !line.empty?
             first_idx1 = 10000000
@@ -256,18 +280,19 @@ module Forked
             end
 
             if first_mark.empty?
+              line = unescape(line, ['*', '_', '`'])
               atoms << make_atom_hash(line)
               line = ''
             else
-              left_text = line[0...first_idx1]
-              marked_text = line[first_idx1 + first_mark[:mark].length...first_idx2]
+              left_text = unescape(line[0...first_idx1], ['*', '_', '`'])
+              marked_text = unescape(line[first_idx1 + first_mark[:mark].length...first_idx2], ['*', '_', '`'])
 
               line = line[first_idx2 + first_mark[:mark].length..-1]
 
               atoms << make_atom_hash(left_text) unless left_text.empty?
               atoms << make_atom_hash(marked_text, [first_mark[:symbol]])
-            end
-          end
+            end 
+          end # while
 
           ######
           # INLINE STYLES DONE
@@ -320,6 +345,9 @@ module Forked
 
       # strip comments from line (comments begin with //)
       def parse_c_comment(line, context)
+
+        # ESCAPE: Not needed (inline pattern starts with a space)
+
         return unless line.include?('//')
 
         prohibited_contexts = [:code_block]
@@ -343,12 +371,14 @@ module Forked
 
         left_mark = '<!--'
         right_mark = '-->'
+        escapee = '<'
+
+        line = escape_char(line, escapee)
 
         # catch inline or single line html comment
 
         if line.include?(left_mark) && line.include?(right_mark)
           line = (pull_out(left_mark, right_mark, line))[0]
-          
           return line unless line.empty?
 
           return nil
@@ -362,7 +392,7 @@ module Forked
         end
 
         # end html comment (return non-comment part of line)
-        if line.include?(right_mark)
+        if line.include?(right_mark) && context.include?(:comment)
           context.delete(:comment)
           line = right_of_string(line, right_mark)
           return nil if line.strip.empty?
@@ -373,7 +403,7 @@ module Forked
           return nil
         end
 
-        return line
+        line = unescape_char(line, '<')
       end
 
       def parse_blockquote(line, context, story, _line_no)
@@ -408,6 +438,7 @@ module Forked
       def parse_code_fence(line, context, story, line_no)
         return unless line.include?('```') 
 
+        # escaping
         if line.include?('\```')
           line.gsub!('\```', '```')
           return false
@@ -420,7 +451,15 @@ module Forked
       # They begin with three tildes (~~~) on a blank line
       # and end with three ticks on a blank line
       def parse_code_block(line, context, story, line_no)
-        if line.include?('~~~') & !line.include?('\~~~')
+
+        # line = escape_char(line, '~')
+
+        if line.start_with?('\~~~')
+          line.delete_prefix!('\\')
+          return false
+        end
+
+        if line.include?('~~~')
           if context.include?(:code_block)
             context.delete(:code_block)
           else
@@ -471,7 +510,13 @@ module Forked
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        if line.include? '::'
+        # escape
+        if line.start_with?('\::')
+          line.delete_prefix!('\\')
+          return false
+        end
+
+        if line.start_with? '::'
            # capture single line action
           if line.strip.start_with?(':: ') && line.strip.end_with?(' ::') && line.length > 3
             line.strip!
@@ -673,7 +718,16 @@ Please add a title to the top of the Story File. Example:
       # The heading line starts a new chunk
       # The heading line begins with a double #
       def parse_heading(line, context, story, line_no)
-        return unless line.strip.start_with?('##') && !line.strip.start_with?('###')
+
+        # Escape
+
+        if line.start_with?('\##')
+          line.delete_prefix!('\\')
+          return nil
+        end
+
+        return unless line.strip.start_with?('##') && 
+        !line.strip.start_with?('###') &&
 
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
@@ -722,6 +776,12 @@ Please add a title to the top of the Story File. Example:
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+
+        if line.start_with?('\[')
+          line.delete_prefix!('\\')
+          return
+        end
 
         # first identify trigger, capture button text and action
         if line.strip.start_with?('[') && 
@@ -804,6 +864,12 @@ Please add a title to the top of the Story File. Example:
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
+        if line.strip.start_with?('\![')
+          line.delete_prefix!('\\')
+          return
+        end
+
 
         # first identify image, capture alt text and path
         if line.strip.start_with?('![') && 
@@ -946,6 +1012,35 @@ Please add a title to the top of the Story File. Example:
           { symbol: :italic, mark: "_" },
           { symbol: :code, mark: "`" }
         ]
+      end
+
+
+      ################
+      # STRING HELPERS
+      ################
+
+      # ecapes all instances of "\chr" in str
+      def escape_char(str, chr)
+        str.gsub("\\#{chr}", '\x' + chr.ord.to_s(16))
+      end
+
+      # unescapes all instances of char's escape sequence in str
+      def unescape_char(str, chr)
+        str.gsub('\\x' + chr.ord.to_s(16), chr)
+      end
+
+      # escapes all instances of characters in array that exist in str
+      def escape(str, arr)
+        arr.each { |chr| 
+          str = escape_char(str, chr)
+        }
+        str
+      end
+
+      # unescapes all instances of characters in array that exist in str
+      def unescape(str, arr)
+        arr.each { |chr| str = unescape_char(str, chr)}
+        str
       end
 
       # given a string str and string delimiters left and right
