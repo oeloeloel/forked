@@ -1,5 +1,30 @@
+
 module Forked
   # parses the story file
+
+  # Elements understood by the parser:
+  # [x] :blockquote (physical div)
+  # [x] :condition block (logical div)
+  # [x] :action_block (multiline code)
+  # [x] :code_block (present code style, multiline)
+  # [x] :trigger text (button display text)
+  # [x] :trigger action (button action)
+  # [x] :title (story title)
+  # [x] :heading text (chunk heading)
+  # [x] :chunk_id (chunk identifier)
+  # [x] :paragraph (plain text)
+  # [x] preformatted line (do not parse line and present as text)
+  # [x] c-style line comments (stripped and ignored)
+  # [x] html-style comments (stripped and ignored)
+  # [x] :rule (horizontal rule)
+  # [x] :action (single line code)
+  # [x] :code (present with code format < 1 line)
+  # [x] :bold (inline strong style)
+  # [x] :italic (inline emphasis style)
+  # [x] :bold italic (inline strong + emphasis style)
+  # :inline trigger
+  # [x] :image
+
   class Parser
     DEFAULT_TITLE = 'A Forked Story'.freeze
 
@@ -17,49 +42,38 @@ module Forked
         context = [:title] # we're looking for a title and nothing else right now
         style_context = [] # tracking inline styles
 
-        # Elements understood by the parser:
-        # [x] :blockquote (physical div)
-        # [x] :condition block (logical div)
-        # [x] :action_block (multiline code)
-        # [x] :code_block (present code style, multiline)
-        # [x] :trigger text (button display text)
-        # [x] :trigger action (button action)
-        # [x] :title (story title)
-        # [x] :heading text (chunk heading)
-        # [x] :chunk_id (chunk identifier)
-        # [x] :paragraph (plain text)
-        # [x] preformatted line (do not parse line and present as text)
-        # [x] c-style line comments (stripped and ignored)
-        # [x] html-style comments (stripped and ignored)
-        # [x] :rule (horizontal rule)
-        # [x] :action (single line code)
-        # [x] :code (present with code format < 1 line)
-        # [x] :bold (inline strong style)
-        # [x] :italic (inline emphasis style)
-        # [x] :bold italic (inline strong + emphasis style)
-        # :inline trigger
-        # [ ] :image
+        @escapable = make_escapable_list
 
         story_lines = story_file.lines
         line_no = -1
+        @increment_line_no = true
 
         while(line = story_lines.shift)
-          line_no += 1
-          # puts "#{line_no + 1}: #{line.strip}"
+          line_no += 1 if @increment_line_no
+          @increment_line_no = true
+          # puts "#{line_no + 1}: #{line.strip}" unless line.strip.empty?
+
+          sc = escape('\~@@@@@@@@', ['~'])
+          escaped = escape(line, @escapable)
 
           ### PREFORMATTED LINE (^@@) and stop parsing it
-          result = parse_preformatted_line(line, context, story, line_no)
+          result = parse_preformatted_line(escaped, context, story, line_no)
           next if result
 
           ### STRIP C COMMENT (//) and continue parsing line
-          result = parse_c_comment(line, context)
-          line = result if result
+          result = parse_c_comment(escaped, context)
+          if result
+            next if result == true
+
+            line = result
+            escaped = result
+          end
 
           ### HTML COMMENTS (<!-- -->)
-          result = parse_html_comment(line, context, line_no)
+          result = parse_html_comment(escaped, context, line_no)
           next unless result
 
-          line = result
+          escaped = result
 
           ### TITLE
           result = parse_title(line, context, story, line_no)
@@ -79,11 +93,11 @@ module Forked
           next if result
 
           ### RULE
-          result = parse_rule(line, context, story, line_no)
+          result = parse_rule(escaped, context, story, line_no)
           next if result
 
           ### CODE FENCE
-          result = parse_code_fence(line, context, story, line_no)
+          result = parse_code_fence(escaped, context, story, line_no)
           next if result
 
           ### TRIGGER
@@ -95,24 +109,29 @@ module Forked
           result = parse_image(line, context, story, line_no)
           next if result
 
-          ### CONDITION BLOCK
-          result = parse_condition_block(line, context, story, line_no, story_lines)
-          if result == :interpolation
-            line = '@#$%INTERPOLATION@#$%'
-          elsif result
-            next
+          result = parse_condition_block2(escaped, line, context, story, line_no, story_lines)
+          case result
+          when String # line must change, continue processing
+            line = result 
+            escaped = escape(line, @escapable)
+          when TrueClass
+            next # finished processing line, go to next line
+          when NilClass
+            # nothing doing, continue processing line
+          else
+            raise "Unexpected result parsing condition block: #{result.class}"
           end
 
           ### CODE BLOCK
-          result = parse_code_block(line, context, story, line_no)
+          result = parse_code_block(escaped, line, context, story, line_no)
           next if result
 
           ### ACTION BLOCK
-          result = parse_action_block(line, context, story, line_no)
+          result = parse_action_block(escaped, line, context, story, line_no)
           next if result
 
           # PARAGRAPH
-          parse_paragraph(line, context, story, line_no)
+          parse_paragraph(escaped, context, story, line_no)
 
           # MEANINGFUL BLANK LINE
           result = parse_blank(line, context, story, line_no)
@@ -124,10 +143,11 @@ module Forked
 
       # check to see whether it is safe to proceed based on
       # context rules
-      def context_safe?(context, prohibited, mandatory)
-        context_prohibited = array_intersect?(context, prohibited)
-        context_mandatory = mandatory.empty? ||  array_intersect?(context, mandatory)
-
+      def context_safe?(context, prohibited = [], mandatory = [])
+        # match at least one prohibited context
+        context_prohibited = array_intersect?(context, prohibited) 
+        # match all mandatory contexts
+        context_mandatory = mandatory.empty? || context.intersection(mandatory) == mandatory.sort
         context_mandatory && !context_prohibited
       end
 
@@ -138,13 +158,6 @@ module Forked
 
       # draws a horizontal line
       def parse_rule(line, context, story, line_no)
-
-        # ESCAPE
-
-        if line.strip.start_with?('\---')
-          line.delete_prefix!('\\')
-          return
-        end
 
         return unless line.strip.start_with?('---')
 
@@ -171,8 +184,6 @@ module Forked
       def parse_blank(line, context, story, line_no)
         # apply to blank lines and NO CONTEXT IS OPEN
 
-        # ESCAPE: Not needed
-
         return if !line.strip.empty? ||
                   !context.empty?
         
@@ -188,14 +199,8 @@ module Forked
       # Used for troubleshooting, not part of the specification
       def parse_preformatted_line(line, context, story, _line_no)
 
-        # ESCAPE
-        if line.strip.start_with?('\@@')
-          line.delete_prefix!('\\')
-          return
-        end
-
         return unless line.strip.start_with?('@@')
-
+        
         prohibited_contexts = [:title, :code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -203,7 +208,8 @@ module Forked
         line.delete_prefix!('@@')
         para = make_paragraph_hash
         atm = make_atom_hash
-        atm[:text] = line.chomp
+        atm[:text] = unescape(line.chomp, @escapable)
+        atm[:styles] << :pre
         para[:atoms] << atm
         story[:chunks][-1][:content] << para
 
@@ -211,20 +217,14 @@ module Forked
       end
 
       def parse_paragraph(line, context, story, line_no) 
-
         # check credentials
         prohibited_contexts = [:title, :codeblock, :heading]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
         
         conditional = false
-
         # strip
         line.strip!
-
-        if line.strip.end_with?('\\\\')
-          line = escape_char(line, '\\')
-        end
 
         # anything that comes here is either a paragraph or a blank line.
         # handle context open/opening/closing
@@ -250,19 +250,17 @@ module Forked
         if context_state == :open
 
           atoms = []
-          if line == '@#$%INTERPOLATION@#$%'
+          if line == '«««INTER»»»' # internal placeholder for interpolation
             conditional = true
             line = ''
             atoms << make_atom_hash()
           end
 
-          line = unescape_char(line, '\\')
+          # line = unescape_char(line, '\\')
           
           ######
           # APPLY INLINE STYLES HERE
           ######
-
-          line = escape(line, ['*', '_', '`'])
           
           while !line.empty?
             first_idx1 = 10000000
@@ -280,19 +278,19 @@ module Forked
             end
 
             if first_mark.empty?
-              line = unescape(line, ['*', '_', '`'])
+              line = unescape(line, @escapable)
               atoms << make_atom_hash(line)
               line = ''
             else
-              left_text = unescape(line[0...first_idx1], ['*', '_', '`'])
-              marked_text = unescape(line[first_idx1 + first_mark[:mark].length...first_idx2], ['*', '_', '`'])
+              left_text = unescape(line[0...first_idx1], @escapable)
+              marked_text = unescape(line[first_idx1 + first_mark[:mark].length...first_idx2], @escapable)
 
               line = line[first_idx2 + first_mark[:mark].length..-1]
 
               atoms << make_atom_hash(left_text) unless left_text.empty?
               atoms << make_atom_hash(marked_text, [first_mark[:symbol]])
             end 
-          end # while
+          end
 
           ######
           # INLINE STYLES DONE
@@ -346,16 +344,13 @@ module Forked
       # strip comments from line (comments begin with //)
       def parse_c_comment(line, context)
 
-        # ESCAPE: Not needed (inline pattern starts with a space)
-
         return unless line.include?('//')
-
         prohibited_contexts = [:code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         if line.strip.start_with?('//')
-          return ''
+          return true
         elsif line.include?(' //')
           index = line.index(' //')
           return line[0...index]
@@ -371,9 +366,6 @@ module Forked
 
         left_mark = '<!--'
         right_mark = '-->'
-        escapee = '<'
-
-        line = escape_char(line, escapee)
 
         # catch inline or single line html comment
 
@@ -403,7 +395,7 @@ module Forked
           return nil
         end
 
-        line = unescape_char(line, '<')
+        line
       end
 
       def parse_blockquote(line, context, story, _line_no)
@@ -439,10 +431,10 @@ module Forked
         return unless line.include?('```') 
 
         # escaping
-        if line.include?('\```')
-          line.gsub!('\```', '```')
-          return false
-        end
+        # if line.include?('\```')
+        #   line.gsub!('\```', '```')
+        #   return false
+        # end
 
         return true
       end
@@ -450,16 +442,9 @@ module Forked
       # Code blocks format code for display
       # They begin with three tildes (~~~) on a blank line
       # and end with three ticks on a blank line
-      def parse_code_block(line, context, story, line_no)
+      def parse_code_block(escaped, line, context, story, line_no)
 
-        # line = escape_char(line, '~')
-
-        if line.start_with?('\~~~')
-          line.delete_prefix!('\\')
-          return false
-        end
-
-        if line.include?('~~~')
+        if escaped.start_with?('~~~')
           if context.include?(:code_block)
             context.delete(:code_block)
           else
@@ -476,7 +461,6 @@ module Forked
           true
         elsif context.include?(:code_block)
           # if the line contains escaped fencing, strip the backslash and present it as-is
-          line.delete_prefix!('\\') if line.strip.start_with?('\~~~')
           story[:chunks][-1][:content][-1].text += line
           true
         end
@@ -505,19 +489,13 @@ module Forked
       # ::
       # no!() ::
 
-      def parse_action_block(line, context, story, line_no)
-        prohibited_contexts = [:code_block, :trigger_action, :condition_block, :condition_block]
+      def parse_action_block(escaped, line, context, story, line_no)
+        prohibited_contexts = [:code_block, :trigger_action, :condition_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        # escape
-        if line.start_with?('\::')
-          line.delete_prefix!('\\')
-          return false
-        end
-
-        if line.start_with? '::'
-           # capture single line action
+        if escaped.start_with? '::'
+          # capture single line action
           if line.strip.start_with?(':: ') && line.strip.end_with?(' ::') && line.length > 3
             line.strip!
             line.delete_prefix!(':: ')
@@ -563,132 +541,31 @@ module Forked
         end
       end
 
-      # condition blocks allow for conditional text
-      # NEW SYNTAX
-      # They begin with a left angle bracket followed by a colon
-      # and end with a colon followed by a right angle bracket
-      # The current functionality is to conditionally include text
-      # returned from the block as a string
-      def parse_condition_block(line, context, story, line_no, story_lines)
-
-        prohibited_contexts = [:code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        # todo: detect and split *inline* condition into multi-line
-
-        # detect and split single line condition into multi-line
-        result = expand_single_line_condition(line, context, story, line_no, story_lines)
-        line = story_lines.shift if result
-
-        # DETECT OPENING CONDITION BLOCK
-        # opening condition block context and condition code context
-        if line.strip.end_with?('<:')
-          # open condition block context
-          context << :condition_block
-          # open condition code block context
-          context << :condition_code_block
-          # add a new condition to the chunk
-          story[:chunks][-1][:conditions] << ''
-          # stop processing this line (ignore any following text)
-          return true
+      # starting from the left of array haystack
+      # count the number of contiguous
+      # repetitions of char needle
+      def char_reps(haystack, needle)
+        i = 0
+        while i < haystack.length
+          return i unless haystack.chars[i] == needle
+          i += 1
         end
-
-
-        # closing both condition code context and condition block context
-        if line.strip.start_with?(':>')
-          
-          # if the last element is a paragraph and
-          # if the paragraph context is open, add to it
-          # only for interpolation
-          if  story[:chunks][-1][:content][-1].type == :paragraph && 
-              context.include?(:paragraph) &&
-              context.include?(:condition_code_block)
-            # most recent element is a paragraph and the paragraph context is open
-            # FIXME: this is creating a bogus extra entry.
-            # It's supposed to be able to continue a paragraph but it's
-            # getting triggered for new paragraphs in addition to the
-            # correct code.
-
-            atm = make_atom_hash
-            atm[:condition] = story[:chunks][-1][:conditions][-1]
-            # story[:chunks][-1][:content][-1][:atoms] << atm
-
-            # story[:chunks][-1][:content][-1][:atoms]
-if context.include?(:condition_code_block)
-   
-            context.delete(:condition_block)
-          context.delete(:condition_code_block)
-          return :interpolation
-end
-          elsif context.include?(:condition_code_block)
-            context.delete(:condition_block)
-          context.delete(:condition_code_block)
-          return :interpolation
-          end
-
-          # close conditon block and condition code block contexts
-          context.delete(:condition_block)
-          context.delete(:condition_code_block)
-          context.delete(:condition_segment)
-          return true
-        end
-
-        # NOTE: The above code appends an atom to the previous paragraph
-        # if it is the last added element, or creates a new paragraph for the atom.
-        # The atom contains only a condition and if the result of the condition
-        # is a string, Forked will add the string to the atom text at runtime.
-
-        # If the condition contains content between the closing code fence
-        # and the closing condition, that doesn't happen. The following code runs
-        # instead.
-
-        # This is important because it's not decided if Forked should display a
-        # returned string AND the following conditional content. Right now,
-        # it won't do both but only because that's how it happens to be.
-
-
-        # closing only condition code block context
-        if line.strip == '::'
-          if context.include? :condition_code_block
-            context.delete(:condition_code_block)
-            context << (:condition_segment)
-            @condition_segment_count = 0
-            return true
-          elsif context.include? :condition_segment
-            @condition_segment_count += 1
-          return true
-          end
-        end
-
-        # capture contents of condition code block
-        if context.include?(:condition_code_block)
-          story[:chunks][-1][:conditions][-1] += line
-          return true
-        end
-
-        # nil return allows conditional content to be handled by other parsers
+        i
       end
 
-      def expand_single_line_condition(line, context, story, line_no, story_lines)
-        if line.strip.start_with?('<: ') && line.strip.end_with?(' :>')
-          line.strip!
-          line.delete_prefix!('<:').delete_suffix!(':>')
-          line.strip!
-          return if line.empty?
+      def find_first_non_escaping_instance(haystack, needle)
+        offset = 0
+        while true
+          return unless idx = haystack.index(needle, offset)
+
+          backcheck = haystack[offset...idx].reverse
+          reps = char_reps(backcheck, '\\')
+          return idx unless reps.odd?
           
-          arr = ['<:']
-          line_split = line.split(' :: ')
-          line_split.each_with_index do |seg, i|
-            next_element = i < line_split.size - 1 ? "::\n" : ":>\n"
-            arr += [seg + "\n", next_element]
-          end
-
-          story_lines.insert(0, *arr)
-
-          return true
+          offset = idx + 1
         end
       end
+
 
       # The title is required. No content can come before it.
       # The Title line starts with a single #
@@ -1011,6 +888,30 @@ Please add a title to the top of the Story File. Example:
           { symbol: :italic, mark: "*" },
           { symbol: :italic, mark: "_" },
           { symbol: :code, mark: "`" }
+        ]
+      end
+
+      def make_escapable_list
+        [
+          '\\', # escapes, hard wrap
+          '!', # image
+          '#', # heading
+          '(', # image, trigger
+          ')', # image, trigger
+          '*', # inline style
+          '_', # inline style
+          '-', # rule
+          '/', # C comment
+          ':', # action
+          '<', # condition
+          '>', # condition
+          '@', # pre
+          '[', # trigger
+          ']', # trigger
+          '`', # code span
+          '{', # chunk id, custom style
+          '}', # chunk id, custom style
+          '~', # code block
         ]
       end
 
