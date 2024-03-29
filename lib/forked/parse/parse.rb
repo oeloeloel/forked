@@ -76,7 +76,7 @@ module Forked
           escaped = result
 
           ### TITLE
-          result = parse_title(line, context, story, line_no)
+          result = parse_title(escaped, context, story, line_no)
           next if result
 
           # Forked wants the first non-blank, non comment line of
@@ -89,7 +89,7 @@ module Forked
           next if result
 
           ### HEADING LINE
-          result = parse_heading(line, context, story, line_no)
+          result = parse_heading(escaped, context, story, line_no)
           next if result
 
           ### RULE
@@ -102,11 +102,11 @@ module Forked
 
           ### TRIGGER
           # currently works for newstyle colon and old-style backtick trigger actions
-          result = parse_trigger(line, context, story, line_no)
+          result = parse_trigger(escaped, context, story, line_no)
           next if result
 
           ### IMAGE
-          result = parse_image(line, context, story, line_no)
+          result = parse_image(escaped, context, story, line_no)
           next if result
 
           result = parse_condition_block2(escaped, line, context, story, line_no, story_lines)
@@ -429,7 +429,10 @@ module Forked
 
       def parse_code_fence(line, context, story, line_no)
         return unless line.include?('```') 
-
+        
+        prohibited_contexts = [:code_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
         # escaping
         # if line.include?('\```')
         #   line.gsub!('\```', '```')
@@ -541,31 +544,6 @@ module Forked
         end
       end
 
-      # starting from the left of array haystack
-      # count the number of contiguous
-      # repetitions of char needle
-      def char_reps(haystack, needle)
-        i = 0
-        while i < haystack.length
-          return i unless haystack.chars[i] == needle
-          i += 1
-        end
-        i
-      end
-
-      def find_first_non_escaping_instance(haystack, needle)
-        offset = 0
-        while true
-          return unless idx = haystack.index(needle, offset)
-
-          backcheck = haystack[offset...idx].reverse
-          reps = char_reps(backcheck, '\\')
-          return idx unless reps.odd?
-          
-          offset = idx + 1
-        end
-      end
-
 
       # The title is required. No content can come before it.
       # The Title line starts with a single #
@@ -587,7 +565,7 @@ Please add a title to the top of the Story File. Example:
 "
         end
 
-        story[:title] = line
+        story[:title] = unescape(line, @escapable)
         context.delete(:title) # title is found
         context << :heading # second element must be a heading
       end
@@ -598,10 +576,10 @@ Please add a title to the top of the Story File. Example:
 
         # Escape
 
-        if line.start_with?('\##')
-          line.delete_prefix!('\\')
-          return nil
-        end
+        # if line.start_with?('\##')
+        #   line.delete_prefix!('\\')
+        #   return nil
+        # end
 
         return unless line.strip.start_with?('##') && 
         !line.strip.start_with?('###') &&
@@ -616,7 +594,7 @@ Please add a title to the top of the Story File. Example:
         line.strip!
         line.delete_prefix!('##').strip!
 
-        gfm_slug = make_slug(line) # GFM style header navigation
+        gfm_slug = make_slug(unescape(line, @escapable)) # GFM style header navigation
 
         if line.include?('{') && line.include?('}')
           line = pull_out('{', '}', line)
@@ -633,11 +611,12 @@ Please add a title to the top of the Story File. Example:
 
             heading = story.title.delete_prefix("#").strip if heading.empty?
             chk = make_chunk_hash
-            chk[:id] = chunk_id
+
+            chk[:id] = unescape(chunk_id, @escapable) if chunk_id
             chk[:slug] = gfm_slug
 
             hdg = make_heading_hash
-            hdg[:text] = heading
+            hdg[:text] = unescape(heading, @escapable)
 
             rul = make_rule_hash
             rul[:weight] = 3
@@ -655,10 +634,10 @@ Please add a title to the top of the Story File. Example:
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
 
-        if line.start_with?('\[')
-          line.delete_prefix!('\\')
-          return
-        end
+        # if line.start_with?('\[')
+        #   line.delete_prefix!('\\')
+        #   return
+        # end
 
         # first identify trigger, capture button text and action
         if line.strip.start_with?('[') && 
@@ -777,6 +756,33 @@ Please add a title to the top of the Story File. Example:
           end
         end
       end 
+
+           # starting from the left of array haystack
+      # count the number of contiguous
+      # repetitions of char needle
+      def char_reps(haystack, needle)
+        i = 0
+        while i < haystack.length
+          return i unless haystack.chars[i] == needle
+          i += 1
+        end
+        i
+      end
+
+      def find_first_non_escaping_instance(haystack, needle)
+        offset = 0
+        while true
+          return unless idx = haystack.index(needle, offset)
+
+          backcheck = haystack[offset...idx].reverse
+          reps = char_reps(backcheck, '\\')
+          return idx unless reps.odd?
+          
+          offset = idx + 1
+        end
+      end
+
+
 
       def l_split(line, delimiter)
         return unless idx = line.index(delimiter)
