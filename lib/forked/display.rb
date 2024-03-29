@@ -612,7 +612,7 @@ module Forked
         x: display.margin_left,
         y: (temp_y_pos - box_height).to_i,
         w: display.w,
-        h: box_height,
+        h: box_height.to_i,
       }.sprite!(code_block_box)
 
       temp_y_pos -= code_block_box.padding_top
