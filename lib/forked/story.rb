@@ -387,7 +387,13 @@ Tell Akz to write a better error message."
       return if command.strip == ("\"\"")
 
       # puts "Evaluating: #{command}"
-      eval(command)
+      begin
+        result = eval(command)
+      rescue Exception => e
+        log "FORKED: Error in story file: #{e}"
+        log "Cannot execute:"
+        log "#{command.lines}"
+      end
     end
 
     #################
