@@ -317,6 +317,13 @@ Tell Akz to write a better error message."
             # when it's a non-empty string, display the result
             if result.is_a?(String) && !result.empty?
               # String Interpolation
+              
+              # string interpolation may include newlines
+              # zap them and add a space to ensure separation between words
+              if result.include?("\n")
+                result.gsub!("\n", " ")
+              end
+
               ### CONTROVERSIAL
               # Add space after the result
               result += ' '
