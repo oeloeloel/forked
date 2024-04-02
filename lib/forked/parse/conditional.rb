@@ -5,8 +5,7 @@ module Forked
       # parse condition block opening, closing, code section, segments
 
       def parse_condition_block2(escaped, line, context, story, line_no, story_lines)
-        return unless context_safe?(context, [:code_block])
-        
+        return unless context_safe?(context, [:code_block, :action_block])
         match_start = '<:'
         match_separator = '::'
         match_end = ':>'
