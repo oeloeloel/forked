@@ -636,7 +636,7 @@ module Forked
     ### BLOCKQUOTE
 
     def display_blockquote(y_pos, item, previous_element_type, content, i)
-      next if item[:text].empty?
+      return if item[:text].empty?
 
       blockquote = data.style.blockquote
       display = data.style.display
