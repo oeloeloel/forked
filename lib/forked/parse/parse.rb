@@ -109,6 +109,7 @@ module Forked
           result = parse_image(escaped, context, story, line_no)
           next if result
 
+          ### CONDITION
           result = parse_condition_block2(escaped, line, context, story, line_no, story_lines)
           case result
           when String # line must change, continue processing
@@ -161,7 +162,7 @@ module Forked
 
         return unless line.strip.start_with?('---')
 
-        prohibited_contexts = [:title, :code_block]
+        prohibited_contexts = [:title, :code_block, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -201,7 +202,7 @@ module Forked
 
         return unless line.strip.start_with?('@@')
         
-        prohibited_contexts = [:title, :code_block]
+        prohibited_contexts = [:title, :code_block, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -218,7 +219,7 @@ module Forked
 
       def parse_paragraph(line, context, story, line_no) 
         # check credentials
-        prohibited_contexts = [:title, :codeblock, :heading]
+        prohibited_contexts = [:title, :codeblock, :heading, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
         
@@ -345,7 +346,7 @@ module Forked
       def parse_c_comment(line, context)
 
         return unless line.include?('//')
-        prohibited_contexts = [:code_block]
+        prohibited_contexts = [:code_block, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -360,7 +361,7 @@ module Forked
       end
 
       def parse_html_comment(line, context, line_no)
-        prohibited_contexts = [:code_block]
+        prohibited_contexts = [:code_block, :action_block]
         mandatory_contexts = []
         return line unless context_safe?(context, prohibited_contexts, mandatory_contexts) 
 
@@ -399,7 +400,7 @@ module Forked
       end
 
       def parse_blockquote(line, context, story, _line_no)
-        prohibited_contexts = [:code_block, :trigger_action]
+        prohibited_contexts = [:code_block, :trigger_action, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -430,7 +431,7 @@ module Forked
       def parse_code_fence(line, context, story, line_no)
         return unless line.include?('```') 
         
-        prohibited_contexts = [:code_block]
+        prohibited_contexts = [:code_block, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
         # escaping
@@ -446,6 +447,10 @@ module Forked
       # They begin with three tildes (~~~) on a blank line
       # and end with three ticks on a blank line
       def parse_code_block(escaped, line, context, story, line_no)
+        prohibited_contexts = [:action_block]
+        mandatory_contexts = []
+        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+
 
         if escaped.start_with?('~~~')
           if context.include?(:code_block)
@@ -497,6 +502,9 @@ module Forked
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
+        return unless escaped.start_with?('::') ||
+          context.include?(:action_block)
+
         if escaped.start_with? '::'
           # capture single line action
           if line.strip.start_with?(':: ') && line.strip.end_with?(' ::') && line.length > 3
@@ -510,7 +518,6 @@ module Forked
               story[:actions] ||= []
               story[:actions] << line
             end
-
             return true
           end
 
@@ -523,11 +530,11 @@ module Forked
           else # different behaviour for code that comes before the first chunk
             context << (:action_block)
           end
+
           return true
 
         # capture action block content
         elsif context.include?(:action_block)
-          
           if story[:chunks][-1] 
             destination = story[:chunks][-1][:actions][-1]
             
@@ -548,6 +555,7 @@ module Forked
       # The title is required. No content can come before it.
       # The Title line starts with a single #
       def parse_title(line, context, story, _line_no)
+
         prohibited_contexts = []
         mandatory_contexts = [:title]
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
@@ -564,10 +572,10 @@ Please add a title to the top of the Story File. Example:
 `# The Name of this Story`
 "
         end
-
         story[:title] = unescape(line, @escapable)
         context.delete(:title) # title is found
         context << :heading # second element must be a heading
+        true
       end
 
       # The heading line starts a new chunk
@@ -584,7 +592,7 @@ Please add a title to the top of the Story File. Example:
         return unless line.strip.start_with?('##') && 
         !line.strip.start_with?('###') &&
 
-        prohibited_contexts = [:code_block]
+        prohibited_contexts = [:code_block, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -629,7 +637,7 @@ Please add a title to the top of the Story File. Example:
       end
 
       def parse_trigger(line, context, story, line_no)
-        prohibited_contexts = [:code_block]
+        prohibited_contexts = [:code_block, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -717,7 +725,7 @@ Please add a title to the top of the Story File. Example:
       end 
 
       def parse_image(line, context, story, line_no)
-        prohibited_contexts = [:code_block]
+        prohibited_contexts = [:code_block, :action_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -725,7 +733,6 @@ Please add a title to the top of the Story File. Example:
           line.delete_prefix!('\\')
           return
         end
-
 
         # first identify image, capture alt text and path
         if line.strip.start_with?('![') && 
