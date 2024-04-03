@@ -74,8 +74,6 @@ module Forked
         evaluate args, state.forked.story.actions.join
       end
 
-
-
       follow args
 
       load_dynamic_state
@@ -126,8 +124,6 @@ module Forked
     ############
     # NAVIGATION
     ############
-
-
 
     ### Navigation
 
