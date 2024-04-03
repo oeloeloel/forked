@@ -397,9 +397,23 @@ Tell Akz to write a better error message."
       begin
         result = eval(command)
       rescue Exception => e
-        log "FORKED: Error in story file: #{e}"
-        log "Cannot execute:"
-        log "#{command.lines}"
+        line_no = e.to_s.split[1].chop.to_i
+
+        log " "
+        log "FORKED: Error in story file. #{e}"
+        log "Cannot execute Ruby code:"
+        command.each_line.with_index do |l, i|
+          str = ""
+          if line_no == i + 1
+            str += "> "
+          else
+            str += "  "
+          end
+          log "#{str}Line #{i + 1}: #{l}"
+        end
+        log "Original error message follows."
+        log " "
+        raise e
       end
     end
 
