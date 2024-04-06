@@ -172,7 +172,13 @@ module Forked
       target = state.forked.story.chunks[idx]
 
       # return when the next chunk is the same as the current chunk
-      return if state.forked.current_chunk[:slug] == target[:slug]
+
+      # WEIRD CODE WARNING
+      # slug may not exist in state
+      # attempting to access the value of slug for comparison using [:slug]
+      # results in a massive warning message from DragonRuby
+      # Use dot access and DragonRuby won't complain
+      return if state.forked.current_chunk.slug == target[:slug]
 
       if target.nil?
         raise "FORKED: TARGET NOT FOUND. "\
