@@ -814,9 +814,11 @@ The `wallet` currently contains
 <!-- Add 11 to the wallet when clicked -->
 [Earn $11](: wallet_plus 11 :)
 <:
-<!-- check to see if funds are available -->
-<!-- do we have 7 or more to spend? -->
-wallet >= 7
+```rb
+  # check to see if funds are available
+  # do we have 7 or more to spend?
+  wallet >= 7
+```
 ::
 <!-- only show this button if funds are available  -->
 <!-- remove 7 from the wallet -->
