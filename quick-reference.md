@@ -84,6 +84,19 @@ This text is displayed if the condition is true.
 :>
 ```
 
+### Conditional text (with alternative text)
+If the condition code returns true (a boolean value), the text following the *first* `::` symbols is displayed. If the code returns false, the text following the *second* `::` symbols is displayed.
+```
+<:
+bag.has? "cinnamon"
+::
+I reluctantly offered the precious spice to the pastry chef.
+::
+Alas, I had no cinnamon! Now, only a miracle could save me from certain death. 
+:>
+```
+
+
 ### Comment:
 Comments are not displayed and can be useful for leaving notes for yourself of other people.
 
