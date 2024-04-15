@@ -383,30 +383,49 @@ We'll learn more about `memo` and other included commands later.
 [Back to Actions](#actions-and-conditions)
 
 ## Conditional Text Part 2
-In the previous chunk, we saw how short text can be inserted into the story. For longer texts as well as triggers and blockquotes, we can write them out and use conditions to decide if they should be displayed.
+In the previous chunk, we saw how short text can be inserted into the story. For longer texts (as well as triggers and blockquotes) we can use conditions to decide if they should be displayed.
 
 ~~~
 But how would I travel to Europe?
 <:
   bag_has? "submarine"
 ::
-  Of course! The Maharajah's gift! I could travel to Europe by submarine.
+  Of course! I could travel to Europe by submarine.
 
   [Travel to Europe by Submarine](#submarine)
 :>
 ~~~
 
-In the example above, if the player does not have a submarine in their bag, they will see only the line:
-> But how would I travel to Europe?
+In the example above, if the player does not have a submarine in their bag, they will see only the question: "But how would I travel to Europe?"
 
-But if they have the submarine, they see more text:
+If they have the submarine, they see the conditional text:
 
-> But how would I travel to Europe? Of course! The Maharajah's gift! I could travel to Europe by submarine.
+> But how would I travel to Europe? Of course! I could travel to Europe by submarine.
 
 They will also see a nice new button to help them start their under-sea voyage.
 
 ---
+[Next: Conditions Part 3](#conditional-text-part-3)
 [Back: Conditions Part 1](#conditional-text-part-1)
+[Back to Actions](#actions-and-conditions)
+
+## Conditional Text Part 3
+You may want to have alternative texts, depending on the result of condition. Say, for example, the player needs the portable submarine to escape the sinking ship. What happens if they don't have it?
+
+In the example below, if the player has the submarine, the block of text following the first `::` will display. If they do not have the submarine, the block of text following the second `::` will display.
+
+~~~
+<:
+  bag_has? "portable submarine"
+::
+  I deployed the portable submarine and hopped inside. Bidding adieu to the brave sailors, I set off for Mauritius.
+::
+  Oh my life! Such bad luck! If only I had a portable submarine! Well, nothing for it but to swim to Mauritius.
+:>
+~~~
+
+---
+[Back: Conditions Part 2](#conditional-text-part-2)
 [Back to Actions](#actions-and-conditions)
 
 ## Built-in Commands
