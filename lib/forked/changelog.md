@@ -1,3 +1,51 @@
+## Dev Version
+### Version 0.0.10
+* Inline string interpolation. Strings can be inserted directly into paragraph text:
+```
+Everyone in Paris knew that <: memo_check "fave colour" :> was the Dauphine's favourite colour.
+```
+* Conditions and string interpolation can be inline, multiline or any combination of the two
+```
+I left the brave crew to plug the hole in the ship's hull and
+<: has_submarine? 
+:: hopped into the tiny submarine.
+:: threw myself into the roiling sea. :>
+```
+* Relative requires added: You can now put Forked anywhere you like in your project folder structure and require it with one command:
+```rb
+require 'path/to/forked/forked.rb'
+```
+* Button Down State: clicking a button or activating it with keyboard or controller displays a "down state'. This gives better visual feedback to indicate when a button is activated.
+* Restart Story Command: Allows you to completely reset the current story, wipe out state variables, delete save data, reload the story from file and restart from the first chunk.
+```md
+## Restart this story
+[Restart story (and delete progress)?](: restart_story :)
+```
+* Escape punctuation with backslash to prevent them being interpreted as markup:
+```
+\[This is not a button](#)
+```
+* Prevent (more) punctuation being interpreted as markup inside code, code blocks and code spans.
+```
+<: "[This is not a button](#)" :>
+```
+* More helpful error messages when exception occurs in Ruby code embedded in story file
+```
+<: 
+  puts "line 1"
+  puts "this line has an unterminated string
+  puts "line 3"
+  putzs "line 4"
+:>
+
+FORKED: Error in story file. line 3: syntax error, unexpected local variable or method, expecting end of file
+Cannot execute Ruby code:
+  Line 1: puts "line 1"
+  Line 2: puts "this line has an unterminated string
+> Line 3: puts "line 3"
+  Line 4: puts "line 4"
+```
+
 ## Current Version
 ### Version 0.0.9
 * Added support for images. The following will display the image `sprites/image.png`. Note: the width and height of the image must be specified (defaults to w: 80, h: 80)
