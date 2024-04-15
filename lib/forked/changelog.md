@@ -1,4 +1,5 @@
-## Dev Version
+
+## Current Version
 ### Version 0.0.10
 * Inline string interpolation. Strings can be inserted directly into paragraph text:
 ```
@@ -46,7 +47,6 @@ Cannot execute Ruby code:
   Line 4: puts "line 4"
 ```
 
-## Current Version
 ### Version 0.0.9
 * Added support for images. The following will display the image `sprites/image.png`. Note: the width and height of the image must be specified (defaults to w: 80, h: 80)
 ```
