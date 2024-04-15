@@ -10,7 +10,8 @@ An interactive version of this manual is included with Forked as the default pro
 [Formatting](#formatting)\
 [Actions and Conditions](#actions-and-conditions)\
 [Built-in Commands](#built-in-commands)\
-[Examples](#examples)
+[Examples](#examples)\
+[Details](#details)
 
 ## Welcome to Forked
 Forked is a scripting system for DragonRuby that lets you write interactive stories, branching dialogues or anything else that requires writing and choices like, for example, this manual.
@@ -742,3 +743,37 @@ wallet >= 7
 ```
 [Back to Contents](#contents)
 
+## Details
+This section is for useful but non-essential information.
+
+### Requiring Forked
+If you downloaded Forked as a ZIP file from GitHub, Forked itself is located in `forked/libs/forked`. If you followed the instructions in [Getting Started](#getting-started), it will be located in `mygame/libs/forked`. In this project, Forked is loaded by the `require` statement at the top of `mygame/app/main.rb`:
+```rb
+require 'lib/forked/forked.rb'
+```
+
+You can move Forked to any location you prefer and adjust this line accordingly.
+
+### Escaping Characters
+In some situations you may want to prevent puctuation from being interpreted as markup and display the literal characters instead.
+
+Forked allows you to escape punctuation by putting a backslash (\\) before it:
+
+```md
+\> This is not a blockquote
+```
+
+In many cases, it is enough to escape the first markup character to prevent it from being interpreted as markup:
+
+```md
+\[This is not a trigger](#trigger-actions)
+
+The backslash character (`\`) can be escaped by a second backslash character. Escaped backslashes will not escape the following character, so the following example will display as a single backslash, followed by a valid trigger:
+
+\\[This IS a trigger](#trigger-actions)
+```
+
+The following characters can be escaped in Forked:
+```
+\, !, #, (, ), *, _, -, /,  :, <, >, @, [, ], `, {, }, ~
+```
