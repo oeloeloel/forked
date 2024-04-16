@@ -685,7 +685,14 @@ Tell Akz to write a better error message."
     # FORKED TESTING
     ################
 
-    def forked_test(expect: nil, print_subject: false)
+    def forked_test(expect: nil, print_subject: false, subject: nil)
+      
+      # caller provided own comparison subject
+      if subject && expect && subject == expect
+        return "Test Passed"
+      end
+
+      # caller is comparing marked section of primitives
       test_mark = []
           outputs.primitives.each_with_index { |prim, i|
           if prim[:text] && prim[:text].strip == "<! start test !>"
