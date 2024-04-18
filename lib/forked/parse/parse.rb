@@ -100,6 +100,10 @@ module Forked
           result = parse_code_fence(escaped, context, story, line_no)
           next if result
 
+          ## TRIGGER SET (experimental) 
+          result = parse_trigger_set(escaped, context, story, line_no)
+          next if result
+
           ### TRIGGER
           # currently works for newstyle colon and old-style backtick trigger actions
           result = parse_trigger(escaped, context, story, line_no)
