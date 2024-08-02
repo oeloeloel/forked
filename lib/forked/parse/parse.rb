@@ -648,6 +648,7 @@ Please add a title to the top of the Story File. Example:
         prohibited_contexts = [:code_block, :action_block, :condition_code_block]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
+        
         # first identify trigger, capture button text and action
         if line.strip.start_with?('[') && 
            line.include?('](') &&
@@ -671,9 +672,11 @@ Please add a title to the top of the Story File. Example:
             end
 
             ### identify and catch chunk id action (return)
-            if action.end_with?(')')
+            # if action.end_with?(')')
+            if action.include?(')')
               action.delete_prefix!('(')
-              action.delete_suffix!(')')
+              # action.delete_suffix!(')')
+              action = action[0...action.rindex(')')]
 
               if action.start_with?('#') || action.strip.empty?
                 # capture simple navigation
@@ -697,6 +700,8 @@ Please add a title to the top of the Story File. Example:
             elsif action.end_with?('(:')
               context << :trigger_action
             end
+
+            return true
           end
 
         # identfy action block close and close context, if open (return)
