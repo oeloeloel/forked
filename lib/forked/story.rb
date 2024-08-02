@@ -7,6 +7,7 @@ module Forked
 
     def initialize sf
       @story_file = sf
+      @theme = THEME
     end
 
     def data
@@ -26,7 +27,7 @@ module Forked
       check_input
 
       # create and feed the display object
-      @display ||= Display.new(THEME)
+      @display ||= Display.new(@theme)
       @display.args = args
       @display.tick
 
@@ -430,7 +431,7 @@ Tell Akz to write a better error message."
         @display.apply_theme(theme)
         @refresh = true
       else
-        THEME = theme
+        @theme = theme
       end
     end
 
