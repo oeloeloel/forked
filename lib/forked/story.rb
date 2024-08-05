@@ -215,6 +215,13 @@ module Forked
       end
     end
 
+    # jump to a label by it's indexed position in the story file
+    # jump_to(1) goes to the first label
+    # jump_to(-1) goes to the last label
+    def jump_to(idx)
+      navigate(idx)
+    end
+
     ####################
     # NAVIGATION HISTORY
     ####################
