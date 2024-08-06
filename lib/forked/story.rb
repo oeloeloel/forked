@@ -676,7 +676,7 @@ Tell Akz to write a better error message."
       if parsed_state
         state.forked.dynamic = parsed_state
       else
-        state.forked.dynamic = nil
+        history_clear
       end
     end
 
