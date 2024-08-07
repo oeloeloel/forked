@@ -8,7 +8,7 @@ module Forked
 
     def export_story_as_json
       $__ll_json_move_fast_and_break_things = true
-      putz "called export_story_as_json"
+      puts "called export_story_as_json"
       $gtk.write_json("story.json", $args.state.forked.story, extensions: true)
     end
 
