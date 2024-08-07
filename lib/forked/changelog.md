@@ -1,3 +1,15 @@
+## Next Version
+### Version 0.0.11
+* New command: `jump_to(n)` jumps to a new chunk by its position (n) in the story file. Negative numbers can be used to specify chunks relative to the end of the file. to Example:
+```
+[Go to first chunk](: jump_to(1) :)
+[Go to final chunk](: jump_to(-1) :)
+```
+* Link validation has been adapted to support the new `jump_to` command.
+* When navigating from one story file to another, using the `load_story(path_to/story.md)` command, Forked now erases the current history. Forked will reload history for a loaded story, if a save file exists. Other data, such as inventory, memos, counters, etc, are not affected and continue to exist in the newly loaded story.
+* The `tick` method has been moved from `tick.rb` to `main.rb`. `tick.rb` is no longer needed and has been removed.
+* Bugfix: Adding text immediately after a button no longer causes display issues (the trailing text is ignored)
+* Bugfix: Code fence inside chunk action no longer causes parse error
 
 ## Current Version
 ### Version 0.0.10
