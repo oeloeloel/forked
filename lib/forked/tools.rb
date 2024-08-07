@@ -50,6 +50,18 @@ def validate_links(verbose = false, limit = 10000000)
             link[1] = target[1]
           end
           num_jump_links += 1
+
+        elsif target = action_has_jump_to?(link)
+          target_num = target[1]
+          if target_num >= 0 && target_num <= num_chunks - 1
+            link[1] = links[target_num].keys[0][0]
+          elsif target_num < 0 && target_num.abs <= num_chunks
+            link[1] = links[target_num].keys[0][0]
+          else
+            # "does not exist"
+          end
+
+          num_jump_links += 1
         else
 
           # identify code only actions
@@ -71,7 +83,7 @@ def validate_links(verbose = false, limit = 10000000)
             outputz += "================================\n" if limit >= 0 && verbose
             outputz +=  chunk_identity_str + "\n" if limit >= 0 && verbose
           end 
-          outputz += "    Matched: #{chunk_targets.keys[0][0]} | #{button_str}\n" if limit >= 0 && verbose
+          outputz += "    Matched: #{chunk_targets.keys[0][0].sub("@@@@", "")} | #{button_str.sub("@@@@", "")}\n" if limit >= 0 && verbose
           matched_link_to_id = true
 
           next
@@ -87,7 +99,7 @@ def validate_links(verbose = false, limit = 10000000)
         unless button_str_output
           button_str_output = true
         end
-        outputz += "    Not Matched: #{link[1]} | #{button_str}\n" if limit >= 0
+        outputz += "    Not Matched: #{link[1].sub("@@@@", "")} | #{button_str.sub("@@@@", "")}\n" if limit >= 0
         num_invalid_links += 1
       end
     end
@@ -143,6 +155,23 @@ def action_has_relative_jump?(link)
   nil
 end
 
+def action_has_jump_to?(link)
+  id = link[1].dup.strip
+  # id.delete_prefix!("@@@@")
+  if try = pull_out('jump_to(', ')', id)
+  elsif try = pull_out('jump_to ', ' ', id)
+  elsif try = pull_out('jump_to ', "\n", id)
+  elsif try = pull_out('jump_to ', "œ∑ƒ", id)
+  end
+
+  if try && try[1] && string_is_valid_number?(try[1])
+    try[1] = try[1].to_i
+    return try
+  end
+
+  nil
+end
+
 def action_has_fall_through?(link)
   link[1] == "#"
 end
@@ -170,15 +199,16 @@ end
 
 def pull_out left, right, str
   left_index = str.index(left)
-
   if left_index
     right_index = str.index(right, left.length)
   end
   return unless left_index && right_index
 
   pulled = str.slice!(left_index + left.size..right_index - 1)
-  str.sub!(left + right, '')
-  [str.strip + "\n", pulled.strip]
+  str.sub!(left + right, "")
+  
+  ret = [str.strip + "\n", pulled.strip]
+  ret
 end
 
 def string_is_valid_number?(str)
