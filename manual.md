@@ -54,7 +54,7 @@ Open up the `mygame/app/story.md` file in any text editor and you'll see the con
 
 When you want to start a new story, create a new file in the `mygame/app` folder and call it whatever you want followed by the `.md` extension.
 
-Open the `tick.rb` file and look for a line near the top that says
+Open the `main.rb` file and look for a line near the top that says
 
 ~~~rb
 STORY_FILE = 'app/story.md'

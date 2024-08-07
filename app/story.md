@@ -58,7 +58,7 @@ To install Forked, you should start with a freshly unzipped DragonRuby project.
 
 Download the Forked project from GitHub and move the files into your DragonRuby project.
 
-Copy/paste or drag the `Forked` folder into the `mygame/app` folder. Copy or drag the file `tick.rb` into `mygame/app` and let it overwrite the existing file.
+Copy/paste or drag the `Forked` folder into the `mygame/app` folder. Copy or drag the file `main.rb` into `mygame/app` and let it overwrite the existing file.
 
 Now run DragonRuby: double-click on the DragonRuby executable (`dragonruby.exe` on windows, `dragonruby` on macOS or Linux).
 
@@ -73,7 +73,7 @@ Open up the `app/story.md` file in any text editor and you'll see the contents o
 
 When you want to start a new story, create a new file in the `app` folder and call it whatever you want.
 
-Open the `tick.rb` file and look for a line near the top that says
+Open the `main.rb` file and look for a line near the top that says
 
 ~~~
 STORY_FILE = 'app/story.md'

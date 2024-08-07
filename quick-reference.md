@@ -255,7 +255,7 @@ Forked automatically saves progress but, if you prefer, you can manually control
 
 | Misc Commands ||
 |-|-|
-| `load_story path_to_story_file` | Loads and navigates to a different story. Saved data such as memos, bag, counters, etc, are unloaded. If the story being loaded has a save file, it will be loaded and the story will continue from the save point. |
+| `load_story path_to_story_file` | Loads and navigates to a different story. Player progress (history of visited chunks) will be unloaded but other data such as memos, bag, counters, etc, will persist in the newly loaded story. If the story being loaded has a save file, the history will be loaded and the story will continue from the save point. |
 | `change_theme DARK_MODE` | Changes the theme. The current built-in themes are `DARK_MODE` (selected), `LIGHT_MODE`, `KIFASS_THEME` and `TWENTY_SECOND_THEME`.|
 
 ## Author Mode

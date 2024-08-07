@@ -31,7 +31,7 @@ By default, the user manual will load up and be displayed. The user manual itsel
 When you're ready to make your own story:
 1. Create a new blank text file in the `mygame/app` folder. 
 2. Name the file however you like but it is recommended to end the filename with `.md`, for example, `my-life-story.md`.
-3. Edit the file `mygame/app/tick.rb`. Change the line at the top of the file from...
+3. Edit the file `mygame/app/main.rb`. Change the line at the top of the file from...
 ```rb
 STORY_FILE = 'app/story.md'
 ```
