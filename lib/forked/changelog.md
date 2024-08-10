@@ -1,4 +1,4 @@
-## Next Version
+## Current version
 ### Version 0.0.11
 * New command: `jump_to(n)` jumps to a new chunk by its position (n) in the story file. Negative numbers can be used to specify chunks relative to the end of the file. to Example:
 ```
@@ -11,7 +11,7 @@
 * Bugfix: Adding text immediately after a button no longer causes display issues (the trailing text is ignored)
 * Bugfix: Code fence inside chunk action no longer causes parse error
 
-## Current Version
+## Previous Version
 ### Version 0.0.10
 * Inline string interpolation. Strings can be inserted directly into paragraph text:
 ```
