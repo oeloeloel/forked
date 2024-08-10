@@ -2,7 +2,7 @@
 ### Version 0.0.11
 * New command: `jump_to(n)` jumps to a new chunk by its position (n) in the story file. Negative numbers can be used to specify chunks relative to the end of the file. to Example:
 ```
-[Go to first chunk](: jump_to(1) :)
+[Go to first chunk](: jump_to(0) :)
 [Go to final chunk](: jump_to(-1) :)
 ```
 * Link validation has been adapted to support the new `jump_to` command.
