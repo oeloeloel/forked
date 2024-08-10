@@ -681,7 +681,11 @@ Tell Akz to write a better error message."
 
     def load_dynamic_state
       parsed_state = gtk.deserialize_state(save_path_get(:dynamic))
-      state.forked.dynamic = parsed_state if parsed_state
+      if parsed_state
+        state.forked.dynamic = parsed_state
+      else
+        history_clear
+      end
     end
 
     def save_path_get(save_type)
