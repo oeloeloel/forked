@@ -31,6 +31,7 @@ module Forked
       @rise_key = :h
       @left_sidebar_key = :q
       @framerate_key = :d # for diagnostic 
+      @orientation_toggle_key = :o
     end
 
     def check_inputs
@@ -46,6 +47,7 @@ module Forked
       args.state.forked.author_mode_sidebar = k_h.send(@left_sidebar_key)
       outputs.debug << "FPS: #{args.gtk.current_framerate_calc.round.to_s}(#{
         args.gtk.current_framerate.round.to_s})" if k_h.send(@framerate_key)
+      $gtk.toggle_orientation if k_d.send(@orientation_toggle_key)
     end
 
     def nav by
