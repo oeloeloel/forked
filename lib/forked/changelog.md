@@ -1,3 +1,12 @@
+## Next version
+### Version 0.0.12
+* Author Mode changes: 
+  * Added orientation toggle for previewing portrait mode. In Author Mode (hold `f` and press `u`) press `o` to toggle orientation.
+  * Author Mode sidebar visibility is now toggled on or off. In Author Mode press `q` to toggle the sidebar visibility.
+  * The Author Mode sidebar has been moved to the right hand side of the screen to avoid conflict with DragonRuby's Watch features.
+  * Author Mode layout adjusted to work with portrait orientation.
+
+
 ## Current version
 ### Version 0.0.11
 * New command: `jump_to(n)` jumps to a new chunk by its position (n) in the story file. Negative numbers can be used to specify chunks relative to the end of the file. to Example:

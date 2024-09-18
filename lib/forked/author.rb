@@ -10,6 +10,7 @@ module Forked
 
     def initialize(story)
       @story = story
+      @display_toggle = false
     end
 
     def tick
@@ -44,7 +45,9 @@ module Forked
 
       nav(1) if k_d.send(@fall_key)
       nav(-1) if k_d.send(@rise_key)
-      args.state.forked.author_mode_sidebar = k_h.send(@left_sidebar_key)
+      @sidebar_display_toggle = !@sidebar_display_toggle if k_d.send(@left_sidebar_key)
+      # args.state.forked.author_mode_sidebar = k_h.send(@left_sidebar_key)
+      args.state.forked.author_mode_sidebar = @sidebar_display_toggle
       outputs.debug << "FPS: #{args.gtk.current_framerate_calc.round.to_s}(#{
         args.gtk.current_framerate.round.to_s})" if k_h.send(@framerate_key)
       $gtk.toggle_orientation if k_d.send(@orientation_toggle_key)
@@ -63,11 +66,11 @@ module Forked
         {x: 0, y: 0, w: 10, h: 10, r: 255, g: 0, b: 0}.sprite!
       ]
 
-      # left sidebar
+      # right sidebar (formerly left sidebar)
       if args.state.forked.author_mode_sidebar
 
         # background
-        am_prims << {x: 0, y: 0, w: 640, h: 720, a: 155}.sprite!
+        am_prims << {x: args.grid.w / 2, y: 0, w: args.grid.w / 2, h: args.grid.h, a: 155}.sprite!
 
         # labels
         am_labels = [
@@ -168,7 +171,7 @@ module Forked
         y_loc = 0
         am_prims += am_labels.map_with_index do |text, i|
           prim = { 
-            x: 1, y: y_loc.from_top,
+            x: 2 + args.grid.w / 2, y: y_loc.from_top,
             text: text,
           }.label!(AUTHOR_MODE_TEXT_STYLE)
           y_loc += AUTHOR_MODE_TEXT_STYLE.size_px * 0.8
