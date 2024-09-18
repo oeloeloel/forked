@@ -45,9 +45,10 @@ module Forked
 
       nav(1) if k_d.send(@fall_key)
       nav(-1) if k_d.send(@rise_key)
+
       @sidebar_display_toggle = !@sidebar_display_toggle if k_d.send(@left_sidebar_key)
-      # args.state.forked.author_mode_sidebar = k_h.send(@left_sidebar_key)
       args.state.forked.author_mode_sidebar = @sidebar_display_toggle
+
       outputs.debug << "FPS: #{args.gtk.current_framerate_calc.round.to_s}(#{
         args.gtk.current_framerate.round.to_s})" if k_h.send(@framerate_key)
       $gtk.toggle_orientation if k_d.send(@orientation_toggle_key)
