@@ -4,13 +4,13 @@ module Forked
 
     AUTHOR_MODE_TEXT_STYLE = {
       font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
-      r: 0, g: 0, b: 76,
+      r: 11, g: 11, b: 11,
       size_px: 18,
     }
 
     def initialize(story)
       @story = story
-      @display_toggle = false
+      @sidebar_display_toggle = false
     end
 
     def tick
@@ -51,7 +51,10 @@ module Forked
 
       outputs.debug << "FPS: #{args.gtk.current_framerate_calc.round.to_s}(#{
         args.gtk.current_framerate.round.to_s})" if k_h.send(@framerate_key)
-      $gtk.toggle_orientation if k_d.send(@orientation_toggle_key)
+
+      if k_d.send(@orientation_toggle_key)
+        $gtk.toggle_orientation
+      end
     end
 
     def nav by
@@ -71,7 +74,7 @@ module Forked
       if args.state.forked.author_mode_sidebar
 
         # background
-        am_prims << {x: args.grid.w / 2, y: 0, w: args.grid.w / 2, h: args.grid.h, a: 155}.sprite!
+        am_prims << {x: args.grid.w / 2, y: 0, w: args.grid.w / 2, h: args.grid.h, r: 255, g: 222, b: 37, a: 225}.sprite!
 
         # labels
         am_labels = [
@@ -85,7 +88,7 @@ module Forked
           'hold f, press u: Toggle Author Mode on/off',
           'n: go to next chunk in story file',
           'h: go to previous chunk in story file',
-          'hold q: open the Author Mode Sidebar',
+          'q: toggle the Author Mode Sidebar',
           'hold d: display the current framerate',
           '',
         ]
