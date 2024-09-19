@@ -29,24 +29,23 @@ end
 def default_display
   {
     background_color: { r: 229, g: 229, b: 229 },
-    margin_left: ml = 200,
+    margin_left: ml = $gtk.orientation == :portrait ? 40 : 200,
     margin_top: mt = 60,
-    margin_right: mr = 200,
-    margin_bottom: mb = 20,
-    w: 1280 - (ml + mr),
-    h: 720 - (mb + mt),
+    margin_right: mr = ml,
+    margin_bottom: mb = mr,
+    w: $args.grid.w - (ml + mr),
+    h: $args.grid.h - (mb + mt)
   }
 end
 
 def default_paragraph
   {
     font: 'fonts/roboto/roboto-regular.ttf',
-    size_enum: 0,
+    size_enum: $gtk.orientation == :portrait ? 4 : 2,
     line_spacing: 1, # 1.0 is the height of the font.
     r: 51, g: 51, b: 51,
     spacing_between: 0.6,
     spacing_after: 0.9,
-
   }
 end
 
@@ -67,7 +66,7 @@ end
 def default_heading # defaults for heading text
   {
     r: 51, g: 51, b: 51,
-    size_enum: 4,
+    size_enum: $gtk.orientation == :portrait ? 8 : 4,
     font: 'fonts/roboto/roboto-black.ttf',
     spacing_after: 1.5
   }
@@ -84,7 +83,7 @@ end
 def default_code_block # defaults for code block text
   {
     font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
-    size_enum: 0,
+    size_enum: $gtk.orientation == :portrait ? 4 : 2,
     line_spacing: 0.85,
     r: 76, g: 51, b: 127,
     spacing_after: 0.7, # 1.0 is line_height.
@@ -104,6 +103,7 @@ end
 def default_blockquote # defaults for block quote text
   default_paragraph.merge(
     r: 102, g: 76, b: 51,
+    size_enum: $gtk.orientation == :portrait ? 4 : 2,
     spacing_between: 0,
     spacing_after: 0.7,
   )
@@ -132,7 +132,6 @@ end
 
 def default_button
   default_paragraph.merge(
-    size_enum: 0,
     font: 'fonts/roboto/roboto-bold.ttf',
     r: 204, g: 204, b: 204,
     spacing_after: 0.7,
