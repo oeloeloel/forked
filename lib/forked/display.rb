@@ -41,8 +41,9 @@ module Forked
     ########
 
     def apply_theme(theme)
-      data.style = config_defaults
       return unless theme
+
+      data.style = config_defaults
 
       theme.each do |k, v|
         next unless data.style[k]
