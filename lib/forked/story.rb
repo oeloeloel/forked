@@ -31,6 +31,8 @@ module Forked
       @display.args = args
       @display.tick
 
+      check_and_handle_orientation_change
+
       # make the display hash and send it to the display object
       present args
 
@@ -439,6 +441,14 @@ Tell Akz to write a better error message."
         @refresh = true
       else
         @theme = theme
+      end
+    end
+
+    def check_and_handle_orientation_change
+      if @orientation != $gtk.orientation
+        @orientation = $gtk.orientation
+        @display.apply_theme(@theme)
+        @refresh = true
       end
     end
 
