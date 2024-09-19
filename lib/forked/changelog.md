@@ -1,5 +1,8 @@
 ## Next version
 ### Version 0.0.12
+* Orientation Change Handling:
+  * Forked now automatically detects an orientation change (see Author Mode changes below). Styles are re-applied after orientation changes.
+  * Default theme has been updated to recalculate margins and font sizes when orientation changes.
 * Author Mode changes: 
   * Added orientation toggle for previewing portrait mode. In Author Mode (hold `f` and press `u`) press `o` to toggle orientation.
   * Author Mode sidebar visibility is now toggled on or off. In Author Mode press `q` to toggle the sidebar visibility.
