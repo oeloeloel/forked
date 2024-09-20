@@ -41,7 +41,7 @@ end
 def default_paragraph
   {
     font: 'fonts/roboto/roboto-regular.ttf',
-    size_enum: $gtk.orientation == :portrait ? 4 : 2,
+    size_enum: $gtk.orientation == :portrait ? 4 : 0,
     line_spacing: 1, # 1.0 is the height of the font.
     r: 51, g: 51, b: 51,
     spacing_between: 0.6,
@@ -160,7 +160,6 @@ def default_selected_button_box
     r: 51, g: 102, b: 102,
   )
 end
-
 
 def default_active_button
   default_button.merge(
