@@ -41,9 +41,14 @@ module Forked
     ########
 
     def apply_theme(theme)
+      # "==== apply_theme(#{theme})"
       return unless theme
 
       data.style = config_defaults
+
+      if theme.is_a?(Module)
+        theme = theme.theme
+      end
 
       theme.each do |k, v|
         next unless data.style[k]
