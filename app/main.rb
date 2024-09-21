@@ -25,8 +25,6 @@ THEME = DARK_MODE # Dark background, light text
 # THEME = KIFASS_THEME # Vibrant colours inspired by the KIFASS game jam
 # THEME = TWENTY_SECOND_THEME # Colour scheme inspired by the 20 Second Game Jam
 
-
-
 #################
 # TICK METHOD
 # -----------
