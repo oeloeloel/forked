@@ -46,9 +46,7 @@ module Forked
 
       data.style = config_defaults
 
-      if theme.is_a?(Module)
-        theme = theme.theme
-      end
+      theme = theme.theme if theme.is_a?(Module)
 
       theme.each do |k, v|
         next unless data.style[k]
@@ -56,7 +54,7 @@ module Forked
         data.style[k].merge!(v)
       end
 
-      # TODO: this line might not be needed (seems like it's there 
+      # TODO: this line might not be needed (seems like it's there
       # to ensure the current selection is highlighted after navigation)
       highlight_selected_option
     end
@@ -71,15 +69,18 @@ module Forked
       update_selection
       return if data.options.nil? || data.options.empty?
 
-      activate_selected_option if check_keyboard_activation_end || check_controller_activation_end || check_mouse_activation_end
+      if check_keyboard_activation_end ||
+         check_controller_activation_end ||
+         check_mouse_activation_end
+
+        activate_selected_option
+      end
     end
 
     ### UPDATE SELECTION
 
     def update_selection(navigated = nil)
-      return if data.options.nil? || data.options.empty? 
-      
-      inp = inputs.last_active
+      return if data.options.nil? || data.options.empty?
 
       # check whether input is selecting a button
       select = check_button_selected
@@ -89,7 +90,7 @@ module Forked
       # and return the cursor to arrow
       # otherwise, maintain the same selection (we just executed some code)
       if navigated
-        data.selected_option = -1 
+        data.selected_option = -1
         next_cursor = :arrow
       end
 
@@ -101,39 +102,31 @@ module Forked
 
       # button is deactivating? (e.g. key/controller/mouse released)
       # revert to selection highlighting
-      if deactivating
-        highlight_selected_option if data.selected_option >= 0
-      end
 
-
+      highlight_selected_option if deactivating && data.selected_option >= 0
 
       # check whether input is deactivating a button
-      clicked = true if data.selected_option != -1 && check_activation_end
+      # clicked = true if data.selected_option != -1 && check_activation_end
 
       if select
         unhighlight_selected_option if data.selected_option >= 0
         data.selected_option = select
         highlight_selected_option if data.selected_option >= 0
         if inputs.last_active == :mouse
-          if data.selected_option >= 0
-            # try to change to the hand cursor
-            next_cursor = :hand
-          else
-            # try to change to the arrow cursor
-            next_cursor = :arrow
-          end
+          next_cursor = if data.selected_option >= 0
+                          # try to change to the hand cursor
+                          :hand
+                        else
+                          # try to change to the arrow cursor
+                          :arrow
+                        end
         end
       end
 
       # player clicked the button
-      if activating
-        highlight_active_option
-      end
+      highlight_active_option if activating
 
-      # playe
-      if select != -1 && check_activation
-        highlight_active_option
-      end
+      highlight_active_option if select != -1 && check_activation
 
       # set the cursor when it has changed
       if next_cursor && next_cursor != data.mouse_cursor
@@ -163,12 +156,12 @@ module Forked
         check_controller_activation_start
       when :mouse
         check_mouse_activation_start
-      end 
+      end
     end
 
     def check_activation
       case inputs.last_active
-        when :keyboard
+      when :keyboard
         check_keyboard_activation
       when :controller
         check_controller_activation
@@ -185,54 +178,43 @@ module Forked
         check_controller_activation_end
       when :mouse
         check_mouse_activation_end
-      end 
+      end
     end
 
     def check_keyboard_activation_start
       kd = inputs.keyboard.key_down
-      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) } 
+      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) }
     end
 
     def check_keyboard_activation
       kh = inputs.keyboard.key_held
-      data.keyboard_input_defaults[:activate].any? { |k| kh.send(k) } 
+      data.keyboard_input_defaults[:activate].any? { |k| kh.send(k) }
     end
 
     def check_keyboard_activation_end
       ku = inputs.keyboard.key_up
-      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) } 
+      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) }
     end
-  
 
     def check_controller_activation_start
       c1 = inputs.controller_one
-
-      if c1.connected
-        data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) }
-      end 
+      data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) } if c1.connected
     end
 
     def check_controller_activation
       c1 = inputs.controller_one
-
-      if c1.connected
-        data.controller_input_defaults[:activate].any? { |k| c1.key_held.send(k) }
-      end 
+      data.controller_input_defaults[:activate].any? { |k| c1.key_held.send(k) } if c1.connected
     end
 
     def check_controller_activation_end
       c1 = inputs.controller_one
 
-      if c1.connected
-        data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) }
-      end 
+      data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) } if c1.connected
     end
-
 
     def check_mouse_activation_start
       inputs.mouse.down
     end
-
 
     def check_mouse_activation
       inputs.mouse.held
@@ -242,13 +224,12 @@ module Forked
       inputs.mouse.up
     end
 
-
     ### GET PLAYER SELECTION
 
     def get_mouse_selection
-      rollover = -1 
+      rollover = -1
       data.options.each_with_index do |option, idx|
-        next if option.action.empty? 
+        next if option.action.empty?
 
         if option.intersect_rect?(inputs.mouse.point)
           rollover = idx
@@ -259,13 +240,12 @@ module Forked
       rollover if rollover != data.selected_option
     end
 
-
     def get_keyboard_selection
       kd = inputs.keyboard.key_down
 
       if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
         return relative_to_absolute_selection(1)
-      elsif data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) } 
+      elsif data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) }
         return relative_to_absolute_selection(-1)
       end
 
@@ -276,12 +256,12 @@ module Forked
       c1 = inputs.controller_one
 
       if c1.connected
-        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) } 
+        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
           return relative_to_absolute_selection(1)
         elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
           return relative_to_absolute_selection(-1)
         end
-      end 
+      end
 
       nil
     end
@@ -290,52 +270,52 @@ module Forked
 
     def highlight_selected_option
       return unless data.options && data.selected_option && data.selected_option >= 0
+
       opt = data.options[data.selected_option]
       return unless opt
-      opt.merge!(data.style.selected_button_box)
+
+      opt.force_status_change(:focused)
     end
 
     def unhighlight_selected_option
       return unless data.selected_option >= 0
 
-      if data.selected_option >= data.options.count
-        return 
-      end
-      data.options[data.selected_option].merge!(data.style.button_box)
+      return if data.selected_option >= data.options.count
+
+      data.options[data.selected_option].force_status_change(:enabled)
     end
 
     def highlight_active_option
       return unless data.options && data.selected_option && data.selected_option >= 0
+
       opt = data.options[data.selected_option]
       return unless opt
-      opt.merge!(data.style.active_button_box)
+
+      opt.force_status_change(:active)
     end
 
     ### PERFORM OPTION
 
-        def activate_selected_option
+    def activate_selected_option
       return unless data.selected_option >= 0
 
       $story.follow(args, data.options[data.selected_option])
-
     end
 
     ### HELPER
 
     def relative_to_absolute_selection(index)
-
       sel_opt = data.selected_option
-      if data.selected_option < 0 || data.selected_option.nil?
+      if data.selected_option.negative? || data.selected_option.nil?
         sel_opt = index.positive? ? data.options.size - 1 : 0
       end
       sel_opt += index
-      sel_opt = sel_opt.clamp_wrap(0, data.options.size - 1)
+      sel_opt.clamp_wrap(0, data.options.size - 1)
     end
 
     ################
     # UPDATE DISPLAY
     ################
-
 
     def update(content, navigated)
       update_selection(navigated)
@@ -347,8 +327,8 @@ module Forked
       next_y_pos = y_pos
 
       content.each_with_index do |item, i|
-        previous_element_type = content[i - 1][:type] 
-        @last_element_type = content[i - 1][:type]  
+        previous_element_type = content[i - 1][:type]
+        @last_element_type = content[i - 1][:type]
         @last_printed_element_type ||= :none
 
         case item[:type]
@@ -361,17 +341,18 @@ module Forked
         when :code_block
           next_y_pos = display_code_block(y_pos, item, previous_element_type)
         when :blockquote
-          next_y_pos = display_blockquote(y_pos, item,  previous_element_type, content, i)
+          next_y_pos = display_blockquote(y_pos, item, previous_element_type, content, i)
         when :button
           next_y_pos = display_button(y_pos, item, content, i)
           highlight_selected_option
         when :image
           next_y_pos = display_image(y_pos, item)
         when :blank
-        else
+          # nothing
         end
 
-        if !(next_y_pos - y_pos).zero? || item[:type] == :blank
+        if !(next_y_pos - y_pos).zero? ||
+           item[:type] == :blank
           @last_printed_element_type = item[:type]
         end
         y_pos = next_y_pos
@@ -383,14 +364,13 @@ module Forked
     #######################
 
     ### BUTTON
-
-    def display_button(y_pos, item, content, i)
-
-      button = data.style.button  
+    # TODO: prevent buttons from being instantiated if object already exists
+    # TODO: wrap up button generation code and put it in the button module
+    def display_button(y_pos, item, _content, __i)
+      button = data.style.button
       display = data.style.display
       button_box = data.style.button_box
-      disabled_button_box = data.style.disabled_button_box
-      
+
       # previous element is also a button? use spacing_between instead of spacing_after
       if @last_printed_element_type == :button
         y_pos += button.spacing_after * button.size_px
@@ -403,39 +383,85 @@ module Forked
       text_w = text_w.to_i
       button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)
 
+      x = display.margin_left
+      y = (y_pos - button_h).to_i
+      w = text_w + button_box.padding_left + button_box.padding_right
+      h = (button.size_px + button_box.padding_top + button_box.padding_bottom).to_i
 
-      if !item.action.empty?
-        option = {
-          x: display.margin_left,
-          y: (y_pos - button_h).to_i,
-          w: text_w + button_box.padding_left + button_box.padding_right,
-          h: (button.size_px + button_box.padding_top + button_box.padding_bottom),
-          action: item.action
-        }.sprite!(button_box)
-        y_pos -= button_box.padding_top
+      button_box = data.style.disabled_button_box if item.action.empty?
 
-        data.primitives << option
-        data.options << option unless data.options.include? option
-      else
-        data.primitives << {
-          x: display.margin_left,
-          y: (y_pos - button_h).to_i,
-          w: text_w + button_box.padding_left + button_box.padding_right,
-          h: (button.size_px + button_box.padding_top + button_box.padding_bottom).to_i,
+      pill_button_base = { x: x, y: y, w: w, h: h, text: item.text, action: item.action }
+      enabled = Effed.pill_button_layer(
+        args,
+        rect: pill_button_base,
+        color: { r: button.r, g: button.g, b: button.b },
+        bg: { r: button_box.r, g: button_box.g, b: button_box.b },
+        font: button.font,
+        size_enum: button.size_enum
+      )
+      focused = Effed.pill_button_layer(
+        args,
+        rect: pill_button_base,
+        color: {
+          r: data.style.selected_button.r,
+          g: data.style.selected_button.g,
+          b: data.style.selected_button.b
+        },
+        bg: {
+          r: data.style.selected_button_box.r,
+          g: data.style.selected_button_box.g,
+          b: data.style.selected_button_box.b
+        },
+        font: data.style.selected_button.font,
+        size_enum: data.style.selected_button.size_enum
+      )
+      active = Effed.pill_button_layer(
+        args,
+        rect: pill_button_base,
+        color: {
+          r: data.style.active_button.r,
+          g: data.style.active_button.g,
+          b: data.style.active_button.b
+        },
+        bg: {
+          r: data.style.active_button_box.r,
+          g: data.style.active_button_box.g,
+          b: data.style.active_button_box.b
+        },
+        font: data.style.active_button.font,
+        size_enum: data.style.active_button.size_enum
+      )
+      disabled = Effed.pill_button_layer(
+        args,
+        rect: pill_button_base,
+        color: {
+          r: data.style.disabled_button.r,
+          g: data.style.disabled_button.g,
+          b: data.style.disabled_button.b
+        },
+        bg: {
+          r: data.style.disabled_button_box.r,
+          g: data.style.disabled_button_box.g,
+          b: data.style.disabled_button_box.b
+        },
+        font: data.style.disabled_button.font,
+        size_enum: data.style.disabled_button.size_enum
+      )
 
-        }.sprite!(disabled_button_box)
+      option = Effed::FButton.new(
+        rect: pill_button_base,
+        enabled: enabled,
+        focused: focused,
+        active: active,
+        disabled: disabled
+      )
+      data.options << option if item&.action && !item.action.empty?
+      data.primitives << option
 
-        y_pos -= button_box.padding_top
-      end
-
-      data.primitives << {
-        x: display.margin_left + button_box.padding_left,
-        y: y_pos.to_i,
-        text: item.text,
-      }.label!(button)
-
-      y_pos -= button.size_px + button_box.padding_bottom
-      y_pos -= button.size_px * button.spacing_after
+      y_pos - (button_box.padding_top +
+               button_box.padding_bottom +
+               button.size_px +
+               button.size_px * button.spacing_after)
     end
 
     ### PARAGRAPH
@@ -454,7 +480,7 @@ module Forked
         # paragraph follows paragraph, so add 'spacing between'
         new_y_pos -= paragraph.size_px * paragraph.spacing_between
       end
-      
+
       args.state.forked.forked_display_last_element_empty = false
 
       empty_paragraph = true # until proven false
@@ -471,11 +497,11 @@ module Forked
         end
 
         font_style = get_font_style(atom.styles)
-        default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
+        # default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
         words = split_preserve_one_space(atom.text)
         line_frag = ''
         until words.empty?
-          word = words[0] 
+          word = words[0]
 
           new_frag = line_frag + word
           new_x_pos = x_pos + gtk.calcstringbox(new_frag, font_style.size_enum, font_style.font)[0]
@@ -488,18 +514,19 @@ module Forked
 
             # line space after soft wrap
             new_y_pos -= paragraph.size_px * paragraph.line_spacing
-            
+
           else
             ### CHANGED
-            line_frag = new_frag #+ ' '
+            line_frag = new_frag # + ' '
             words.shift
           end
 
           next unless words.empty?
+
           loc = { x: x_pos.to_i + display.margin_left, y: new_y_pos.to_i }
           lab = loc.merge(make_paragraph_label(line_frag, font_style))
           data.primitives << lab
-          x_pos = new_x_pos #+ default_space_w
+          x_pos = new_x_pos # + default_space_w
           line_frag = ''
           if atom.text[-1] == "\n"
             x_pos = 0
@@ -533,7 +560,7 @@ module Forked
 
     ### HEADING
 
-    def display_heading(y_pos, item, previous_element_type)
+    def display_heading(y_pos, item, _previous_element_type)
       heading = data.style.heading
       display = data.style.display
       heading.size_px = args.gtk.calcstringbox('X', heading.size_enum, heading.font)[1]
@@ -541,20 +568,20 @@ module Forked
       data.primitives << {
         x: display.margin_left,
         y: y_pos.to_i,
-        text: item.text,
+        text: item.text
       }.label!(heading)
 
-      y_pos -= heading.size_px * heading.spacing_after
+      y_pos - heading.size_px * heading.spacing_after
     end
 
     ### RULE
 
-    def display_rule(y_pos, item, previous_element_type)
+    def display_rule(y_pos, item, _previous_element_type)
       rule = data.style.rule
       display = data.style.display
       weight = rule.weight
       weight = item.weight if item.weight
-      
+
       data.primitives << {
         x: display.margin_left,
         y: y_pos.to_i,
@@ -562,7 +589,7 @@ module Forked
         h: weight
       }.sprite!(rule)
 
-      y_pos -= rule.spacing_after
+      y_pos - rule.spacing_after
     end
 
     def display_image(y_pos, item)
@@ -573,32 +600,32 @@ module Forked
       # It's a string, and it doesn't have any odd
       # characters in it
       # But putting it into a _new_ string makes it work
-      path = "#{item[:path]}"
+      path = item[:path].to_s
       merger = {}
       if path.end_with?('}') && path.include?('{')
         path, remnant = Forked::Parser.pull_out('{', '}', path)
-        merger = eval ('{' + remnant + '}')
+        merger = eval('{' + remnant + '}')
       end
 
       h = merger.h || 80
-      w = merger.w || 80
+      # w = merger.w || 80
 
       im = {
         x: display.margin_left,
         y: y_pos.to_i - h,
         w: 80,
         h: h,
-        path: path,
+        path: path
       }.sprite!(image)
 
       data.primitives << im.merge(merger)
 
-      y_pos -= (h + image.spacing_after)
+      y_pos - (h + image.spacing_after)
     end
 
     ### CODE BLOCK
 
-    def display_code_block(y_pos, item, previous_element_type)
+    def display_code_block(y_pos, item, _previous_element_type)
       code_block = data.style.code_block
       display = data.style.display
       code_block_box = data.style.code_block_box
@@ -610,7 +637,7 @@ module Forked
       code_block.size_px = args.gtk.calcstringbox('X', code_block.size_enum, code_block.font)[1]
 
       box_height = text_array.count * (code_block.size_px * code_block.line_spacing) +
-                  code_block_box.padding_top + code_block_box.padding_bottom
+                   code_block_box.padding_top + code_block_box.padding_bottom
 
       temp_y_pos = y_pos
 
@@ -618,16 +645,15 @@ module Forked
         x: display.margin_left,
         y: (temp_y_pos - box_height).to_i,
         w: display.w,
-        h: box_height.to_i,
+        h: box_height.to_i
       }.sprite!(code_block_box)
 
       temp_y_pos -= code_block_box.padding_top
       data.primitives << text_array.map do |line|
-
         label = {
           x: display.margin_left + code_block_box.padding_left,
           y: temp_y_pos.to_i,
-          text: line,
+          text: line
         }.label!(code_block)
 
         temp_y_pos -= code_block.size_px * code_block.line_spacing
@@ -636,12 +662,12 @@ module Forked
       end
 
       y_pos -= box_height
-      y_pos -= code_block.size_px * code_block.spacing_after
+      y_pos - code_block.size_px * code_block.spacing_after
     end
 
     ### BLOCKQUOTE
 
-    def display_blockquote(y_pos, item, previous_element_type, content, i)
+    def display_blockquote(y_pos, item, _previous_element_type, content, i)
       return if item[:text].empty?
 
       blockquote = data.style.blockquote
@@ -654,19 +680,22 @@ module Forked
         y_pos -= blockquote.spacing_between * blockquote.size_px
       end
 
-      text_array = wrap_lines(item.text, blockquote.font, blockquote.size_enum, display.w - (blockquote_box.padding_left + blockquote_box.padding_right))
+      text_array = wrap_lines(
+        item.text, blockquote.font, blockquote.size_enum,
+        display.w - (blockquote_box.padding_left + blockquote_box.padding_right)
+      )
 
       blockquote.size_px = args.gtk.calcstringbox('X', blockquote.size_enum, blockquote.font)[1]
 
       box_height = text_array.count * (blockquote.size_px * blockquote.line_spacing) +
-      blockquote_box.padding_top + blockquote_box.padding_bottom
+                   blockquote_box.padding_top + blockquote_box.padding_bottom
       box_height = box_height.greater(blockquote_box[:min_height])
 
       data.primitives << {
         x: display.margin_left,
         y: (y_pos - box_height).to_i,
         w: display.w,
-        h: box_height,
+        h: box_height
       }.sprite!(blockquote_box)
 
       temp_y_pos = y_pos - blockquote_box.padding_top
@@ -675,7 +704,7 @@ module Forked
         label = {
           x: display.margin_left + blockquote_box.padding_left,
           y: temp_y_pos.to_i,
-          text: line,
+          text: line
         }.label!(blockquote)
 
         temp_y_pos -= blockquote.size_px * blockquote.line_spacing
@@ -684,15 +713,14 @@ module Forked
       end
 
       y_pos -= box_height
-      y_pos -= blockquote.size_px * blockquote.spacing_after
-
+      y_pos - blockquote.size_px * blockquote.spacing_after
     end
 
     ################
     # STYLE HANDLING
     ################
 
-    def get_font_style styles
+    def get_font_style(styles)
       if styles.include?(:bold) && styles.include?(:italic)
         data.style.bold_italic
       elsif styles.include? :bold_italic
@@ -713,9 +741,9 @@ module Forked
     ############
 
     # make a one line label in the specified style
-    def make_paragraph_label text, font_style
+    def make_paragraph_label(text, font_style)
       {
-        text: text,
+        text: text
       }.label!(data.display.paragraph).merge!(font_style)
     end
 
@@ -723,7 +751,7 @@ module Forked
     # TEXT HANDLING
     ###############
 
-    def wrap_lines_code_block str, font, size_px, width
+    def wrap_lines_code_block(str, font, size_px, width)
       wrapped_text = []
       str.lines.map do |l|
         l += ' ' # <== It's a hack :)
@@ -750,7 +778,7 @@ module Forked
                 fixed_width_line = frag.delete_prefix!(' ')
                 # empty the frag but add a space
                 frag = ' '
-              end # end test_w < width
+              end
 
               # empty frag and add a space
 
@@ -777,7 +805,7 @@ module Forked
       wrapped_text
     end
 
-    def wrap_lines_code_block_slow str, font, size_px, width
+    def wrap_lines_code_block_slow(str, font, size_px, width)
       wrapped_text = []
       str.lines.map do |l|
         fixed_width_line = ''
@@ -825,7 +853,7 @@ module Forked
       wrapped_text
     end
 
-    def wrap_lines str, font, size_px, width
+    def wrap_lines(str, font, size_px, width)
       wrapped_text = []
       str.lines.map do |l|
         fixed_width_line = ''
@@ -842,10 +870,8 @@ module Forked
             fixed_width_line = ''
           end
 
-          if words.empty?
-            wrapped_text << fixed_width_line
-          end
-        end # until
+          wrapped_text << fixed_width_line if words.empty?
+        end
       end
 
       wrapped_text
@@ -856,19 +882,17 @@ module Forked
     def split_preserve_one_space(str)
       arr = []
       while str.length > 0
-        if idx = str.index(' ')
+        if (idx = str.index(' '))
           capture = str[0...idx + 1]
           # prevent runs of spaces
-          unless capture == ' ' && arr[-1]&.end_with?(" ")
-            arr << capture
-          end
+          arr << capture unless capture == ' ' && arr[-1]&.end_with?(" ")
           str = str [idx + 1..-1]
         else
           # the string does not or no longer contains a space
           arr << str
           str = ''
         end
-      end # while
+      end
       arr
     end
 
@@ -879,14 +903,14 @@ module Forked
       while str.length > 0
         idx = str.index(' ')
         if idx
-          cap = str[0...idx + 1] 
+          cap = str[0...idx + 1]
           arr << cap
           str = str [idx + 1..-1]
         else
           arr << str
           str = ''
         end
-      end # while
+      end
       arr
     end
 
@@ -900,76 +924,3 @@ module Forked
     end
   end
 end
-
-  # reference for display format
-  #   [
-  #     {
-  #       type: :heading,
-  #       text: "Non eram nescius",
-  #     },
-  #     {
-  #       type: :rule
-  #     },
-  #     {
-  #       type: :paragraph,
-  #       atoms: [
-  #         {
-  #           text: "Non eram nescius,",
-  #           styles: []
-  #         },
-  #         {
-  #           text: "Brute, cum, quae summis ingeniis",
-  #           styles: [:italic]
-  #         },
-  #         {
-  #           text: " exquisitaque doctrina philosophi Graeco sermone tractavissent, ea",
-  #           styles: []
-  #         },
-  #         {
-  #           text: " Latinis litteris mandaremus,",
-  #           styles: [:bold]
-  #         },
-  #         {
-  #           text: "fore ut hic noster labor in varias reprehensiones incurreret. nam quibusdam, et iis quidem non admodum indoctis,",
-  #           styles: []
-  #         },
-  #         {
-  #           text: " totum hoc displicet",
-  #           styles: [:bold, :italic]
-  #         },
-  #         {
-  #           text: " philosophari. quidam autem non tam id",
-  #           styles: []
-  #         },
-  #         {
-  #           text: " reprehendunt",
-  #           styles: [:code]
-  #         },
-  #         {
-  #           text: "si remissius agatur sed.",
-  #           styles: []
-  #         },
-  #        ]
-  #     },
-  #     {
-  #     type: :code_block,
-  #     text: "def default_code_block # defaults for code block text
-  #   {
-  #     font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
-  #     size_px: 22,
-  #     line_spacing: 0.85,
-  #     r: 76, g: 51, b: 127,
-  #     spacing_after: 0.7, # 1.0 is line_height.
-  #   }
-  # end",
-  #     },
-  #     {
-  #     type: :blockquote,
-  #     text: "Contra quos omnis dicendum breviter existimo. Quamquam philosophiae quidem vituperatoribus satis responsum est eo libro, quo a nobis philosophia defensa et collaudata est, cum esset accusata et vituperata ab Hortensio.",
-  #     },
-  #     {
-  #     type: :button,
-  #     text: "Contra quos omnis",
-  #     action: "puz'This button was clicked'"
-  #     },
-  #   ]

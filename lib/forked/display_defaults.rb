@@ -141,9 +141,9 @@ end
 
 def default_button_box
   default_box.merge(
-    padding_left: 10,
+    padding_left: 15,
     padding_top: 6,
-    padding_right: 10,
+    padding_right: 15,
     padding_bottom: 6,
     r: 51, g: 51, b: 51,
   )
