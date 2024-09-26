@@ -1,12 +1,12 @@
 ## Next version
 ### Version 0.0.12
 * Orientation Change Handling:
-  * Forked now automatically detects an orientation change (see Author Mode changes below). Styles are re-applied after orientation changes.
+  * Forked now automatically detects an orientation change (see Author Mode changes below). Styles are re-applied after orientation changes. On mobile devices, Forked will change orientation when the device is rotated (be sure to set `orientation=landscape,portrait` in game_metadata.txt)
   * Default theme has been updated to recalculate margins and font sizes when orientation changes.
   * Allow optional theme modules that are recalculated after an orientation change to allow dev to program changes based on orientation and/or grid size, etc.
   * All themes adapted to automatically adjust to orientation changes
 * Buttons have been upgraded to allow multiple primitives for each state (previously, buttons were limited to a rectangle that could change attributes and a fixed label)
-* Author Mode changes: a
+* Author Mode changes:
   * Added orientation toggle for previewing portrait mode. In Author Mode (hold `f` and press `u`) press `o` to toggle orientation.
   * Author Mode sidebar visibility is now toggled on or off. In Author Mode press `q` to toggle the sidebar visibility.
   * The Author Mode sidebar has been moved to the right hand side of the screen to avoid conflict with DragonRuby's Watch features.
