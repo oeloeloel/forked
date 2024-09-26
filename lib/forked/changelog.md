@@ -13,6 +13,7 @@
   * Author Mode sidebar visibility is now toggled on or off. In Author Mode press `q` to toggle the sidebar visibility.
   * The Author Mode sidebar has been moved to the right hand side of the screen to avoid conflict with DragonRuby's Watch features.
   * Author Mode layout adjusted to work with portrait orientation.
+  * The FPS counter is now a toggle. In author mode, press `d` to display the FPS counter.
 
 
 ## Current version

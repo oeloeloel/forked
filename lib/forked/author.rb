@@ -11,6 +11,7 @@ module Forked
     def initialize(story)
       @story = story
       @sidebar_display_toggle = false
+      @fps_toggle = false
     end
 
     def tick
@@ -49,8 +50,9 @@ module Forked
       @sidebar_display_toggle = !@sidebar_display_toggle if k_d.send(@left_sidebar_key)
       args.state.forked.author_mode_sidebar = @sidebar_display_toggle
 
+      @fps_toggle = !@fps_toggle if k_d.send(@framerate_key)
       outputs.debug << "FPS: #{args.gtk.current_framerate_calc.round.to_s}(#{
-        args.gtk.current_framerate.round.to_s})" if k_h.send(@framerate_key)
+      args.gtk.current_framerate.round.to_s})" if @fps_toggle
 
       if k_d.send(@orientation_toggle_key)
         $gtk.toggle_orientation
