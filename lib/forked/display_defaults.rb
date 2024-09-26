@@ -27,9 +27,16 @@ def config_defaults
 end
 
 def default_display
+  ml = if ($gtk.orientation == :portrait) ||
+           $gtk.platform == "iOS" ||
+           $gtk.platform == "android"
+         40
+       else
+         200
+       end
   {
     background_color: { r: 229, g: 229, b: 229 },
-    margin_left: ml = $gtk.orientation == :portrait ? 40 : 200,
+    margin_left: ml,
     margin_top: mt = 60,
     margin_right: mr = ml,
     margin_bottom: mb = mr,
@@ -39,9 +46,17 @@ def default_display
 end
 
 def default_paragraph
+  size_enum = if ($gtk.orientation == :portrait) || 
+                  $gtk.platform?(:ios) || 
+                  $gtk.platform?(:android)
+                4
+              else
+                0
+              end
+
   {
     font: 'fonts/roboto/roboto-regular.ttf',
-    size_enum: $gtk.orientation == :portrait ? 4 : 0,
+    size_enum: size_enum,
     line_spacing: 1, # 1.0 is the height of the font.
     r: 51, g: 51, b: 51,
     spacing_between: 0.6,
