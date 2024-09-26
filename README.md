@@ -18,6 +18,7 @@ What it lets you do:
 * Buttons can link to other parts of the story or run code
 * Track the player's progress through the story
 * Automatically (or manually) save the player's progress so they can continue playing where they left off
+* Automatically handle orientation changes when published to mobile devices
 
 ## Getting started
 To begin:

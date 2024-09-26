@@ -28,8 +28,7 @@ end
 
 def default_display
   ml = if ($gtk.orientation == :portrait) ||
-           $gtk.platform == "iOS" ||
-           $gtk.platform == "android"
+           $gtk.platform?(:touch)
          40
        else
          200
@@ -98,7 +97,7 @@ end
 def default_code_block # defaults for code block text
   {
     font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
-    size_enum: $gtk.orientation == :portrait ? 4 : 2,
+    size_enum: default_paragraph.size_enum,
     line_spacing: 0.85,
     r: 76, g: 51, b: 127,
     spacing_after: 0.7, # 1.0 is line_height.
@@ -118,7 +117,7 @@ end
 def default_blockquote # defaults for block quote text
   default_paragraph.merge(
     r: 102, g: 76, b: 51,
-    size_enum: $gtk.orientation == :portrait ? 4 : 2,
+    size_enum: default_paragraph.size_enum,
     spacing_between: 0,
     spacing_after: 0.7,
   )

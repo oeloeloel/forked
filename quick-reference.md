@@ -270,3 +270,4 @@ Author mode provides some features that may be useful while writing your story. 
 | `n` | Navigate to the following chunk in the story file until the last chunk is displayed. |
 | `h` | Navigate to the preceding chunk in the story file until the first chunk is displayed. |
 | `d` (hold) | Display the current framerate (fps) |
+| `o` | Toggle the orientation between `landscape` and `portrait` to preview how the game will appear on mobile devices

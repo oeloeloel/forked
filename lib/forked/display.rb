@@ -42,7 +42,7 @@ module Forked
 
     def apply_theme(theme)
       # "==== apply_theme(#{theme})"
-      return unless theme
+      theme ||= {}
 
       data.style = config_defaults
 
@@ -641,12 +641,16 @@ module Forked
 
       temp_y_pos = y_pos
 
-      data.primitives << {
-        x: display.margin_left,
-        y: (temp_y_pos - box_height).to_i,
-        w: display.w,
-        h: box_height.to_i
-      }.sprite!(code_block_box)
+      rect = {
+        x: display.margin_left, 
+        y: y_pos - box_height.to_i, 
+        w: display.w, h: box_height,
+        r: code_block_box.r,
+        g: code_block_box.g,
+        b: code_block_box.b
+      }
+      bg = Effed.rounded_panel(rect: rect)
+      data.primitives << bg
 
       temp_y_pos -= code_block_box.padding_top
       data.primitives << text_array.map do |line|
@@ -691,12 +695,16 @@ module Forked
                    blockquote_box.padding_top + blockquote_box.padding_bottom
       box_height = box_height.greater(blockquote_box[:min_height])
 
-      data.primitives << {
-        x: display.margin_left,
-        y: (y_pos - box_height).to_i,
-        w: display.w,
-        h: box_height
-      }.sprite!(blockquote_box)
+      rect = {
+        x: display.margin_left, 
+        y: y_pos - box_height.to_i, 
+        w: display.w, h: box_height,
+        r: blockquote_box.r,
+        g: blockquote_box.g,
+        b: blockquote_box.b
+      }
+      bg = Effed.rounded_panel(rect: rect)
+      data.primitives << bg
 
       temp_y_pos = y_pos - blockquote_box.padding_top
 

@@ -574,7 +574,7 @@ counter_check "number of rugs"
 
 Change the presentation of the story.
 
-[Turn the lights on](: change_theme nil :)
+[Turn the lights on](: change_theme(nil) :)
 [Turn the lights off](: change_theme DARK_MODE :)
 [Turn the lights fun and stupid](: change_theme KIFASS_THEME :)
 

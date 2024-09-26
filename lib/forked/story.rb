@@ -503,8 +503,8 @@ Tell Akz to write a better error message."
       outputs.sprites << {
         x: 0,
         y: 0,
-        w: 1280,
-        h: 720,
+        w: grid.w,
+        h: grid.h,
         path: path
       }
     end
