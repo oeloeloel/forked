@@ -82,7 +82,8 @@ def default_heading # defaults for heading text
     r: 51, g: 51, b: 51,
     size_enum: $gtk.orientation == :portrait ? 8 : 4,
     font: 'fonts/roboto/roboto-black.ttf',
-    spacing_after: 1.5
+    spacing_after: 1.5,
+    align: 0.5,
   }
 end
 
