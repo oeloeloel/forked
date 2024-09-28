@@ -7,7 +7,7 @@
   * All themes adapted to automatically adjust to orientation changes
 * Buttons have been upgraded to allow multiple primitives for each state (previously, buttons were limited to a rectangle that could change attributes and a fixed label)
 * Button rollover state is disabled on mobile
-* Blockquote and Code Block boxes now have rounded corners
+* Blockquote and Code Block boxes now have rounded corners (buttons can now be composed from multiple primitives)
 * Author Mode changes:
   * Added orientation toggle for previewing portrait mode. In Author Mode (hold `f` and press `u`) press `o` to toggle orientation.
   * Author Mode sidebar visibility is now toggled on or off. In Author Mode press `q` to toggle the sidebar visibility.
