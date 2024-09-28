@@ -47,11 +47,11 @@ module Effed
             o.x, o.y, o.w, o.h,
             o.path.to_s,
             0,
-            255, o.r, o.g, o.b,
-            nil, nil, nil, nil,
-            nil, nil,
-            nil, nil,
-            nil, nil, nil, nil,
+            o.a, o.r, o.g, o.b,
+            nil, nil, nil, nil, # tile
+            nil, nil, # flip
+            nil, nil, # anchor
+            o.source_x, o.source_y, o.source_w, o.source_h, # source
             nil,
             nil,
             nil,
@@ -108,17 +108,22 @@ module Effed
     end
 
     def pill_button_layer _args, **params
+      circle_diameter = 129
+      circle_radius = circle_diameter / 2
       [
         {
           path: 'sprites/white-circle.png',
           x: 0,
-          w: params.rect.h, h: params.rect.h,
-          **params.bg
+          w: params.rect.h / 2, h: params.rect.h,
+          **params.bg,
+          source_w: circle_radius,
         }.sprite!,
         {
           path: 'sprites/white-circle.png',
-          x: params.rect.w - params.rect.h,
-          w: params.rect.h, h: params.rect.h,
+          x: params.rect.w - params.rect.h / 2,
+          w: params.rect.h / 2, h: params.rect.h,
+          source_x: circle_radius,
+          source_w: circle_radius,
           **params.bg
         }.sprite!,
         {
@@ -129,7 +134,8 @@ module Effed
         {
           x: params.rect.w / 2,
           y: params.rect.h / 2,
-          text: params.text, **params.color,
+          text: params.text,
+          **params.color,
           font: params.font, size_enum: params.size_enum,
           anchor_x: 0.5, anchor_y: 0.5
         }

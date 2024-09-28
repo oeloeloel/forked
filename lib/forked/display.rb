@@ -377,6 +377,11 @@ module Forked
         y_pos -= button.spacing_between * button.size_px
       end
 
+      if item.action.empty?
+        button = data.style.disabled_button
+        button_box = data.style.disabled_button_box
+      end
+
       button.size_px = args.gtk.calcstringbox('X', button.size_enum, button.font)[1]
 
       text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
@@ -388,14 +393,13 @@ module Forked
       w = text_w + button_box.padding_left + button_box.padding_right
       h = (button.size_px + button_box.padding_top + button_box.padding_bottom).to_i
 
-      button_box = data.style.disabled_button_box if item.action.empty?
-
       pill_button_base = { x: x, y: y, w: w, h: h, text: item.text, action: item.action }
+
       enabled = Effed.pill_button_layer(
         args,
         rect: pill_button_base,
-        color: { r: button.r, g: button.g, b: button.b },
-        bg: { r: button_box.r, g: button_box.g, b: button_box.b },
+        color: { r: button.r, g: button.g, b: button.b, a: button.a || 255 },
+        bg: { r: button_box.r, g: button_box.g, b: button_box.b, a: button.a || 255 },
         font: button.font,
         size_enum: button.size_enum
       )
@@ -405,12 +409,14 @@ module Forked
         color: {
           r: data.style.selected_button.r,
           g: data.style.selected_button.g,
-          b: data.style.selected_button.b
+          b: data.style.selected_button.b,
+          a: data.style.selected_button.a || 255
         },
         bg: {
           r: data.style.selected_button_box.r,
           g: data.style.selected_button_box.g,
-          b: data.style.selected_button_box.b
+          b: data.style.selected_button_box.b,
+          a: data.style.selected_button_box.a || 255
         },
         font: data.style.selected_button.font,
         size_enum: data.style.selected_button.size_enum
@@ -421,12 +427,14 @@ module Forked
         color: {
           r: data.style.active_button.r,
           g: data.style.active_button.g,
-          b: data.style.active_button.b
+          b: data.style.active_button.b,
+          a: data.style.active_button.a || 255
         },
         bg: {
           r: data.style.active_button_box.r,
           g: data.style.active_button_box.g,
-          b: data.style.active_button_box.b
+          b: data.style.active_button_box.b,
+          a: data.style.active_button.a || 255
         },
         font: data.style.active_button.font,
         size_enum: data.style.active_button.size_enum
@@ -437,12 +445,14 @@ module Forked
         color: {
           r: data.style.disabled_button.r,
           g: data.style.disabled_button.g,
-          b: data.style.disabled_button.b
+          b: data.style.disabled_button.b,
+          a: data.style.disabled_button.a || 255
         },
         bg: {
           r: data.style.disabled_button_box.r,
           g: data.style.disabled_button_box.g,
-          b: data.style.disabled_button_box.b
+          b: data.style.disabled_button_box.b,
+          a: data.style.disabled_button_box.a || 255
         },
         font: data.style.disabled_button.font,
         size_enum: data.style.disabled_button.size_enum
@@ -455,6 +465,9 @@ module Forked
         active: active,
         disabled: disabled
       )
+
+      option.force_status_change(:disabled) if item.action.empty?
+
       data.options << option if item&.action && !item.action.empty?
       data.primitives << option
 
