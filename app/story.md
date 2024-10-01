@@ -229,6 +229,8 @@ Make text appear as `code` by putting backticks ` around it:
 This line has `some code` in it
 ~~~
 This line has `some code` in it
+
+Inline styles may also be used with blockquotes.
 ---
 [Back to Formatting](#formatting)
 
@@ -244,14 +246,15 @@ To make a blockquote, start the line with a right angle bracket >
 If you put several blockquotes one after the other, they appear as a single blockquote:
 ~~~
 > Many people have tried to steal it over the centuries.
-> All of them perished.
-> Horribly.
+> *All of them perished*.
+> ***Horribly***.
 ~~~
 
 > Many people have tried to steal it over the centuries.
-> All of them perished.
-> Horribly.
+> *All of them perished*.
+> ***Horribly***.
 
+As you have just seen, inline styles may also be used in blockquotes.
 ---
 [Back to Formatting](#formatting)
 

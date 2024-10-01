@@ -112,6 +112,7 @@ which can span multiple lines -->
 ```
 
 ## Formatting
+Note: formatting also works inside blockquotes
 
 *Italic text*
 ```md
@@ -142,6 +143,8 @@ Blockquotes can run over more than one line. To separate blockquotes, include a 
 > This text is inside a second blockquote
 > This text is inside the same blockquote
 ```
+
+Text styles (italic, bold, bold-italic and code) can be used in blockquotes. See [Formatting](#formatting).
 
 ### Code Block:
 By default, code blocks display text inside a box, in a monospace font. The text is displayed *as-is*, without any changes except for wrapping long lines. Code in code blocks is not executable.
