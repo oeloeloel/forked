@@ -4,7 +4,7 @@ module Effed
   class FButton
     attr_gtk
     attr_sprite
-    attr_accessor :action, :counter
+    attr_accessor :action, :counter, :text
 
     def initialize(**kwargs)
       @data = kwargs
@@ -70,6 +70,18 @@ module Effed
           )
         end
       end
+    end
+
+    def serialize
+      { }
+    end
+
+    def inspect
+      serialize.to_s
+    end
+
+    def to_s
+      serialize.to_s
     end
   end
 
