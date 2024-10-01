@@ -58,5 +58,17 @@ DARK_MODE = {
   },
   code: {
     r: 153, g: 204, b: 102,
+  },
+  blockquote_bold: {
+    r: 153, g: 179, b: 204,
+  },
+  blockquote_italic: {
+    r: 153, g: 179, b: 204,
+  },
+  blockquote_bold_italic: {
+    r: 153, g: 179, b: 204, 
+  },
+  blockquote_code: {
+    r: 153, g: 204, b: 102,
   }
 }
