@@ -22,7 +22,11 @@ def config_defaults
     italic: default_italic_style,
     bold_italic: default_bold_italic_style,
     code: default_code_style,
-    image: default_image_style
+    image: default_image_style,
+    blockquote_bold: default_blockquote_bold_style,
+    blockquote_italic: default_blockquote_italic_style,
+    blockquote_bold_italic: default_blockquote_bold_italic_style,
+    blockquote_code: default_blockquote_code_style,
   }
 end
 
@@ -112,6 +116,7 @@ def default_code_block_box # defaults for code block background
     padding_right: 20,
     padding_top: 7,
     padding_bottom: 12,
+    margin_bottom: 10
   )
 end
 
@@ -119,8 +124,8 @@ def default_blockquote # defaults for block quote text
   default_paragraph.merge(
     r: 102, g: 76, b: 51,
     size_enum: default_paragraph.size_enum,
-    spacing_between: 0,
-    spacing_after: 0.7,
+    spacing_between: 0.6,
+    spacing_after: 0.9,
   )
 end
 
@@ -131,8 +136,11 @@ def default_blockquote_box # defaults for blockquote background
     padding_right: 20,
     padding_top: 10,
     padding_bottom: 10,
-    margin_left: 20,
-    margin_right: 20,
+    margin_left: 0,
+    margin_right: 0,
+    margin_top: 10,
+    margin_bottom: 12,
+
     min_height: 0 # default_blockquote_image[:height] + 20
   )
 end
@@ -221,6 +229,31 @@ end
 
 def default_code_style # inline code
   default_paragraph.merge(
+    font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
+    r: 102, g: 51, b: 153,
+  )
+end
+
+def default_blockquote_bold_style
+  default_blockquote.merge(
+    font: 'fonts/roboto/roboto-bold.ttf',
+  )
+end
+
+def default_blockquote_italic_style
+  default_blockquote.merge(
+    font: 'fonts/roboto/roboto-italic.ttf',
+  )
+end
+
+def default_blockquote_bold_italic_style
+  default_blockquote.merge(
+    font: 'fonts/roboto/roboto-bolditalic.ttf',
+  )
+end
+
+def default_blockquote_code_style # inline code
+  default_blockquote.merge(
     font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
     r: 102, g: 51, b: 153,
   )

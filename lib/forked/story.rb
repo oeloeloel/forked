@@ -710,9 +710,9 @@ Tell Akz to write a better error message."
     def forked_test(expect: nil, print_subject: false)
       test_mark = []
           outputs.primitives.each_with_index { |prim, i|
-          if prim[:text] && prim[:text].strip == "<! start test !>"
+          if prim&.text && prim&.text&.strip == "<! start test !>"
             test_mark << i + 1
-          elsif prim[:text] && prim[:text].strip == "<! end test !>"
+          elsif prim&.text && prim&.text&.strip == "<! end test !>"
             test_mark << i - 1
           end
         }
