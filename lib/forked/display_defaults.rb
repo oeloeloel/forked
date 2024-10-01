@@ -2,6 +2,7 @@
 def config_defaults
   { 
     display: default_display,
+    background: default_background,
     heading: default_heading,
     rule: default_rule,
     paragraph: default_paragraph,
@@ -38,13 +39,32 @@ def default_display
          200
        end
   {
-    background_color: { r: 229, g: 229, b: 229 },
     margin_left: ml,
     margin_top: mt = 60,
     margin_right: mr = ml,
     margin_bottom: mb = mr,
     w: $args.grid.w - (ml + mr),
     h: $args.grid.h - (mb + mt)
+  }
+end
+
+def default_background
+  if $gtk.orientation == :portrait
+    angle = -90
+    x = -280
+    y = 280
+  else
+    angle = 0
+    x = 0
+    y = 0
+  end
+  {
+    background_color: { r: 229, g: 229, b: 229 },
+    # path: 'sprites/background.png',
+    # x: x, y: y,
+    # w: 1280,
+    # h: 720,
+    # angle: angle,
   }
 end
 

@@ -1,3 +1,4 @@
+require_relative 'display_background.rb'
 require_relative 'display_blockquote.rb'
 require_relative 'display_button.rb'
 require_relative 'display_code_block.rb'
@@ -539,7 +540,15 @@ module Forked
     ########
 
     def render
-      outputs.background_color = data.style.display.background_color.values
+      background = data.style.background
+      if background.path
+        outputs.sprites << {
+          **background.sprite!
+        }
+      elsif background.background_color
+        outputs.background_color = background.background_color
+      end
+
       args.outputs.primitives << data.primitives
     end
   end
