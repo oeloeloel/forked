@@ -13,6 +13,7 @@ module Effed
       @y = kwargs.rect.y
       @w = kwargs.rect.w
       @h = kwargs.rect.h
+      @text = kwargs.rect.text
       force_status_change(:enabled)
     end
 
@@ -73,7 +74,7 @@ module Effed
     end
 
     def serialize
-      { }
+      { x: @x, y: @y, w: @w, h: @h, text: @text }
     end
 
     def inspect

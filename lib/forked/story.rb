@@ -709,19 +709,23 @@ Tell Akz to write a better error message."
 
     def forked_test(expect: nil, print_subject: false)
       test_mark = []
-          outputs.primitives.each_with_index { |prim, i|
-          if prim&.text && prim&.text&.strip == "<! start test !>"
-            test_mark << i + 1
-          elsif prim&.text && prim&.text&.strip == "<! end test !>"
-            test_mark << i - 1
-          end
-        }
+      outputs.primitives.each_with_index do |prim, i|
+        if prim&.text && prim&.text&.strip == "<! start test !>"
+          test_mark << i + 1
+        elsif prim&.text && prim&.text&.strip == "<! end test !>"
+          test_mark << i - 1
+        end
+      end
       return "Test does not contain two marks" if test_mark.count < 2
 
-      subject = outputs.primitives[test_mark[0]..test_mark[1]] 
-      puts "Subject:\n#{subject}" if print_subject
-      result = expect == subject
-      result ? "Test passed" : "Test failed"
+      subject = outputs.primitives[test_mark[0]..test_mark[1]]
+
+      if expect.to_s != subject.to_s
+        puts "Subject:\n#{subject}" if print_subject
+        return "Test failed"
+      end
+
+      "Test passed"
     end
   end
 end
