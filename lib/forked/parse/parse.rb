@@ -1,10 +1,22 @@
-require_relative 'conditional.rb'
-require_relative 'paragraph.rb'
-require_relative 'blockquote.rb'
+require_relative 'parse_action_block.rb'
+require_relative 'parse_blank.rb'
+require_relative 'parse_blockquote.rb'
+require_relative 'parse_c_comment.rb'
+require_relative 'parse_code_block.rb'
+require_relative 'parse_code_fence.rb'
+require_relative 'parse_conditional.rb'
+require_relative 'parse_generic.rb'
+require_relative 'parse_heading.rb'
+require_relative 'parse_html_comment.rb'
+require_relative 'parse_image.rb'
+require_relative 'parse_paragraph.rb'
+require_relative 'parse_preformatted_line.rb'
+require_relative 'parse_rule.rb'
+require_relative 'parse_title.rb'
+require_relative 'parse_trigger.rb'
 
 module Forked
   # parses the story file
-
   class Parser
     DEFAULT_TITLE = 'A Forked Story'.freeze
 
@@ -111,6 +123,10 @@ module Forked
           result = parse_action_block(escaped, line, context, story, line_no)
           next if result
 
+          ### GENERIC ELEMENT
+          result = parse_generic(escaped, line, context, story, line_no)
+          next if result
+
           # PARAGRAPH
           parse_paragraph(escaped, context, story, line_no)
 
@@ -121,439 +137,6 @@ module Forked
 
         story
       end
-
-
-      # action blocks contain executable code
-      # action block markers are a beginning and ending pair of colons ::
-      # action block markers can be block level or line level but not inline
-
-      # Block level:
-      # ::
-      # # block level
-      # code()
-      # ::
-
-      # Line level:
-      # :: code() ::
-
-      # Inline not supported
-      # NO! This will display as text :: code() ::
-
-      # Mixing levels not supported
-      # :: no!()
-      # ::
-
-      # ::
-      # no!() ::
-
-      def parse_action_block(escaped, line, context, story, line_no)
-        prohibited_contexts = [:code_block, :trigger_action, :condition_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-        return unless escaped.start_with?('::') ||
-          context.include?(:action_block)
-
-        if escaped.start_with? '::'
-          # capture single line action
-          if line.strip.start_with?(':: ') && line.strip.end_with?(' ::') && line.length > 3
-            line.strip!
-            line.delete_prefix!(':: ')
-            line.delete_suffix!(' ::')
-            line.strip!
-            if story[:chunks][-1]
-              story[:chunks][-1][:actions] << line
-            else # different behaviour for code that comes between the title and the first chunk
-              story[:actions] ||= []
-              story[:actions] << line
-            end
-            return true
-          end
-
-          # capture action block end/start (close/open context)
-          if context.include?(:action_block)
-            context.delete(:action_block)
-          elsif story[:chunks][-1] 
-            context << (:action_block)
-            story[:chunks][-1][:actions] << ''
-          else # different behaviour for code that comes before the first chunk
-            context << (:action_block)
-          end
-
-          return true
-
-        # capture action block content
-        elsif context.include?(:action_block)
-          if story[:chunks][-1] 
-            destination = story[:chunks][-1][:actions][-1]
-            
-            if destination.nil?
-              raise "FORKED: An action block is open but no action exists in the current chunk.\n"\
-                    "Check for an unterminated action block (::) around or before line #{line_no + 1}."
-            end
-            story[:chunks][-1][:actions][-1] += line
-          else # different behaviour for code that comes before the first chunk
-            story[:actions] ||= []
-            story[:actions] << line
-          end
-          return true
-        end
-      end
-
-      # when a line is totally blank, add it as a `:blank` element
-      # only add one :blank - runs of blanks are not meaningful
-      # display will ignore the blank
-      # display will not treat two of the same block level
-      # elements as contiguous if they are separated by a blank
-      
-      def parse_blank(line, context, story, line_no)
-        # apply to blank lines and NO CONTEXT IS OPEN
-
-        return if !line.strip.empty? ||
-                  !context.empty?
-        
-        # check last element type
-        prev_type = story&.[](:chunks)[-1][:content]&.[](-1)[:type]
-
-        # blank is meaningful after last element? add it
-        # for now, blank is only meaningful after button
-        
-        case prev_type
-        when :button 
-          story[:chunks][-1][:content] << make_blank_hash if prev_type == :button
-        end
-      end
-
-
-      # strip comments from line (comments begin with //)
-      def parse_c_comment(line, context)
-
-        return unless line.include?('//')
-        prohibited_contexts = [:code_block, :action_block, :condition_code_block, :trigger_action]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        if line.strip.start_with?('//')
-          return true
-        elsif line.include?(' //')
-          index = line.index(' //')
-          return line[0...index]
-        end
-
-        nil
-      end
-
-      # Code blocks format code for display
-      # They begin with three tildes (~~~) on a blank line
-      # and end with three ticks on a blank line
-      def parse_code_block(escaped, line, context, story, line_no)
-        prohibited_contexts = [:action_block, :condition_code_block, :trigger_action]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-
-        if escaped.start_with?('~~~')
-          if context.include?(:code_block)
-            context.delete(:code_block)
-          else
-            context << (:code_block)
-            story[:chunks][-1][:content] << make_code_block_hash
-
-            # if this content is conditional, add the condition to the current element
-            if context.include?(:condition_block) || context.include?(:condition_block)
-              condition = story[:chunks][-1][:conditions][-1]
-              story[:chunks][-1][:content][-1][:condition] = condition
-            end
-
-          end
-          true
-        elsif context.include?(:code_block)
-          # if the line contains escaped fencing, strip the backslash and present it as-is
-          story[:chunks][-1][:content][-1].text += line
-          true
-        end
-      end
-
-      def parse_code_fence(line, context, story, line_no)
-        return unless line.include?('```') 
-        
-        prohibited_contexts = [:code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        return true
-      end
-
-      # The heading line starts a new chunk
-      # The heading line begins with a double #
-      def parse_heading(line, context, story, line_no)
-
-        return unless line.strip.start_with?('##') && 
-        !line.strip.start_with?('###') &&
-
-        prohibited_contexts = [:code_block, :action_block, :condition_code_block, :trigger_action]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        context.delete(:heading)
-        context.clear
-
-        line.strip!
-        line.delete_prefix!('##').strip!
-
-        gfm_slug = make_slug(unescape(line, @escapable)) # GFM style header navigation
-
-        if line.include?('{') && line.include?('}')
-          line = pull_out('{', '}', line)
-        else
-          line = [line]
-        end
-
-        heading, chunk_id = line
-        if heading.empty? && chunk_id.nil?
-          raise "Forked: Expected heading and/or ID on line #{line_no + 1}."
-        end
-
-        heading = story.title.delete_prefix("#").strip if heading.empty?
-        chk = make_chunk_hash
-
-        chk[:id] = unescape(chunk_id, @escapable) if chunk_id
-        chk[:slug] = gfm_slug
-
-        hdg = make_heading_hash
-        hdg[:text] = unescape(heading, @escapable)
-
-        rul = make_rule_hash
-        rul[:weight] = 3
-
-        chk[:content] << hdg
-        chk[:content] << rul
-
-        story[:chunks] << chk
-        true
-      end
-
-      def parse_html_comment(line, context, line_no)
-        prohibited_contexts = [:code_block, :action_block, :condition_code_block, :trigger_action]
-        mandatory_contexts = []
-        return line unless context_safe?(context, prohibited_contexts, mandatory_contexts) 
-
-        left_mark = '<!--'
-        right_mark = '-->'
-
-        # catch inline or single line html comment
-
-        if line.include?(left_mark) && line.include?(right_mark)
-          line = (pull_out(left_mark, right_mark, line))[0]
-          return line unless line.empty?
-
-          return nil
-        end
-
-        # start html comment (return non-comment part of line)
-        if line.include?(left_mark)
-          context << (:comment)
-          line = left_of_string(line, left_mark)
-          return nil if line.strip.empty?
-        end
-
-        # end html comment (return non-comment part of line)
-        if line.include?(right_mark) && context.include?(:comment)
-          context.delete(:comment)
-          line = right_of_string(line, right_mark)
-          return nil if line.strip.empty?
-        end
-
-        # while comment is open
-        if context.include?(:comment)
-          return nil
-        end
-
-        line
-      end
-
-      def parse_image(line, context, story, line_no)
-        prohibited_contexts = [:code_block, :action_block, :condition_code_block, :trigger_action]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        if line.strip.start_with?('\![')
-          line.delete_prefix!('\\')
-          return
-        end
-
-        # first identify image, capture alt text and path
-        if line.strip.start_with?('![') && 
-           line.include?('](') &&
-           line.strip.end_with?(')')
-
-          line = line.strip.delete_prefix!('![')
-
-          line.split(']', 2).then do |alt, path|
-            alt.strip!
-            path.strip!
-
-            # this content is conditional? add the condition to the current element
-
-            if context.include?(:condition_block) || context.include?(:condition_block)
-              condition = story[:chunks][-1][:conditions][-1]
-              story[:chunks][-1][:content][-1][:condition] = condition
-              story[:chunks][-1][:content][-1][:condition_segment] = @condition_segment_count
-            end
-
-            ### identify and catch url (return)
-            path.delete_prefix!('(')
-            path.delete_suffix!(')')
-            
-            img = make_image_hash
-            img[:path] = path
-            story[:chunks][-1][:content] << img
-          end
-        end
-      end 
-
-      # Force a line to display as plain, unformatted text, ignoring any further markup
-      # Used for troubleshooting, not part of the specification
-      def parse_preformatted_line(line, context, story, _line_no)
-
-        return unless line.strip.start_with?('@@')
-        
-        prohibited_contexts = [:title, :code_block, :action_block, :condition_code_block, :trigger_action]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        line.delete_prefix!('@@')
-        para = make_paragraph_hash
-        atm = make_atom_hash
-        atm[:text] = unescape(line.chomp, @escapable)
-        atm[:styles] << :pre
-        para[:atoms] << atm
-        story[:chunks][-1][:content] << para
-
-        true
-      end
-
-      # draws a horizontal line
-      def parse_rule(line, context, story, line_no)
-
-        return unless line.strip.start_with?('---')
-
-        prohibited_contexts = [:title, :code_block, :action_block, :condition_code_block, :trigger_action]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        story[:chunks][-1][:content] << make_rule_hash
-
-        # this content is conditional? add the condition to the current element
-        if context.include?(:condition_block)  || context.include?(:condition_block)
-          condition = story[:chunks][-1][:conditions][-1]
-          story[:chunks][-1][:content][-1][:condition] = condition
-        end
-
-        true
-      end
-
-      # The title is required. No content can come before it.
-      # The Title line starts with a single #
-      def parse_title(line, context, story, _line_no)
-
-        prohibited_contexts = []
-        mandatory_contexts = [:title]
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-
-        if line.strip.start_with?('#') && !line.strip.start_with?('##')
-          line.strip!
-          line.delete_prefix!('#').strip!
-        elsif !line.strip.empty?
-          raise "FORKED: CONTENT BEFORE TITLE.
-
-The first line of the story file is expected to be the title.
-Please add a title to the top of the Story File. Example:
-
-`# The Name of this Story`
-"
-        end
-        story[:title] = unescape(line, @escapable)
-        context.delete(:title) # title is found
-        context << :heading # second element must be a heading
-        true
-      end
-
-      def parse_trigger(line, context, story, line_no)
-        prohibited_contexts = [:code_block, :action_block, :condition_code_block]
-        mandatory_contexts = []
-        return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
-        
-        # first identify trigger, capture button text and action
-        if line.strip.start_with?('[') && 
-           line.include?('](') &&
-           !context.include?(:trigger_action)
-
-          line = line.strip.delete_prefix!('[')
-
-          line.split(']', 2).then do |trigger, action|
-            trigger.strip!
-            action.strip!
-            trg = make_trigger_hash
-            trg[:text] = trigger
-            story[:chunks][-1][:content] << trg
-
-            # if this content is conditional, add the condition to the current element
-
-            if context.include?(:condition_block) || context.include?(:condition_block)
-              condition = story[:chunks][-1][:conditions][-1]
-              story[:chunks][-1][:content][-1][:condition] = condition
-              story[:chunks][-1][:content][-1][:condition_segment] = @condition_segment_count
-            end
-
-            ### identify and catch chunk id action (return)
-            # if action.end_with?(')')
-            if action.include?(')')
-              action.delete_prefix!('(')
-              # action.delete_suffix!(')')
-              action = action[0...action.rindex(')')]
-
-              if action.start_with?('#') || action.strip.empty?
-                # capture simple navigation
-                story[:chunks][-1][:content][-1].action = action
-                return true
-              elsif action.start_with?(': ') && action.end_with?(' :')
-                # capture single line trigger action
-                action.delete_prefix!(': ')
-                action.delete_suffix!(' :')
-                # a kludge that identifies a Ruby trigger action from a normal action 
-                # so actions that begin with '#' are not mistaken for navigational actions
-                action = '@@@@' + action
-                story[:chunks][-1][:content][-1].action = action
-                return true
-              else
-                # not navigation, not a single line action, not a multiline action
-                raise("UNCLEAR TRIGGER ACTION in line #{line_no + 1}")
-              end
-
-            # identify action block and open context (keep parsing)
-            elsif action.end_with?('(:')
-              context << :trigger_action
-            end
-
-            return true
-          end
-
-        # identfy action block close and close context, if open (return)
-        elsif line.strip.start_with?(':)') && context.include?(:trigger_action)
-          context.delete(:trigger_action)
-          return true
-
-        # if context is open, add line to trigger action (return)
-        elsif context.include?(:trigger_action) || context.include?(:trigger_action)
-          if story[:chunks][-1][:content][-1].action.size.zero?
-            # a kludge that identifies a Ruby trigger action from a normal action 
-            # so actions that begin with '#' are not mistaken for navigational actions
-            line = '@@@@' + line
-          end
-          story[:chunks][-1][:content][-1].action += line
-          return true
-        end
-      end 
 
       # check to see whether it is safe to proceed based on
       # context rules
@@ -601,12 +184,6 @@ Please add a title to the top of the Story File. Example:
         [line[0...idx], line[idx + delimiter.length...line.length]]
       end
 
-      def make_blank_hash
-        {
-          type: :blank
-        } 
-      end
-
       def make_slug(line)
         # make slug for GFM compatibility
         l = line.downcase.gsub(' ', '-')
@@ -636,49 +213,12 @@ Please add a title to the top of the Story File. Example:
         }
       end
 
-      def make_rule_hash
-        {
-          type: :rule,
-          weight: 1
-        }
-      end
-
       def make_atom_hash(text = '', styles = [], condition = [], condition_segment = '')
         {
           text: text,
           styles: styles,
           condition: condition,
           condition_segment: condition_segment
-        }
-      end
-
-       def make_code_block_hash
-        {
-          type: :code_block,
-          text: ''
-        }
-      end
-
-      def make_heading_hash
-        {
-          type: :heading,
-          text: ''
-        }
-      end
-
-      def make_trigger_hash
-        {
-          type: :button,
-          text: '',
-          action: ''
-        }
-      end
-
-      
-      def make_image_hash
-        {
-          type: :image,
-          path: ''
         }
       end
 
