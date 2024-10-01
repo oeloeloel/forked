@@ -103,5 +103,21 @@ module Forked
         text: text
       }.label!(data.style.paragraph).merge!(font_style)
     end
+
+    def get_font_style(styles)
+      if styles.include?(:bold) && styles.include?(:italic)
+        data.style.bold_italic
+      elsif styles.include? :bold_italic
+        data.style.bold_italic
+      elsif styles.include? :bold
+        data.style.bold
+      elsif styles.include? :italic
+        data.style.italic
+      elsif styles.include? :code
+        data.style.code
+      else
+        data.style.paragraph
+      end
+    end
   end
 end
