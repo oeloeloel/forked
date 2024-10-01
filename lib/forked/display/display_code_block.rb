@@ -23,7 +23,8 @@ module Forked
       rect = {
         x: display.margin_left, 
         y: y_pos - box_height.to_i, 
-        w: display.w, h: box_height,
+        w: display.w, 
+        h: box_height.to_i,
         r: code_block_box.r,
         g: code_block_box.g,
         b: code_block_box.b
