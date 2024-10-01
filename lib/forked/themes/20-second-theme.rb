@@ -29,7 +29,7 @@ module TWENTY_SECOND_THEME
       end
 
       {
-        display: {
+        background: {
           background_color: { r: 0x2f, g: 0x2f, b: 0x54 },
         },
         heading: {

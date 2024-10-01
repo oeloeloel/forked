@@ -1,5 +1,5 @@
 KIFASS_THEME = {
-  display: {
+  background: {
     background_color: { r: 0x41, g: 0x15, b: 0x79 },
   },
   heading: {

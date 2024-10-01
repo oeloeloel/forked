@@ -1,5 +1,8 @@
 DARK_MODE = {
   display: {
+    # nothing to see here
+  },
+  background: {
     background_color: { r: 35, g: 35, b: 35 },
   },
   heading: {
