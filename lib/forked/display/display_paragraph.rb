@@ -1,7 +1,6 @@
 module Forked
   # Display class
   class Display
-
     ### PARAGRAPH
 
     def display_paragraph(y_pos, item)
