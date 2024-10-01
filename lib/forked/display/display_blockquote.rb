@@ -28,7 +28,6 @@ module Forked
         y: next_y_pos.to_i,
         w: display.w - blockquote_box.margin_left - blockquote_box.margin_right,
         h: box_height,
-        path: :solid,
         a: 25,
         r: blockquote_box.r,
         g: blockquote_box.g,
