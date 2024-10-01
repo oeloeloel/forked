@@ -7,11 +7,27 @@ module TWENTY_SECOND_THEME
   PALE_PURPLE   = { r: 0x4f, g: 0x4f, b: 0x74 }
   BLUE   =        { r: 0x97, g: 0xbf, b: 0xe8 }
   WHITE  =        { r: 255,  g: 255,  b: 255  }
-  YELLOW_DARK   = { r: 0x65, g: 0x60, b: 0x55 } 
+  YELLOW_DARK =   { r: 0x65, g: 0x60, b: 0x55 }
+  CODE_COLOR =    { r: 255, g: 255, b: 125 }
+  CODE_COLOR =    { r: 9, g: 108, b: 57 }
+
+  REGULAR_FONT = 'fonts/mali/mali-regular.ttf'.freeze
+  BOLD_FONT = 'fonts/mali/mali-bold.ttf'.freeze
+  ITALIC_FONT = 'fonts/mali/mali-italic.ttf'.freeze
+  MEDIUM_ITALIC_FONT = 'fonts/mali/mali-mediumitalic.ttf'.freeze
+  BOLD_ITALIC_FONT = 'fonts/mali/mali-bolditalic.ttf'.freeze
+  CODE_FONT = 'fonts/mali/mali-semibold.ttf'.freeze
 
   class << self
-
     def theme
+      body_font_size_enum = if ($gtk.orientation == :portrait) || 
+        $gtk.platform?(:ios) || 
+        $gtk.platform?(:android)
+        6
+      else
+        2
+      end
+
       {
         display: {
           background_color: { r: 0x2f, g: 0x2f, b: 0x54 },
@@ -19,36 +35,37 @@ module TWENTY_SECOND_THEME
         heading: {
           **BLUE,
           size_enum: $gtk.orientation == :landscape ? 8 : 16,
-          font: 'fonts/mali/mali-bold.ttf',
+          font: BOLD_FONT,
         },
         rule: {
           **BLUE
         },
         paragraph: {
           **WHITE,
-          size_enum: $gtk.orientation == :portrait ? 6 : 2,
-          font: 'fonts/mali/mali-regular.ttf',
+          size_enum: body_font_size_enum,
+          font: REGULAR_FONT,
           spacing_after: 0.4,
         },
         code_block: {
           **BLUE,
-          size_enum: $gtk.orientation == :portrait ? 6 : 2,
+          size_enum: body_font_size_enum,
+          font: CODE_FONT,
         },
         code_block_box: {
           **PALE_PURPLE
         },
         blockquote: {
           **PURPLE,
-          font: 'fonts/mali/mali-mediumitalic.ttf',
-          size_enum: $gtk.orientation == :portrait ? 6 : 2,
+          font: ITALIC_FONT,
+          size_enum: body_font_size_enum,
         },
         blockquote_box: {
           **BLUE
         },
         button: {
           r: 51, g: 51, b: 51,
-          font: 'fonts/mali/mali-regular.ttf',
-          size_enum: $gtk.orientation == :portrait ? 6 : 2,
+          font: REGULAR_FONT,
+          size_enum: body_font_size_enum,
         },
         button_box: {
           **YELLOW_PALE
@@ -72,20 +89,53 @@ module TWENTY_SECOND_THEME
           **PALE_GREEN
         },
         bold: {
-          font: 'fonts/mali/mali-bold.ttf',
-          **WHITE
+          name: "bold",
+          font: BOLD_FONT,
+          **WHITE,
+          size_enum: body_font_size_enum,
         },
         italic: {
-          font: 'fonts/mali/mali-italic.ttf',
-          **WHITE
+          name: "italic",
+          font: ITALIC_FONT,
+          **WHITE,
+          size_enum: body_font_size_enum,
         },
         bold_italic: {
-          font: 'fonts/mali/mali-bolditalic.ttf',
-          **WHITE 
+          name: "bold_italic",
+          font: BOLD_ITALIC_FONT,
+          **WHITE,
+          size_enum: body_font_size_enum,
         },
         code: {
-          font: 'fonts/mali/mali-semibold.ttf',
-          **BLUE
+          name: "code",
+          # size_enum: 20,
+          font: CODE_FONT,
+          **BLUE,
+          size_enum: body_font_size_enum,
+        },
+        blockquote_bold: {
+          name: "blockquote_bold",
+          font: BOLD_ITALIC_FONT,
+          **PURPLE,
+          size_enum: body_font_size_enum,
+        },
+        blockquote_italic: {
+          name: "blockquote_italic",
+          font: REGULAR_FONT,
+          **PURPLE,
+          size_enum: body_font_size_enum,
+        },
+        blockquote_bold_italic: {
+          name: "blockquote_bold_italic",
+          font: BOLD_FONT,
+          **PURPLE,
+          size_enum: body_font_size_enum,
+        },
+        blockquote_code: {
+          name: "blockquote_code",
+          font: CODE_FONT,
+          **CODE_COLOR,
+          size_enum: body_font_size_enum,
         }
       }
     end
