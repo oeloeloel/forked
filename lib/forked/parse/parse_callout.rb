@@ -305,9 +305,13 @@ module Forked
         last = story&.chunks&.[](-1)&.content
         sub_content = last&.[](-1)&.content
 
-        return sub_content if sub_content && context != [:paragraph]
+        if !context.include?(:callout) &&
+           !context.include?(:blockquote)
 
-        last
+          last
+        else
+          sub_content
+        end
       end
 
       # add a string to the front of the line array
