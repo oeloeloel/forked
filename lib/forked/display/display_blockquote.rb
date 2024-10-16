@@ -11,6 +11,7 @@ module Forked
       next_y_pos = y_pos - blockquote_box.padding_top
       labels = []
 
+      # return y_pos
       item.content.each do |para|
         result = display_blockquote_paragraph(next_y_pos, para)
         @last_printed_element_type = :blockquote_paragraph
@@ -65,6 +66,7 @@ module Forked
       args.state.forked.forked_display_last_element_empty = false
 
       empty_paragraph = true # until proven false
+
       item.atoms.each_with_index do |atom, i|
         # when we're at the end of the paragraph and no atoms have had any text
         # mark it as empty so we know not to remove added 'spacing after'

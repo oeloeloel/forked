@@ -201,7 +201,6 @@ module Forked
       state.forked.options = []
 
       state.forked.navigated = true
-
       process_new_chunk
     end
 
@@ -316,7 +315,6 @@ Tell Akz to write a better error message."
     end
 
     def present(args)
-
       display_lines = state.forked.current_lines.copy
       display_lines.each do |element|
         # deal first with content that contains atoms
@@ -380,6 +378,8 @@ Tell Akz to write a better error message."
       if @hashed_display == new_hash && !@refresh
         return
       else 
+        $second_hash ||= @hashed_display unless $first_hash.nil?
+        $first_hash ||= @hashed_display
         @display.update(display_lines, state.forked.navigated)
         @hashed_display = new_hash
         @refresh = false
@@ -719,9 +719,11 @@ Tell Akz to write a better error message."
       return "Test does not contain two marks" if test_mark.count < 2
 
       subject = outputs.primitives[test_mark[0]..test_mark[1]]
+      subject_hash = subject.to_s.hash
 
-      if expect.to_s != subject.to_s
-        puts "Subject:\n#{subject}" if print_subject
+      if expect != subject_hash 
+        puts "Subject:\n#{subject_hash}"
+        putz ["Subject:\n#{subject}"] if print_subject
         return "Test failed"
       end
 

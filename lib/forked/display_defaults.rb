@@ -41,7 +41,7 @@ def default_display
     margin_left: ml,
     margin_top: mt = 60,
     margin_right: mr = ml,
-    margin_bottom: mb = mr,
+    margin_bottom: mb = 40,
     w: $args.grid.w - (ml + mr),
     h: $args.grid.h - (mb + mt)
   }
@@ -96,7 +96,8 @@ def default_box
     margin_right: 0,
     margin_top: 0,
     margin_bottom: 0,
-    min_height: 0
+    min_height: 0,
+    min_w: 0,
   }
 end
 
@@ -159,16 +160,17 @@ def default_blockquote_box
     margin_right: 0,
     margin_top: 10,
     margin_bottom: 12,
-
     min_height: 0 # default_blockquote_image[:height] + 20
   )
 end
 
 def default_blockquote_image
   {
-    width: 80,
-    height: 80,
-    path: 'sprites/haunted.png'
+    **default_image_style,
+    w: 80,
+    h: 80,
+    path: 'sprites/haunted.png',
+    margin_right: 10,
   }
 end
 
@@ -280,6 +282,10 @@ end
 
 def default_image_style
   {
+    margin_left: 0,
+    margin_right: 0,
+    margin_top: 0,
+    margin_bottom: 0,
     spacing_after: 20,
     anchor_x: 0.5,
     x: $args.grid.w.half

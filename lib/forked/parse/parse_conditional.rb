@@ -6,6 +6,9 @@ module Forked
 
       def parse_condition_block2(escaped, line, context, story, line_no, story_lines)
         return unless context_safe?(context, [:code_block, :action_block])
+
+
+        # putz "=== parse_condition_block2(escaped, line, context, story, line_no, story_lines)"
         match_start = '<:'
         match_separator = '::'
         match_end = ':>'
@@ -25,6 +28,8 @@ module Forked
         else
           # condition was not found on line
         end
+
+        return unless context.include? :condition_block
 
         result = parse_opening_segment(line, match_separator, context, story_lines)
         case result
@@ -92,7 +97,7 @@ module Forked
         
         # check for opening condition block
         result = split_at_first_unescaped_instance(line, match_start)
-        
+
         # return false if match does not exist (escaped at this point)
         return unless result
         
@@ -114,6 +119,7 @@ module Forked
 
         # if match is followed, return string right of match
         # if match is not followed, we're done, return true
+
         return result[1].strip.empty? ? true : result[1]
       end
 
@@ -142,7 +148,7 @@ module Forked
 
           # unshift match start + right text to lines array (if right text is not blank)
           unshift_to_line_array(story_lines, ":> #{result[1]}") #unless result[1].strip.empty?
-        
+
           # return array [left of match, match + right of match]
           return result
         end
@@ -176,7 +182,10 @@ module Forked
       end
 
       def parse_opening_segment(line, match_separator, context, story_lines)
+
+        putz "parse_opening_segment(line, match_separator, context, story_lines)"
         # check segment opening
+
         if line.include?(match_separator) && 
           (context.include?(:condition_block) ||
           context.include?(:condition_segment))
@@ -252,6 +261,8 @@ module Forked
       #   element
       #   nil if the element is not found
       def get_last_element(story)
+        last_chunk = story&.chunks&.[](-1)
+
         story[:chunks][-1][:content][-1]
       end
 

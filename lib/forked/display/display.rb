@@ -3,8 +3,10 @@ require_relative 'display_blockquote.rb'
 require_relative 'display_button.rb'
 require_relative 'display_code_block.rb'
 require_relative 'display_heading.rb'
+require_relative 'display_image.rb'
 require_relative 'display_paragraph.rb'
 require_relative 'display_rule.rb'
+require_relative 'display_callout.rb'
 
 $gtk.reset
 
@@ -57,9 +59,11 @@ module Forked
       theme = theme.theme if theme.is_a?(Module)
 
       theme.each do |k, v|
-        next unless data.style[k]
-
-        data.style[k].merge!(v)
+        if data.style[k]
+          data.style[k].merge!(v)
+        else
+          data.style[k] = v
+        end
       end
 
       # TODO: this line might not be needed (seems like it's there
@@ -358,6 +362,8 @@ module Forked
           next_y_pos = display_image(y_pos, item)
         when :blank
           # nothing
+        else
+          next_y_pos = display_callout(y_pos, item)
         end
 
         if !(next_y_pos - y_pos).zero? ||
@@ -533,6 +539,16 @@ module Forked
         end
       end
       arr
+    end
+
+    def size_enum_to_size_px(size_enum)
+      size_enum * 2 + 22
+    end
+
+    # converts label size_px to size_enum
+    # rounds down (so size_px 22 and 23 are bothe size_enum 0)
+    def size_px_to_size_enum(size_px)
+      (size_px - 22).div(2)
     end
 
     ########

@@ -108,7 +108,6 @@ module TWENTY_SECOND_THEME
         },
         code: {
           name: "code",
-          # size_enum: 20,
           font: CODE_FONT,
           **BLUE,
           size_enum: body_font_size_enum,

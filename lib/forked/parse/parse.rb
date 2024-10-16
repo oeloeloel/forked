@@ -5,7 +5,7 @@ require_relative 'parse_c_comment.rb'
 require_relative 'parse_code_block.rb'
 require_relative 'parse_code_fence.rb'
 require_relative 'parse_conditional.rb'
-require_relative 'parse_generic.rb'
+require_relative 'parse_callout.rb'
 require_relative 'parse_heading.rb'
 require_relative 'parse_html_comment.rb'
 require_relative 'parse_image.rb'
@@ -98,14 +98,14 @@ module Forked
           next if result
 
           ### IMAGE
-          result = parse_image(escaped, context, story, line_no)
+          result = parse_image2(escaped, context, story, line_no)
           next if result
 
           ### CONDITION
           result = parse_condition_block2(escaped, line, context, story, line_no, story_lines)
           case result
           when String # line must change, continue processing
-            line = result 
+            line = result
             escaped = escape(line, @escapable)
           when TrueClass
             next # finished processing line, go to next line
@@ -123,12 +123,22 @@ module Forked
           result = parse_action_block(escaped, line, context, story, line_no)
           next if result
 
-          ### GENERIC ELEMENT
-          result = parse_generic(escaped, line, context, story, line_no)
-          next if result
+          # ### PARSE CALLOUT
+          result = parse_callout(escaped, line, context, story, line_no, story_lines)
+          case result
+          when String # line must change, continue processing
+            line = result
+            escaped = escape(line, @escapable)
+          when TrueClass
+            next # finished processing line, go to next line
+          when NilClass
+            # nothing doing, continue processing line
+          else
+            raise "Unexpected result parsing condition block: #{result.class}"
+          end
 
           # PARAGRAPH
-          parse_paragraph(escaped, context, story, line_no)
+          parse_paragraph2(escaped, context, story, line_no)
 
           # MEANINGFUL BLANK LINE
           result = parse_blank(line, context, story, line_no)
@@ -142,7 +152,7 @@ module Forked
       # context rules
       def context_safe?(context, prohibited = [], mandatory = [])
         # match at least one prohibited context
-        context_prohibited = array_intersect?(context, prohibited) 
+        context_prohibited = array_intersect?(context, prohibited)
         # match all mandatory contexts
         context_mandatory = mandatory.empty? || context.intersection(mandatory) == mandatory.sort
         context_mandatory && !context_prohibited
@@ -160,6 +170,7 @@ module Forked
         i = 0
         while i < haystack.length
           return i unless haystack.chars[i] == needle
+
           i += 1
         end
         i
@@ -173,14 +184,14 @@ module Forked
           backcheck = haystack[offset...idx].reverse
           reps = char_reps(backcheck, '\\')
           return idx unless reps.odd?
-          
+
           offset = idx + 1
         end
       end
 
       def l_split(line, delimiter)
-        return unless idx = line.index(delimiter)
-        
+        return unless (idx = line.index(delimiter))
+
         [line[0...idx], line[idx + delimiter.length...line.length]]
       end
 
@@ -209,7 +220,8 @@ module Forked
           id: '',
           actions: [],
           conditions: [],
-          content: []
+          content: [],
+          parse_actions: []
         }
       end
 
@@ -275,7 +287,7 @@ module Forked
 
       # escapes all instances of characters in array that exist in str
       def escape(str, arr)
-        arr.each { |chr| 
+        arr.each { |chr|
           str = escape_char(str, chr)
         }
         str
