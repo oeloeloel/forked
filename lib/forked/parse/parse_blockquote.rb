@@ -13,8 +13,6 @@ module Forked
 
         if line.strip.start_with?('>')
           line.delete_prefix!('>')
-          return if line.strip.empty?
-
           unless context.include?(:blockquote)
             context_open(context, :blockquote)
             story[:chunks][-1][:content] << make_blockquote_hash
