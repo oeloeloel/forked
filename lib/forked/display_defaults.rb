@@ -27,6 +27,13 @@ def config_defaults
     blockquote_italic: default_blockquote_italic_style,
     blockquote_bold_italic: default_blockquote_bold_italic_style,
     blockquote_code: default_blockquote_code_style,
+    callout: default_callout,
+    callout_box: default_callout_box,
+    callout_image: default_callout_image,
+    callout_bold: default_callout_bold,
+    callout_italic: default_callout_italic,
+    callout_bold_italic: default_callout_bold_italic,
+    callout_code: default_callout_code
   }
 end
 
@@ -289,6 +296,68 @@ def default_image_style
     spacing_after: 20,
     anchor_x: 0.5,
     x: $args.grid.w.half
+  }
+end
+
+def default_callout
+  {
+    **default_blockquote,
+    r: 255 - 204, g: 255 - 179, b: 255 - 153,
+  }
+end
+
+def default_callout_box
+  {
+    **default_blockquote_box,
+    r: 168, g: 222, b: 244,
+    padding_top: 10,
+    padding_right: 10,
+    padding_left: 10,
+    padding_bottom: 10,
+    margin_top: 0,
+    margin_left: 100,
+    margin_right: 100,
+    margin_bottom: 20,
+    min_height: 100,
+  }
+
+end
+
+def default_callout_image
+  {
+    **default_image_style,
+    w: 80, h: 80,
+    margin_left: 10,
+    margin_top: 10,
+    margin_right: 10,
+    margin_bottom: 10,
+  }
+end
+
+def default_callout_bold
+  {
+    **default_bold_style,
+    r: 51, g: 76, b: 102,
+  }
+end
+
+def default_callout_italic
+  {
+    **default_italic_style,
+    r: 51, g: 76, b: 102,
+  }
+end
+
+def default_callout_bold_italic
+  {
+    **default_bold_italic_style,
+    r: 51, g: 76, b: 102,
+  }
+end
+
+def default_callout_code
+  {
+    **default_code_style,
   }
 end
 
