@@ -2,6 +2,33 @@ module Forked
   # forked parser
   class Parser
     class << self
+
+      ##########
+      # CALLOUT
+      # =========
+      # example: callout
+      # Text only
+      # <? callout ?? An important message! ?>
+
+      # Image and text:
+      # <? callout ??
+      #   ![](sprites/biohazard.png)
+      #   An important message!
+      # ?>
+
+      # Text and image:
+      # <? callout ??
+      #   ![](sprites/biohazard.png)
+      #   An important message!
+      # ?>
+
+      # Image must be at start or end of content
+      # Images that are not at the start or end will be ignored
+      # Only one image is supported, other images will be ignored
+      # Only image and text (with inline styles) are supported
+      # Embedding other elements within callouts may have unpredictable results
+
+
       # parse callout block opening, closing, code section, segments
       def parse_callout(_escaped, line, context, story, _line_no, story_lines)
         return unless context_safe?(context, %i[code_block action_block])
@@ -9,17 +36,6 @@ module Forked
         match_start = '<?'
         match_separator = '??'
         match_end = '?>'
-
-        # example: callout
-        # <? callout ?? Do something important ?>
-        # <?
-        #   callout
-        # ??
-        #   Do something important
-        # ?>
-
-        # that calls the callout method, which creates the necessary
-        # data to be inserted into the hash.
 
         # check for and handle an opening
         # if open is found on line AND NOTHING ELSE, return true
@@ -204,8 +220,8 @@ module Forked
       end
 
       def parse_opening_callout_segment(line, match_separator, context, story_lines)
-        putz "wrong place"
         # check segment opening
+
         if line.include?(match_separator) &&
            (context.include?(:callout) ||
            context.include?(:callout_segment))
@@ -218,7 +234,7 @@ module Forked
               # there's something before the segment (code?)
               line = result[0]
               # # unshift match_separator + right text to lines array (if right text is not blank)
-              unshift_to_line_array(story_lines, ":: #{result[1]}") # unless result[1].strip.empty?
+              unshift_to_line_array(story_lines, "#{match_separator} #{result[1]}") # unless result[1].strip.empty?
               return result[0] if context.include?(:callout_segment)
 
               return result
@@ -318,10 +334,6 @@ module Forked
           haystack[first_match + needle.length..]
         ]
       end
-
-      # def parse_callout_content(story)
-
-      # end
 
       def make_callout_hash
         {
