@@ -362,7 +362,10 @@ module Forked
           next_y_pos = display_image(y_pos, item)
         when :blank
           # nothing
+        when :hidden
+          # nothing
         else
+          putz "what happened here? #{item.type}"
           next_y_pos = display_callout(y_pos, item)
         end
 
