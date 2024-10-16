@@ -364,9 +364,10 @@ module Forked
           # nothing
         when :hidden
           # nothing
-        else
-          putz "what happened here? #{item.type}"
+        when :callout
           next_y_pos = display_callout(y_pos, item)
+        else
+          # nothing
         end
 
         if !(next_y_pos - y_pos).zero? ||
