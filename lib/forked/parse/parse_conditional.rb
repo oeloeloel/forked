@@ -182,14 +182,11 @@ module Forked
       end
 
       def parse_opening_segment(line, match_separator, context, story_lines)
-
-        putz "parse_opening_segment(line, match_separator, context, story_lines)"
         # check segment opening
-
         if line.include?(match_separator) && 
           (context.include?(:condition_block) ||
           context.include?(:condition_segment))
-        
+
           result = split_at_first_unescaped_instance(line, match_separator)
           # the split was made and
           # there is content to the left of the split
