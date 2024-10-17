@@ -82,7 +82,6 @@ module Forked
         font_style = get_blockquote_font_style(atom.styles)
         font_style.size_px = args.gtk.calcstringbox('X', font_style.size_enum, font_style.font)[1]
 
-        # default_space_w = args.gtk.calcstringbox(' ', font_style.size_enum, paragraph.font)[0]
         words = split_preserve_one_space(atom.text)
         line_frag = ''
         until words.empty?

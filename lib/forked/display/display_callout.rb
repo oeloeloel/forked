@@ -12,7 +12,7 @@ module Forked
         x: display.margin_left,
         y: display.margin_bottom,
         w: display.w,
-        h: display.h,
+        h: display.h
       }.border!
 
       outer_rect = {
@@ -40,7 +40,7 @@ module Forked
       }
 
       rect.h = rect.h.greater(inner_rect.h + box.padding_top + box.padding_bottom)
-      outer_rect.h = outer_rect.h.greater(rect.h + box.margin_top + box.margin_bottom) 
+      outer_rect.h = outer_rect.h.greater(rect.h + box.margin_top + box.margin_bottom)
 
       next_y_pos = inner_rect.y
       labels = []
@@ -48,33 +48,29 @@ module Forked
       text_rect = nil
       im = nil
 
-      # if there is an image
-      #   if the image is first
+
       if item.content.first.type == :image
+        # if the first element is an image, display it on the left
         image_box = inner_rect.dup
         im = display_callout_image(image_box, item.content.first, :left)
       elsif item.content.last.type == :image
+        # if the first element is not an image but the last element is,
+        # display it on the right
         image_box = inner_rect.dup
         im = display_callout_image(image_box, item.content.last, :right)
       end
 
       inner_rect = image_box if image_box
-      #     display image on right
-      #   if the image is anywhere else
-      #     don't display the image
-
-      # if there is text
-      #   display text in remaining space not consumed by image
 
       item.content.each do |part|
-        if part.type == :paragraph
-          text_rect = inner_rect.dup
-          result = display_callout_paragraph(text_rect, next_y_pos, part)
-          @last_printed_element_type = :callout_paragraph
-          labels << result[1]
-          next_y_pos = result[0]
-          text_rect.h = text_rect.y - next_y_pos
-        end
+        next unless part.type == :paragraph
+
+        text_rect = inner_rect.dup
+        result = display_callout_paragraph(text_rect, next_y_pos, part)
+        @last_printed_element_type = :callout_paragraph
+        labels << result[1]
+        next_y_pos = result[0]
+        text_rect.h = text_rect.y - next_y_pos
       end
 
       # get out if no valid elements to display
@@ -111,8 +107,6 @@ module Forked
 
     def display_callout_paragraph(outer_rect, y_pos, item)
       callout = data.style.paragraph
-      callout_box = data.style.callout_box
-      display = data.style.display
 
       callout.size_px = args.gtk.calcstringbox('X', callout.size_enum, callout.font)[1]
       output_labels = []
@@ -126,22 +120,9 @@ module Forked
       new_y_pos = y_pos
       x_pos = rect.x
 
-      # if @last_printed_element_type == :callout_paragraph
-      #   # paragraph follows paragraph, so undo the added 'spacing after'
-      #   new_y_pos += blockquote.size_px * blockquote.spacing_after
-      #   # paragraph follows paragraph, so add 'spacing between'
-      #   new_y_pos -= blockquote.size_px * blockquote.spacing_between
-      # else
-      #   puts @last_printed_element_type
-      # end
-
       if @last_printed_element_type == :callout_paragraph
-      #   # paragraph follows paragraph, so undo the added 'spacing after'
-      #   new_y_pos += blockquote.size_px * blockquote.spacing_after
-      #   # paragraph follows paragraph, so add 'spacing between'
+        # paragraph follows paragraph, so add 'spacing between'
         new_y_pos -= callout.size_px * callout.spacing_between
-      # else
-      #   puts @last_printed_element_type
       end
 
       args.state.forked.forked_display_last_element_empty = false
@@ -153,11 +134,6 @@ module Forked
         empty_paragraph = false if atom[:text].strip != ''
         if i == item.atoms.size - 1 && empty_paragraph
           args.state.forked.forked_display_last_element_empty = true
-          # previous element was a paragraph? remove the between spacing
-          # new_y_pos += blockquote.size_px * blockquote.spacing_between
-          # add 'spacing after'. Next element might not be a paragraph.
-          # new_y_pos -= blockquote.size_px * blockquote.spacing_after
-          # new_y_pos -= blockquote.size_px * blockquote.spacing_between
         end
 
         font_style = {
@@ -205,23 +181,19 @@ module Forked
           end
 
           # we made it this far and this is the last atom? add
-          # line spacing and 'spacing after'
+          # line spacing
           if i == item.atoms.size - 1
             new_y_pos -= callout.size_px * callout.line_spacing
-            # new_y_pos -= blockquote.size_px * blockquote.spacing_after
-            # new_y_pos -= blockquote.size_px * blockquote.spacing_between
           end
         end
 
         # this is the last atom and it's empty but the paragraph is not empty?
-        # (interpolation will do this), apply paragraph spacing now because
+        # (interpolation will do this), apply spacing now because
         # we won't get there otherwise
         if  atom[:text] == '' &&
             !empty_paragraph &&
             i == item.atoms.size - 1
           new_y_pos -= callout.size_px * callout.line_spacing
-          # new_y_pos -= blockquote.size_px * blockquote.spacing_after
-          # new_y_pos -= blockquote.size_px * blockquote.spacing_between
         end
       end
 
@@ -244,36 +216,35 @@ module Forked
     # display image 3 returns the rect used by the image including the image margins
     def display_callout_image(outer_rect, item, align)
       image = data.style.callout_image
-      # display = data.style.display
 
       if align == :left
-      outer_rect.w = outer_rect.w - image.w - image.margin_left - image.margin_right
+        outer_rect.w = outer_rect.w - image.w - image.margin_left - image.margin_right
 
-      image_rect = {
-        x: outer_rect.x + image.margin_left,
-        y: (outer_rect.y - image.margin_top).to_i,
-        w: image.w,
-        h: image.h,
-        anchor_y: 1,
-      }
-
-      outer_rect.h = image_rect.h + image.margin_top + image.margin_bottom
-      outer_rect.x += image_rect.w + image.margin_left + image.margin_right
-
-      elsif align == :right
         image_rect = {
-          x: outer_rect.w + outer_rect.x - image.w - image.margin_right, 
-          y: outer_rect.y - image.margin_top, 
+          x: outer_rect.x + image.margin_left,
+          y: (outer_rect.y - image.margin_top).to_i,
           w: image.w,
           h: image.h,
           anchor_y: 1
         }
-  
+
+        outer_rect.h = image_rect.h + image.margin_top + image.margin_bottom
+        outer_rect.x += image_rect.w + image.margin_left + image.margin_right
+
+      elsif align == :right
+        image_rect = {
+          x: outer_rect.w + outer_rect.x - image.w - image.margin_right,
+          y: outer_rect.y - image.margin_top,
+          w: image.w,
+          h: image.h,
+          anchor_y: 1
+        }
+
         outer_rect.h = image_rect.h + image.margin_top + image.margin_bottom
         outer_rect.w -= image_rect.w + image.margin_left + image.margin_right
       end
 
-
+      # debug lines
       # outputs.static_debug << [
       #   outer_rect.dup.border!(r: 255, g: 127),
       #   image_rect.dup.border!(g: 255),
@@ -284,22 +255,23 @@ module Forked
       # characters in it
       # But putting it into a _new_ string makes it work
       path = item[:path].strip.to_s
-      merger = {}
-      if path.end_with?('}') && path.include?('{')
-        path, remnant = Forked::Parser.pull_out('{', '}', path)
-        merger = eval('{' + remnant + '}')
-      end
+
+      # merger allows author to add a style to some elements
+      # not implemented here but could be in future
+      # merger = {}
+      # if path.end_with?('}') && path.include?('{')
+      #   path, remnant = Forked::Parser.pull_out('{', '}', path)
+      #   merger = eval('{' + remnant + '}')
+      # end
 
       # h = merger.h || 80
       # w = merger.w || 80
 
-      im = {
+      {
         **image_rect,
-        path: path,
+        path: path
       }
-      im
     end
-
 
     def get_callout_font_style(styles)
       if styles.include?(:bold) && styles.include?(:italic)

@@ -366,8 +366,6 @@ module Forked
           # nothing
         when :callout
           next_y_pos = display_callout(y_pos, item)
-        else
-          # nothing
         end
 
         if !(next_y_pos - y_pos).zero? ||

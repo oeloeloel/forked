@@ -1,9 +1,6 @@
-
 module Forked
   # Display class
   class Display
-    ### CODE BLOCK
-
     def display_code_block(y_pos, item, _previous_element_type)
       code_block = data.style.code_block
       display = data.style.display
@@ -21,9 +18,9 @@ module Forked
       temp_y_pos = y_pos
 
       rect = {
-        x: display.margin_left, 
-        y: y_pos - box_height.to_i, 
-        w: display.w, 
+        x: display.margin_left,
+        y: y_pos - box_height.to_i,
+        w: display.w,
         h: box_height.to_i,
         r: code_block_box.r,
         g: code_block_box.g,
@@ -46,8 +43,7 @@ module Forked
       end
 
       y_pos -= box_height
-      # y_pos - code_block.size_px * code_block.spacing_after
-      y_pos -= code_block_box.margin_bottom
+      y_pos - code_block_box.margin_bottom
     end
   end
 end

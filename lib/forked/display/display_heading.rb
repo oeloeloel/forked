@@ -2,8 +2,6 @@
 module Forked
   # Display class
   class Display
-        ### HEADING
-
     def display_heading(y_pos, item, _previous_element_type)
       heading = data.style.heading
       display = data.style.display

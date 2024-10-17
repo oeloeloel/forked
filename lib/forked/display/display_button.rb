@@ -1,10 +1,9 @@
-
 module Forked
   # Display class
   class Display
-        ### BUTTON
     # TODO: prevent buttons from being instantiated if object already exists
     # TODO: wrap up button generation code and put it in the button module
+
     def display_button(y_pos, item, _content, __i)
       button = data.style.button
       display = data.style.display
@@ -23,7 +22,6 @@ module Forked
         button_box = data.style.disabled_button_box
       end
 
- 
       text_w, button.size_px = args.gtk.calcstringbox(item.text, button.size_enum, button.font)
       text_w = text_w.to_i
       button_h = (button.size_px + button_box.padding_top + button_box.padding_bottom)

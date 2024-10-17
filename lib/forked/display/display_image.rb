@@ -1,15 +1,12 @@
-
 module Forked
   # Display class
   class Display
+    # TODO: consolidate display_image() and display_image2
 
     # display image 2 accepts a rect representing
     # the space available for the image to occupy
     def display_image2(rect, item)
       image = data.style.image
-      display = data.style.display
-
-      # outputs.static_debug << rect.dup.border!(r: 255)
 
       # I don't know why path doesn't work *as is*
       # It's a string, and it doesn't have any odd
@@ -32,12 +29,16 @@ module Forked
         w: w,
         h: h,
         path: path,
-        anchor_x: 0,
+        anchor_x: 0
       }.sprite!
 
       data.primitives << im.merge(merger)
 
-      outputs.static_debug << im.rect.dup.border!(g: 255, b: 255)
+      # debug lines
+      outputs.static_debug << [
+        rect.dup.border!(r: 255),
+        im.rect.dup.border!(g: 255, b: 255)
+      ]
 
       rect.y -= (h + image.spacing_after)
       rect
@@ -59,12 +60,12 @@ module Forked
       end
 
       h = merger.h || 80
-      # w = merger.w || 80
+      w = merger.w || 80
 
       im = {
         x: display.margin_left,
         y: y_pos.to_i - h,
-        w: 80,
+        w: w,
         h: h,
         path: path
       }.sprite!(image)

@@ -1,9 +1,6 @@
-
 module Forked
   # Display class
   class Display
-    ### RULE
-
     def display_rule(y_pos, item, _previous_element_type)
       rule = data.style.rule
       display = data.style.display
