@@ -5,6 +5,29 @@
   * Default theme has been updated to recalculate margins and font sizes when orientation changes.
   * Allow optional theme modules that are recalculated after an orientation change to allow dev to program changes based on orientation and/or grid size, etc.
   * All themes adapted to automatically adjust to orientation changes
+* Callouts
+  * New "Callout" element added. This element is similar to a blockquote but can optionally support an image (placed either to the left or the right of the callout).
+  * Callouts support multiline text, paragraphs and inline text styles
+  * Callouts can be used for any purpose but will be especially useful for:
+    * Displaying important messages or instructions for the player
+    * Displaying quoted speech, with a picture of the speaker embedded into the element
+  * Currently, callouts are created with the following code:
+```
+<? callout ??
+![](path/to/image.png)
+This text is displayed to the **right** of the image
+?>
+```
+
+The above code displays the image to the left of the text. To display the image to the right of the text, simply put the image after the text.
+
+```
+<? callout ??
+This text is displayed to the **left** of the image
+![](path/to/image.png)
+?>
+```
+
 * Blockquotes now allow the same formatting as paragraphs (pargraphs, hard-wrap, italic style, bold style, bold-italic style, code style)
 * Blockquote and Code Block boxes now have rounded corners (buttons can now be composed from multiple primitives)
 * Built-in themes updated to accommodate blockquote styles
@@ -16,6 +39,7 @@
   * The Author Mode sidebar has been moved to the right hand side of the screen to avoid conflict with DragonRuby's Watch features.
   * Author Mode layout adjusted to work with portrait orientation.
   * The FPS counter is now a toggle. In author mode, press `d` to display the FPS counter.
+* Bugfix: Story title displays in window titlebar in DragonRuby version 6+
 
 
 ## Current version
