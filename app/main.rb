@@ -13,7 +13,7 @@ require 'lib/forked/forked.rb'
 
 # This line tells Forked where to find the story file.
 # If you change the name or location of the file, update it here.
-STORY_FILE = 'app/story.md'  # the Forked User Manual
+STORY_FILE = 'app/story.md' # the Forked User Manual
 
 #### Set the theme ####
 # You can change the theme here, or set it in the story file
