@@ -21,7 +21,7 @@ module Forked
       # navigated is passed to display to determine whether to reset
       # the keyboard selection during an update
       # set to false every tick and set to true if navigation happens later
-      state.forked.navigated = false 
+      state.forked.navigated = false
 
       # process player input (mouse, keyboard, controller)
       check_input
@@ -69,7 +69,7 @@ module Forked
 
       # $gtk.set_window_title is (re)added in DR 5.20
       major, minor = $gtk.version.split(".").map { _1.to_i }
-      $gtk.set_window_title(state.forked.title) if (major >= 5 && minor >= 20)
+      $gtk.set_window_title(state.forked.title) if ((major >= 5 && minor >= 20) || major > 5)
 
       # allow story to run one-time setup code that needs to be
       # setup regardless of where we start the story after a reload
