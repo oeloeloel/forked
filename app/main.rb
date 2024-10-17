@@ -14,13 +14,12 @@ require 'lib/forked/forked.rb'
 # This line tells Forked where to find the story file.
 # If you change the name or location of the file, update it here.
 STORY_FILE = 'app/story.md'  # the Forked User Manual
-# STORY_FILE = 'app/peas.md' # the story of the three peas
-# STORY_FILE = 'app/threshold.md # a fragment of a horror story
 
 #### Set the theme ####
 # You can change the theme here, or set it in the story file
 
 THEME = DARK_MODE # Dark background, light text
+# other themes:
 # THEME = LIGHT_MODE # Light background, dark text
 # THEME = KIFASS_THEME # Vibrant colours inspired by the KIFASS game jam
 # THEME = TWENTY_SECOND_THEME # Colour scheme inspired by the 20 Second Game Jam
@@ -38,7 +37,7 @@ def tick args
   if args.tick_count.zero? && args.gtk.platform?(:web)
     # display a black background color so we don't get a white flash
     args.outputs.background_color = { r: 0, g: 0, b: 0 }
-    return 
+    return
   end
 
   # load the story file specified at the top of this page
