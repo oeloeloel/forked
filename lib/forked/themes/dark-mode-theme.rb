@@ -12,7 +12,6 @@ DARK_MODE = {
     r: 204, g: 204, b: 204,
   },
   paragraph: p = {
-    **default_paragraph,
     r: 204, g: 204, b: 204,
   },
   code_block: {
