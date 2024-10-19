@@ -5,7 +5,6 @@ module Forked
       # The title is required. No content can come before it.
       # The Title line starts with a single #
       def parse_title(line, context, story, _line_no)
-
         prohibited_contexts = []
         mandatory_contexts = [:title]
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)

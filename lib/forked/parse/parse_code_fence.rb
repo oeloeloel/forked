@@ -9,7 +9,7 @@ module Forked
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
-        return true
+        true
       end
     end
   end

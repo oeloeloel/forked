@@ -2,10 +2,10 @@ module Forked
   # Forked story file parser
   class Parser
     class << self
-      def parse_html_comment(line, context, line_no)
+      def parse_html_comment(line, context, _line_no)
         prohibited_contexts = [:code_block, :action_block, :condition_code_block, :trigger_action]
         mandatory_contexts = []
-        return line unless context_safe?(context, prohibited_contexts, mandatory_contexts) 
+        return line unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
         left_mark = '<!--'
         right_mark = '-->'
@@ -13,7 +13,7 @@ module Forked
         # catch inline or single line html comment
 
         if line.include?(left_mark) && line.include?(right_mark)
-          line = (pull_out(left_mark, right_mark, line))[0]
+          line = pull_out(left_mark, right_mark, line)[0]
           return line unless line.empty?
 
           return nil

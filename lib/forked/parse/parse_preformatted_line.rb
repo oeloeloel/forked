@@ -5,9 +5,8 @@ module Forked
       # Force a line to display as plain, unformatted text, ignoring any further markup
       # Used for troubleshooting, not part of the specification
       def parse_preformatted_line(line, context, story, _line_no)
-
         return unless line.strip.start_with?('@@')
-        
+
         prohibited_contexts = [:title, :code_block, :action_block, :condition_code_block, :trigger_action]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)

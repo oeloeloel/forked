@@ -1,19 +1,19 @@
-require_relative 'parse_action_block.rb'
-require_relative 'parse_blank.rb'
-require_relative 'parse_blockquote.rb'
-require_relative 'parse_c_comment.rb'
-require_relative 'parse_code_block.rb'
-require_relative 'parse_code_fence.rb'
-require_relative 'parse_conditional.rb'
-require_relative 'parse_callout.rb'
-require_relative 'parse_heading.rb'
-require_relative 'parse_html_comment.rb'
-require_relative 'parse_image.rb'
-require_relative 'parse_paragraph.rb'
-require_relative 'parse_preformatted_line.rb'
-require_relative 'parse_rule.rb'
-require_relative 'parse_title.rb'
-require_relative 'parse_trigger.rb'
+require_relative 'parse_action_block'
+require_relative 'parse_blank'
+require_relative 'parse_blockquote'
+require_relative 'parse_c_comment'
+require_relative 'parse_code_block'
+require_relative 'parse_code_fence'
+require_relative 'parse_conditional'
+require_relative 'parse_callout'
+require_relative 'parse_heading'
+require_relative 'parse_html_comment'
+require_relative 'parse_image'
+require_relative 'parse_paragraph'
+require_relative 'parse_preformatted_line'
+require_relative 'parse_rule'
+require_relative 'parse_title'
+require_relative 'parse_trigger'
 
 module Forked
   # parses the story file
@@ -30,22 +30,17 @@ module Forked
 
         # Empty story
         story = make_story_hash
-
         context = [:title] # we're looking for a title and nothing else right now
-        style_context = [] # tracking inline styles
-
         @escapable = make_escapable_list
-
         story_lines = story_file.lines
         line_no = -1
         @increment_line_no = true
 
-        while(line = story_lines.shift)
+        while (line = story_lines.shift)
           line_no += 1 if @increment_line_no
           @increment_line_no = true
           # puts "#{line_no + 1}: #{line.strip}" unless line.strip.empty?
 
-          sc = escape('\~@@@@@@@@', ['~'])
           escaped = escape(line, @escapable)
 
           ### PREFORMATTED LINE (^@@) and stop parsing it
@@ -179,7 +174,7 @@ module Forked
       def find_first_non_escaping_instance(haystack, needle)
         offset = 0
         while true
-          return unless idx = haystack.index(needle, offset)
+          return unless (idx = haystack.index(needle, offset))
 
           backcheck = haystack[offset...idx].reverse
           reps = char_reps(backcheck, '\\')
@@ -202,7 +197,7 @@ module Forked
         l.chars.each do |c|
           o = c.ord
           if (o >= 97 && o <= 122) || (o >= 48 && o <= 57) || o == 45 || o == 95
-           slug += c
+            slug += c
           end
         end
         slug
@@ -239,7 +234,7 @@ module Forked
           { symbol: :bold_italic, mark: "***" },
           { symbol: :bold_italic, mark: "___" },
           { symbol: :bold, mark: "**" },
-          { symbol: :bold, mark: "__"},
+          { symbol: :bold, mark: "__" },
           { symbol: :italic, mark: "*" },
           { symbol: :italic, mark: "_" },
           { symbol: :code, mark: "`" }
@@ -266,10 +261,91 @@ module Forked
           '`', # code span
           '{', # chunk id, custom style
           '}', # chunk id, custom style
-          '~', # code block
+          '~' # code block
         ]
       end
 
+      # ==================================================
+      # COMMON PARSER METHODS
+      # --------------------------------------------------
+
+      # deletes all elements in context that exist in close
+      # mutates the context array
+      # this will remove ALL matching elments
+      def close_context(context, close = [])
+        context.reject! { |c| close.include? c }
+      end
+
+      # adds all elements in close to context
+      # mutates the context array
+      # does not prevent duplicate values
+      def open_context(context, open = [])
+        context.concat(open)
+      end
+
+      # get_last_element_type
+      # discover the type of the element that was most recently
+      # pushed to the chunk content array
+      # return
+      #   symbol `type`
+      #   nil if the type is not found
+      def last_element_type(story)
+        last_element(story)[:type]
+      end
+
+      # get_last_element
+      # get the element that was most recently
+      # pushed to the story array
+      # TODO: Does this need to change to be like last_content?
+      def last_element(story)
+        last_element = story&.chunks&.[](-1)&.content&.[](-1)
+        sub_element = last_element&.content&.[](-1)
+        return sub_element if sub_element
+
+        last_element
+      end
+
+      # returns the most recently added contents array
+      # which could be the contents attached to the
+      # currently open chunk, or could be the contents
+      # of the most recently added element
+      def last_content(story, context)
+        last = story&.chunks&.[](-1)&.content
+        sub_content = last&.[](-1)&.content
+
+        if !context.include?(:callout) &&
+           !context.include?(:blockquote)
+
+          last
+        else
+          sub_content
+        end
+      end
+
+      # add a string to the front of the line array
+      # prevents line number count from incrementing
+      # so line number reporting is not affected
+      def unshift_to_line_array(line_array, string)
+        line_array.unshift(string)
+        @increment_line_no = false
+      end
+
+      # splits a string (haystack) around a string (needle)
+      # returns an array with two strings
+      # left and right of the split
+      # left or right may be empty if the split begins or ends a line
+      # returns nil if needle does not exist in haystack
+      def split_at_first_unescaped_instance(haystack, needle)
+        return unless haystack.include?(needle)
+
+        first_match = find_first_non_escaping_instance(haystack, needle)
+        return unless first_match
+
+        [
+          haystack[0...first_match],
+          haystack[first_match + needle.length..]
+        ]
+      end
 
       ################
       # STRING HELPERS
@@ -287,24 +363,24 @@ module Forked
 
       # escapes all instances of characters in array that exist in str
       def escape(str, arr)
-        arr.each { |chr|
-          str = escape_char(str, chr)
-        }
+        arr.each { |chr| str = escape_char(str, chr) }
         str
       end
 
       # unescapes all instances of characters in array that exist in str
       def unescape(str, arr)
-        arr.each { |chr| str = unescape_char(str, chr)}
+        arr.each { |chr| str = unescape_char(str, chr) }
         str
       end
 
       # given a string str and string delimiters left and right
       # returns an array containing
-      # [0] the content of the string to the left of the left delimiter + the content of the string to the right of the right delimiter
+      # [0] the content of the string to the left of the left delimiter + the content
+      # of the string to the right of the right delimiter
       # [1] the content of the string between the left and right delimiters
-      # If either or both delimiters are not found, [0] will be an empty string and [1] will contain the original str
-      def pull_out left, right, str
+      # If either or both delimiters are not found, [0] will be an empty string and [1]
+      # will contain the original str
+      def pull_out(left, right, str)
         left_index = str.index(left)
 
         if left_index
@@ -320,8 +396,8 @@ module Forked
       # given a string str and a string delimiter
       # returns the portion of str preceding the delimiter
       # returns nil if the delimiter is not found
-      def left_of_string str, delimiter
-        return unless index = str.index(delimiter)
+      def left_of_string(str, delimiter)
+        return unless (index = str.index(delimiter))
 
         str.slice(0, index)
       end
@@ -329,8 +405,8 @@ module Forked
       # given a string str and a string delimiter
       # returns the portion of str following the delimiter
       # returns nil if the delimiter is not found
-      def right_of_string str, delimiter
-        return unless index = str.index(delimiter)
+      def right_of_string(str, delimiter)
+        return unless (index = str.index(delimiter))
 
         index += delimiter.length
         str.slice(index, str.length)

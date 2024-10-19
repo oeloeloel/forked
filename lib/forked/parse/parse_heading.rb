@@ -5,9 +5,8 @@ module Forked
       # The heading line starts a new chunk
       # The heading line begins with a double #
       def parse_heading(line, context, story, line_no)
-
-        return unless line.strip.start_with?('##') && 
-        !line.strip.start_with?('###') &&
+        return unless line.strip.start_with?('##') &&
+                      !line.strip.start_with?('###')
 
         prohibited_contexts = [:code_block, :action_block, :condition_code_block, :trigger_action]
         mandatory_contexts = []
@@ -50,7 +49,7 @@ module Forked
         story[:chunks] << chk
         true
       end
-      
+
       def make_heading_hash
         {
           type: :heading,

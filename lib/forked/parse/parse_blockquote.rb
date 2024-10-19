@@ -5,7 +5,7 @@ module Forked
       def parse_blockquote(line, context, story, line_no)
         # validate entry
 
-        prohibited_contexts = [:title, :code_block, :heading, :action_block, :condition_code_block, :trigger_action, :callout]
+        prohibited_contexts = %i[title code_block heading action_block condition_code_block trigger_action callout]
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
 
@@ -111,6 +111,7 @@ module Forked
 
           if story.chunks[-1].content[-1]&.type == :blockquote &&
              story.chunks[-1].content[-1].content[-1]&.type == :blockquote_paragraph
+            # it's a blockquote paragraph
           else
             story[:chunks][-1][:content][-1][:content] << make_blockquote_paragraph_hash
           end

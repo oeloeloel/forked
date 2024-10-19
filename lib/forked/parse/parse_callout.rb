@@ -28,7 +28,6 @@ module Forked
       # Only image and text (with inline styles) are supported
       # Embedding other elements within callouts may have unpredictable results
 
-
       # parse callout block opening, closing, code section, segments
       def parse_callout(_escaped, line, context, story, _line_no, story_lines)
         return unless context_safe?(context, %i[code_block action_block])
@@ -43,7 +42,6 @@ module Forked
         # if open is found and text follows, return right
         # if open is not found, return is nil
         result = parse_opening_callout(line, match_start, context, story, story_lines)
-  
         case result
         when Array # opening was found but text comes first
           return result[0]
@@ -255,88 +253,6 @@ module Forked
 
           line
         end
-      end
-
-      # ==================================================
-      # COMMON PARSER METHODS
-      # --------------------------------------------------
-
-      # deletes all elements in context that exist in close
-      # mutates the context array
-      # this will remove ALL matching elments
-      def close_context(context, close = [])
-        context.reject! { |c| close.include? c }
-      end
-
-      # adds all elements in close to context
-      # mutates the context array
-      # does not prevent duplicate values
-      def open_context(context, open = [])
-        context.concat(open)
-      end
-
-      # get_last_element_type
-      # discover the type of the element that was most recently
-      # pushed to the chunk content array
-      # return
-      #   symbol `type`
-      #   nil if the type is not found
-      def last_element_type(story)
-        last_element(story)[:type]
-      end
-
-      # get_last_element
-      # get the element that was most recently
-      # pushed to the story array
-      # TODO: Does this need to change to be like last_content?
-      def last_element(story)
-        last_element = story&.chunks&.[](-1)&.content&.[](-1)
-        sub_element = last_element&.content&.[](-1)
-        return sub_element if sub_element
-
-        return last_element
-      end
-
-      # returns the most recently added contents array
-      # which could be the contents attached to the
-      # currently open chunk, or could be the contents
-      # of the most recently added element
-      def last_content(story, context)
-        last = story&.chunks&.[](-1)&.content
-        sub_content = last&.[](-1)&.content
-
-        if !context.include?(:callout) &&
-           !context.include?(:blockquote)
-
-          last
-        else
-          sub_content
-        end
-      end
-
-      # add a string to the front of the line array
-      # prevents line number count from incrementing
-      # so line number reporting is not affected
-      def unshift_to_line_array(line_array, string)
-        line_array.unshift(string)
-        @increment_line_no = false
-      end
-
-      # splits a string (haystack) around a string (needle)
-      # returns an array with two strings
-      # left and right of the split
-      # left or right may be empty if the split begins or ends a line
-      # returns nil if needle does not exist in haystack
-      def split_at_first_unescaped_instance(haystack, needle)
-        return unless haystack.include?(needle)
-
-        first_match = find_first_non_escaping_instance(haystack, needle)
-        return unless first_match
-
-        [
-          haystack[0...first_match],
-          haystack[first_match + needle.length..]
-        ]
       end
 
       def make_callout_hash

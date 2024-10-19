@@ -33,7 +33,6 @@ module Forked
             # if action.end_with?(')')
             if action.include?(')')
               action.delete_prefix!('(')
-              # action.delete_suffix!(')')
               action = action[0...action.rindex(')')]
 
               if action.start_with?('#') || action.strip.empty?
@@ -69,7 +68,7 @@ module Forked
 
         # if context is open, add line to trigger action (return)
         elsif context.include?(:trigger_action)
-          if story[:chunks][-1][:content][-1].action.size.zero?
+          if story[:chunks][-1][:content][-1].action.empty?
             # a kludge that identifies a Ruby trigger action from a normal action
             # so actions that begin with '#' are not mistaken for navigational actions
             line = '@@@@' + line

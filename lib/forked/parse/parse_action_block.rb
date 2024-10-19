@@ -7,7 +7,7 @@ module Forked
         mandatory_contexts = []
         return unless context_safe?(context, prohibited_contexts, mandatory_contexts)
         return unless escaped.start_with?('::') ||
-          context.include?(:action_block)
+                      context.include?(:action_block)
 
         if escaped.start_with? '::'
           # capture single line action
@@ -28,7 +28,7 @@ module Forked
           # capture action block end/start (close/open context)
           if context.include?(:action_block)
             context.delete(:action_block)
-          elsif story[:chunks][-1] 
+          elsif story[:chunks][-1]
             context << (:action_block)
             story[:chunks][-1][:actions] << ''
           else # different behaviour for code that comes before the first chunk
@@ -39,9 +39,9 @@ module Forked
 
         # capture action block content
         elsif context.include?(:action_block)
-          if story[:chunks][-1] 
+          if story[:chunks][-1]
             destination = story[:chunks][-1][:actions][-1]
-            
+
             if destination.nil?
               raise "FORKED: An action block is open but no action exists in the current chunk.\n"\
                     "Check for an unterminated action block (::) around or before line #{line_no + 1}."

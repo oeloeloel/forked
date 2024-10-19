@@ -3,8 +3,7 @@ module Forked
   class Parser
     class << self
       # draws a horizontal line
-      def parse_rule(line, context, story, line_no)
-
+      def parse_rule(line, context, story, _line_no)
         return unless line.strip.start_with?('---')
 
         prohibited_contexts = [:title, :code_block, :action_block, :condition_code_block, :trigger_action]
@@ -14,7 +13,7 @@ module Forked
         story[:chunks][-1][:content] << make_rule_hash
 
         # this content is conditional? add the condition to the current element
-        if context.include?(:condition_block)  || context.include?(:condition_block)
+        if context.include?(:condition_block)
           condition = story[:chunks][-1][:conditions][-1]
           story[:chunks][-1][:content][-1][:condition] = condition
         end
