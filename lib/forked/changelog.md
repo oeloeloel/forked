@@ -1,4 +1,46 @@
 ## Current version
+### Version 0.0.12
+* Orientation Change Handling:
+  * Forked now automatically detects an orientation change (see Author Mode changes below). Styles are re-applied after orientation changes. On mobile devices, Forked will change orientation when the device is rotated (be sure to set `orientation=landscape,portrait` in game_metadata.txt)
+  * Default theme has been updated to recalculate margins and font sizes when orientation changes.
+  * Allow optional theme modules that are recalculated after an orientation change to allow dev to program changes based on orientation and/or grid size, etc.
+  * All themes adapted to automatically adjust to orientation changes
+* Callouts
+  * New "Callout" element added. This element is similar to a blockquote but can optionally support an image (placed either to the left or the right of the callout).
+  * Callouts support multiline text, paragraphs and inline text styles
+  * Callouts can be used for any purpose but will be especially useful for:
+    * Displaying important messages or instructions for the player
+    * Displaying quoted speech, with a picture of the speaker embedded into the element
+  * Currently, callouts are created with the following code:
+```
+<? callout ??
+![](path/to/image.png)
+This text is displayed to the **right** of the image
+?>
+```
+
+The above code displays the image to the left of the text. To display the image to the right of the text, simply put the image after the text.
+
+```
+<? callout ??
+This text is displayed to the **left** of the image
+![](path/to/image.png)
+?>
+```
+
+* Blockquotes now allow the same formatting as paragraphs (pargraphs, hard-wrap, italic style, bold style, bold-italic style, code style)
+* Blockquote and Code Block boxes now have rounded corners (buttons can now be composed from multiple primitives)
+* Built-in themes updated to accommodate blockquote styles
+* Buttons have been upgraded to allow multiple primitives for each state (previously, buttons were limited to a rectangle that could change attributes and a fixed label)
+* Button rollover state is disabled on mobile
+* Author Mode changes:
+  * Added orientation toggle for previewing portrait mode. In Author Mode (hold `f` and press `u`) press `o` to toggle orientation.
+  * Author Mode sidebar visibility is now toggled on or off. In Author Mode press `q` to toggle the sidebar visibility.
+  * The Author Mode sidebar has been moved to the right hand side of the screen to avoid conflict with DragonRuby's Watch features.
+  * Author Mode layout adjusted to work with portrait orientation.
+  * The FPS counter is now a toggle. In author mode, press `d` to display the FPS counter.
+* Bugfix: Story title displays in window titlebar in DragonRuby version 6+
+
 ### Version 0.0.11
 * New command: `jump_to(n)` jumps to a new chunk by its position (n) in the story file. Negative numbers can be used to specify chunks relative to the end of the file. to Example:
 ```

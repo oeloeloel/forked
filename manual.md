@@ -176,6 +176,8 @@ Make text appear as `code` by putting backticks `` ` `` around it:
 This line has `some code` in it
 ~~~
 
+Inline styles may also be used in blockquotes.
+
 ### Blockquotes
 Blockquotes put your text in a box:
 > The Maharajah's Star is a diamond of great renown.

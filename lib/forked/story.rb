@@ -21,7 +21,7 @@ module Forked
       # navigated is passed to display to determine whether to reset
       # the keyboard selection during an update
       # set to false every tick and set to true if navigation happens later
-      state.forked.navigated = false 
+      state.forked.navigated = false
 
       # process player input (mouse, keyboard, controller)
       check_input
@@ -30,6 +30,8 @@ module Forked
       @display ||= Display.new(@theme)
       @display.args = args
       @display.tick
+
+      check_and_handle_orientation_change
 
       # make the display hash and send it to the display object
       present args
@@ -67,7 +69,7 @@ module Forked
 
       # $gtk.set_window_title is (re)added in DR 5.20
       major, minor = $gtk.version.split(".").map { _1.to_i }
-      $gtk.set_window_title(state.forked.title) if (major >= 5 && minor >= 20)
+      $gtk.set_window_title(state.forked.title) if ((major >= 5 && minor >= 20) || major > 5)
 
       # allow story to run one-time setup code that needs to be
       # setup regardless of where we start the story after a reload
@@ -199,7 +201,6 @@ module Forked
       state.forked.options = []
 
       state.forked.navigated = true
-
       process_new_chunk
     end
 
@@ -314,7 +315,6 @@ Tell Akz to write a better error message."
     end
 
     def present(args)
-
       display_lines = state.forked.current_lines.copy
       display_lines.each do |element|
         # deal first with content that contains atoms
@@ -378,6 +378,8 @@ Tell Akz to write a better error message."
       if @hashed_display == new_hash && !@refresh
         return
       else 
+        $second_hash ||= @hashed_display unless $first_hash.nil?
+        $first_hash ||= @hashed_display
         @display.update(display_lines, state.forked.navigated)
         @hashed_display = new_hash
         @refresh = false
@@ -442,6 +444,14 @@ Tell Akz to write a better error message."
       end
     end
 
+    def check_and_handle_orientation_change
+      if @orientation != $gtk.orientation
+        @orientation = $gtk.orientation
+        @display.apply_theme(@theme)
+        @refresh = true
+      end
+    end
+
     ### Chunk content
 
     def heading
@@ -493,8 +503,8 @@ Tell Akz to write a better error message."
       outputs.sprites << {
         x: 0,
         y: 0,
-        w: 1280,
-        h: 720,
+        w: grid.w,
+        h: grid.h,
         path: path
       }
     end
@@ -699,19 +709,25 @@ Tell Akz to write a better error message."
 
     def forked_test(expect: nil, print_subject: false)
       test_mark = []
-          outputs.primitives.each_with_index { |prim, i|
-          if prim[:text] && prim[:text].strip == "<! start test !>"
-            test_mark << i + 1
-          elsif prim[:text] && prim[:text].strip == "<! end test !>"
-            test_mark << i - 1
-          end
-        }
+      outputs.primitives.each_with_index do |prim, i|
+        if prim&.text && prim&.text&.strip == "<! start test !>"
+          test_mark << i + 1
+        elsif prim&.text && prim&.text&.strip == "<! end test !>"
+          test_mark << i - 1
+        end
+      end
       return "Test does not contain two marks" if test_mark.count < 2
 
-      subject = outputs.primitives[test_mark[0]..test_mark[1]] 
-      puts "Subject:\n#{subject}" if print_subject
-      result = expect == subject
-      result ? "Test passed" : "Test failed"
+      subject = outputs.primitives[test_mark[0]..test_mark[1]]
+      subject_hash = subject.to_s.hash
+
+      if expect != subject_hash 
+        puts "Subject:\n#{subject_hash}"
+        putz ["Subject:\n#{subject}"] if print_subject
+        return "Test failed"
+      end
+
+      "Test passed"
     end
   end
 end

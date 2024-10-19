@@ -1,5 +1,5 @@
 KIFASS_THEME = {
-  display: {
+  background: {
     background_color: { r: 0x41, g: 0x15, b: 0x79 },
   },
   heading: {
@@ -58,5 +58,18 @@ KIFASS_THEME = {
   },
   code: {
     r: 0x14, g: 0xc2, b: 0xd4,
+  },
+  blockquote_bold: {
+    r: 204, g: 204, b: 204,
+  },
+  blockquote_italic: {
+    r: 204, g: 204, b: 204, 
+  },
+  blockquote_bold_italic: {
+    r: 204, g: 204, b: 204, 
+  },
+  blockquote_code: {
+    r: 0x14, g: 0xc2, b: 0xd4,
   }
+
 }

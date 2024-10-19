@@ -112,6 +112,7 @@ which can span multiple lines -->
 ```
 
 ## Formatting
+Note: formatting also works inside blockquotes
 
 *Italic text*
 ```md
@@ -142,6 +143,8 @@ Blockquotes can run over more than one line. To separate blockquotes, include a 
 > This text is inside a second blockquote
 > This text is inside the same blockquote
 ```
+
+Text styles (italic, bold, bold-italic and code) can be used in blockquotes. See [Formatting](#formatting).
 
 ### Code Block:
 By default, code blocks display text inside a box, in a monospace font. The text is displayed *as-is*, without any changes except for wrapping long lines. Code in code blocks is not executable.
@@ -266,7 +269,8 @@ Author mode provides some features that may be useful while writing your story. 
 | Shortcuts | Action |
 |-|-|
 | <nobr>`f` (hold) + `u`</nobr> | Toggle Author Mode on or off. When author mode is active, a red square appears in the bottom left corner of the screen. The following shortcuts become available when Author Mode is on. |
-| `q` (hold) | Display information sidebar. This displays information such as the navigation history and the contents of the player's bag |
+| `q` | Toggle display of the information sidebar. This displays information such as the navigation history and the contents of the player's bag |
 | `n` | Navigate to the following chunk in the story file until the last chunk is displayed. |
 | `h` | Navigate to the preceding chunk in the story file until the first chunk is displayed. |
-| `d` (hold) | Display the current framerate (fps) |
+| `d` | Toggle display of the current framerate (fps) |
+| `o` | Toggle the orientation between `landscape` and `portrait` to preview how the game will appear on mobile devices

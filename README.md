@@ -7,7 +7,8 @@ Additional functionality can be added by writing commands in Ruby.
 
 What it lets you do:
 * Write stories in a readable format with minimal distraction
-* Player navigates to different parts of your story with button clicks
+* Player navigates to different parts of your story with buttons
+* Player can control the game with mouse, game controller or keyboard (or all three at the same time)
 * Issue commands from within your story
   * Premade commands available for non-programmers
   * Custom commands are simple to create using Ruby
@@ -17,6 +18,7 @@ What it lets you do:
 * Buttons can link to other parts of the story or run code
 * Track the player's progress through the story
 * Automatically (or manually) save the player's progress so they can continue playing where they left off
+* Automatically handle orientation changes when published to mobile devices
 
 ## Getting started
 To begin:
