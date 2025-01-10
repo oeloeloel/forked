@@ -54,7 +54,7 @@ module Forked
             loc = { x: x_pos.to_i, y: new_y_pos.to_i }
             lab = loc.merge(make_text_label(line_frag.rstrip!, font_style, item))
             row << lab
-            center_row(row, old_x_pos - rect.x, rect)
+            center_row(row, old_x_pos - rect.x, rect) if style.text_align == :center
             output_labels << row.dup
             row.clear
             line_frag = ''
