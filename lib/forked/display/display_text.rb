@@ -105,9 +105,11 @@ module Forked
         end
       end
 
-      row[-1].text.rstrip!
-      center_row(row, new_x_pos - rect.x, rect) if style.text_align == :center
-      output_labels += row
+      if row.any?
+        row[-1].text.rstrip!
+        center_row(row, new_x_pos - rect.x, rect) if style.text_align == :center
+        output_labels += row
+      end
 
       data.primitives << output_labels
 
