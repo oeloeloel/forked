@@ -25,27 +25,19 @@ KIFASS_THEME = {
   },
   button: {
     r: 255, g: 255, b: 255,
-  },
-  button_box: {
-    r: 0xeb, g: 0x38, b: 0xc2,
+    background_color: { r: 0xeb, g: 0x38, b: 0xc2, }
   },
   selected_button: {
-    r: 51, g: 51, b: 51, 
-  },
-  selected_button_box: {
-    r: 0x14, g: 0xc2, b: 0xd4,
+    r: 51, g: 51, b: 51,
+    background_color: { r: 0x14, g: 0xc2, b: 0xd4,} 
   },
   disabled_button: {
     r: 51, g: 51, b: 51,
-  },
-  disabled_button_box: {
-    r: 102, g: 102, b: 102, 
+    background_color: { r: 102, g: 102, b: 102, }
   },
   active_button: {
     r: 51, g: 51, b: 51, 
-  },
-  active_button_box: {
-    r: 0x14, g: 0x82, b: 0x94,
+    background_color: { r: 0x14, g: 0x82, b: 0x94,}
   },
   bold: {
     r: 204, g: 204, b: 204,
