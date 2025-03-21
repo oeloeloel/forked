@@ -21,6 +21,8 @@ Minor changes:
 ## This Heading is Underlined
 ---
 ```
+* Theme changes to meet changes in style handling for background boxes in buttons, blockquotes and code-blocks
+* Bugfix: Fixed issue where a condition without text could cause an exception
 
 ## Current version
 ### Version 0.0.12
