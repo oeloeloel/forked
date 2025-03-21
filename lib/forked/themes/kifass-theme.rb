@@ -13,15 +13,11 @@ KIFASS_THEME = {
   },
   code_block: {
     r: 0x14, g: 0xc2, b: 0xd4,
-  },
-  code_block_box: {
-    r: 0x55, g: 0x26, b: 0x94,
+    background_color: { r: 0x55, g: 0x26, b: 0x94,}
   },
   blockquote: {
     r: 255, g: 255, b: 255,
-  },
-  blockquote_box: {
-    r: 0x55, g: 0x26, b: 0x94,
+    background_color: { r: 0x55, g: 0x26, b: 0x94, }
   },
   button: {
     r: 255, g: 255, b: 255,
