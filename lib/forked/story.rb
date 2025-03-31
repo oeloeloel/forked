@@ -98,6 +98,7 @@ module Forked
         elsif p.start_with? "ftest "
           file = '/lib/forked/forked-tests/' + p.split(' ')[1]
           puts "Forked: Loading test file #{file} from command line argument"
+          ftest_init(file)
           return file
         end
       end
@@ -708,33 +709,6 @@ Tell Akz to write a better error message."
     def save_path_get(save_type)
       devmode = gtk.production ? '' : '-dev'
       "data/#{save_type.to_s}-#{state.forked.story_id}#{devmode}.txt"
-    end
-
-    ################
-    # FORKED TESTING
-    ################
-
-    def forked_test(expect: nil, print_subject: false)
-      test_mark = []
-      outputs.primitives.each_with_index do |prim, i|
-        if prim&.text && prim&.text&.strip == "<! start test !>"
-          test_mark << i + 1
-        elsif prim&.text && prim&.text&.strip == "<! end test !>"
-          test_mark << i - 1
-        end
-      end
-      return "Test does not contain two marks" if test_mark.count < 2
-
-      subject = outputs.primitives[test_mark[0]..test_mark[1]]
-      subject_hash = subject.to_s.hash
-
-      if expect != subject_hash 
-        puts "Subject:\n#{subject_hash}"
-        putz ["Subject:\n#{subject}"] if print_subject
-        return "Test failed"
-      end
-
-      "Test passed"
     end
   end
 end
