@@ -4,22 +4,14 @@ module Forked
     # FORKED TESTING
     ################
 
-    # TODO: In Progress
-    # Improvements to testing
-    # [x] 1. When a test file is loaded, initialize the test data
-    #    [x] a. If the test data file does not exist, create it
-    #    [x] b. If the test data file exists, load it
-    # [x] 2. If test has neither expectation nor id, error out
-    # [x] 3. If test includes an expectation, use it for the test
-    # [x] 4. If test does not include an expectation but has an id...
-    #    [ ] a. Load the expectation from the test data
-    #    [x] b. If there is no expectation for the test_id, error out
-    #           Not needed/desirable: user needs to be able save new expectations
-    #    [x] c. If expectation meets the subject, display test passed message
-    #    [x] d. If test fails, display test failed message
-    #       [x] i. Display a button to save the new expectation
-    #       [x] ii. Save the new expectation to the test data file
-    # [ ] 5. Devise some way to clean-up unused test data
+    # TODO: Testing
+    # [ ] go through test files and 
+    #     [ ] add test ids
+    #     [ ] remove failed expectations
+    #     [ ] underline headings
+
+    # Testing Boolean Conditions does not update the test data file
+    # [ ] don't update the test expectation if there is no id
 
     # Initialize the test data
     # Load the test data from a file
@@ -112,6 +104,9 @@ module Forked
 
     def update_expectation test_id, expectation
       # puts "==== def update_expectation test_id"
+      unless test_id
+        raise "No test id provided"
+      end
       @ftest_data[test_id] = expectation
       save_ftest_data_file
     end

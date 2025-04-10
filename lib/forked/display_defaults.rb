@@ -130,13 +130,13 @@ end
 
 def default_code_block
   {
+    **default_code_block_box,
     font: 'fonts/roboto_mono/static/robotomono-regular.ttf',
     size_enum: default_paragraph.size_enum,
     line_spacing: 0.85,
     r: 76, g: 51, b: 127,
     spacing_after: 0.9, # 1.0 is line_height.
     background_color: { r: 192, g: 188, b: 204 },
-    **default_code_block_box
   }
 end
 
@@ -238,7 +238,6 @@ end
 def default_disabled_button
   default_button.merge(
     **default_disabled_button_box,
-    background_color: { r: 204, g: 204, b: 204 }
   )
 end
 
