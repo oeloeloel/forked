@@ -323,6 +323,84 @@ Tell Akz to write a better error message."
     end
 
     def present(args)
+      # display_lines = data.current_lines.copy
+      display_lines = data.current_lines
+      display_lines.each do |element|
+        # deal first with content that contains atoms
+        if element[:atoms]
+          element[:atoms].each_with_index do |atom, j|
+            next unless (atom[:condition] &&
+                        atom[:condition].is_a?(String) &&
+                        !atom[:condition].empty?)
+            result = evaluate(args, atom[:condition])
+            # when it's a non-empty string, display the result
+            if result.is_a?(String) && !result.empty?
+              # String Interpolation
+
+              # string interpolation may include newlines
+              # zap them and add a space to ensure separation between words
+              if result.include?("\n")
+                result.gsub!("\n", " ")
+              end
+
+              ### CONTROVERSIAL
+              # Add space after the result
+              result += ' '
+              element[:atoms][j][:text] = "#{result}"
+            elsif [true, false].include? result
+              display_segment = false
+              if atom[:condition_segment].to_i == 0 && result == true
+                display_segment = true
+              elsif atom[:condition_segment].to_i == 1 && result == false
+                display_segment = true
+              end
+
+              element[:atoms][j][:text] = '' if display_segment != true
+            else
+              # don't display
+              element[:atoms][j][:text] = '' #j > 0 ? ' ' : ''
+            end
+          end
+        else
+          # the element does not contain atoms
+          next unless element && element[:condition]
+
+          result = evaluate(args, element[:condition])
+
+          if [true, false].include? result
+              display_element = false
+              if element[:condition_segment].to_i == 0 && result == true
+                display_element = true
+              elsif element[:condition_segment].to_i == 1 && result == false
+                display_element = true
+              end
+
+              element[:type] = :hidden if display_element != true
+            else
+              # don't display
+              element[:type] = :hidden
+            end
+        end
+      end
+
+      new_hash = display_lines.hash
+
+      # Forcing display to update every tick so scrolling can happen
+      # No way around this so it has to be done
+      # Could be ameliorated on the display side
+
+      # if @hashed_display == new_hash && !@refresh
+      #   # return
+      # else 
+      $second_hash ||= @hashed_display unless $first_hash.nil?
+      $first_hash ||= @hashed_display
+      @display.update(display_lines, state.forked.navigated)
+      @hashed_display = new_hash
+      @refresh = false
+      # end
+    end
+
+    def present_old(args)
       display_lines = state.forked.current_lines.copy
       display_lines.each do |element|
         # deal first with content that contains atoms

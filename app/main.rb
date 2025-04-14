@@ -7,7 +7,7 @@
 # This line tells DragonRuby where to find Forked
 # If you change the location of Forked, you need
 # to update this line
-require 'lib/forked/forked.rb'
+require 'lib/forked/forked'
 
 #### load the story file ####
 
