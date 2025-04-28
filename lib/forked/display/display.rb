@@ -207,7 +207,7 @@ module Forked
     def update(content, navigated)
       update_selection(navigated)
 
-      @scroll_offset = 0 if navigated
+      reset_scroll if navigated
 
       data.primitives = []
       data.options = []

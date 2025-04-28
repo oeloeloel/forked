@@ -20,6 +20,11 @@ module Forked
       @scroll_lines = 5
     end
 
+    def reset_scroll
+      @scroll_offset = 0
+      @scroll_target = 0
+    end
+
     def scroll_by(dist)
       # "==== def scroll_by #{dist}"
       @scroll_target -= dist

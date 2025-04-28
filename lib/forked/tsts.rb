@@ -4,12 +4,6 @@ module Forked
     # FORKED TESTING
     ################
 
-    # TODO: Testing
-    # [ ] go through test files and 
-    #     [ ] add test ids
-    #     [ ] remove failed expectations
-    #     [ ] underline headings
-
     # Testing Boolean Conditions does not update the test data file
     # [ ] don't update the test expectation if there is no id
 

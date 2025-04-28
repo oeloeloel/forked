@@ -10,6 +10,8 @@ module Forked
         up:           [:up,        :w    ],
         page_up:      [:page_up          ],
         page_down:    [:page_down        ],
+        home:         [:home             ],
+        end:          [:end              ],
         activate:     [:space,     :enter],
       }
     end
@@ -24,6 +26,8 @@ module Forked
         up:            [:up        ],
         page_up:       [:r2        ],
         page_down:     [:l2        ],
+        home:          [           ],
+        end:           [           ],
         activate:      [:a,     :b,]
       }
     end
