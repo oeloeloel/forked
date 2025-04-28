@@ -2,17 +2,29 @@ module Forked
   class << self
     def keyboard_input_defaults
       {
-        next:       [:down,  :right],
-        prev:       [:up,    :left],
-        activate:   [:space, :enter],
+        next:         [:tab              ],
+        prev:         [:shift_tab        ],
+        next_visible: [:right,     :d    ],
+        prev_visible: [:left,      :a    ],
+        down:         [:down,      :s    ],
+        up:           [:up,        :w    ],
+        page_up:      [:page_up          ],
+        page_down:    [:page_down        ],
+        activate:     [:space,     :enter],
       }
     end
 
     def controller_input_defaults
       {
-        next:     [:down, :right      ],
-        prev:     [:up,   :left       ],
-        activate: [:a,    :b, :r1, :r2]
+        next:          [:r1        ],
+        prev:          [:l1        ],
+        next_visible:  [:right     ],
+        prev_visible:  [:left      ],
+        down:          [:down      ],
+        up:            [:up        ],
+        page_up:       [:r2        ],
+        page_down:     [:l2        ],
+        activate:      [:a,     :b,]
       }
     end
   end

@@ -17,7 +17,7 @@ module Forked
     # Load the test data from a file
     # Or create a new file if it does not exist
     def ftest_init(file)
-      puts "==== def ftest_init(file)"
+      # "==== def ftest_init(file)"
       putz "loaded file #{file}"
 
       @test_data_file_path = ftest_data_file_path file

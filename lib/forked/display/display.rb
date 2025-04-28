@@ -1,4 +1,4 @@
-require_relative 'input'
+require_relative 'display_interaction'
 require_relative 'display_text'
 require_relative 'display_background'
 require_relative 'display_blockquote'
@@ -17,17 +17,14 @@ module Forked
   class Display
     attr_gtk
 
-    attr_accessor :bg_clicked, :mouse_up_handled, :mouse_down_handled
-
     def initialize(theme = nil)
-      puts "==== def initialize(theme = nil)"
+      # "==== def initialize(theme = nil)"
       # set the current theme if passed
       @theme = theme
 
       @mouse_down_handled = false
       @mouse_up_handled = false
 
-      puts "init scrolling"
       init_scrolling
     end
 
@@ -55,6 +52,7 @@ module Forked
       data.controller_input_defaults = Forked.controller_input_defaults
 
       data.selected_option = -1 # set the current selection to no selection
+      data.previous_selected_option = -1
       data.mouse_cursor = :arrow # set the default cursor
 
       data.defaults_set = true # and don't come back
@@ -88,9 +86,10 @@ module Forked
     ### UPDATE SELECTION
 
     def update_selection(navigated = nil)
-      "==== def update_selection(navidated = nil)"
       return if @roll_handled
       return if data.options.nil? || data.options.empty?
+
+      # "==== def update_selection(navigated = nil)"
 
       # check whether input is selecting a button
       select = check_button_selected
@@ -101,6 +100,7 @@ module Forked
       # otherwise, maintain the same selection (we just executed some code)
       if navigated
         data.selected_option = -1
+        data.previous_selected_option = -1
         next_cursor = :arrow
       end
 
@@ -121,6 +121,10 @@ module Forked
 
       if select && !navigated
         unhighlight_selected_option if data.selected_option >= 0
+        if data.selected_option >= 0
+          data.previous_selected_option = data.selected_option
+          # putz "previous selected option #{data.previous_selected_option}"
+        end
         data.selected_option = select
         highlight_selected_option if data.selected_option >= 0
         if inputs.last_active == :mouse
@@ -144,201 +148,6 @@ module Forked
         gtk.set_system_cursor(next_cursor)
         data.mouse_cursor = next_cursor
       end
-    end
-
-    def update_selection_old(navigated = nil)
-      return if data.options.nil? || data.options.empty?
-
-      # check whether input is selecting a button
-      select = check_button_selected
-
-      # did we come here from a navigation command?
-      # deselect the buttons (the selection is not valid)
-      # and return the cursor to arrow
-      # otherwise, maintain the same selection (we just executed some code)
-      if navigated
-        data.selected_option = -1
-        next_cursor = :arrow
-      end
-
-      # check whether input is activating a button
-      activating = true if data.selected_option != -1 && check_activation_start
-
-      # check whether input is deactivating a button
-      deactivating = data.selected_option != -1 && check_activation_end
-
-      # button is deactivating? (e.g. key/controller/mouse released)
-      # revert to selection highlighting
-
-      highlight_selected_option if deactivating && data.selected_option >= 0
-
-      # check whether input is deactivating a button
-      # clicked = true if data.selected_option != -1 && check_activation_end
-
-      if select
-        unhighlight_selected_option if data.selected_option >= 0
-        data.selected_option = select
-        highlight_selected_option if data.selected_option >= 0
-        if inputs.last_active == :mouse
-          next_cursor = if data.selected_option >= 0
-                          # try to change to the hand cursor
-                          :hand
-                        else
-                          # try to change to the arrow cursor
-                          :arrow
-                        end
-        end
-      end
-
-      # player clicked the button
-      highlight_active_option if activating
-
-      highlight_active_option if select != -1 && check_activation
-
-      # set the cursor when it has changed
-      if next_cursor && next_cursor != data.mouse_cursor
-        gtk.set_system_cursor(next_cursor)
-        data.mouse_cursor = next_cursor
-      end
-    end
-
-    ### CHECKS
-
-    def check_button_selected
-      case inputs.last_active
-      when :keyboard
-        get_keyboard_selection
-      when :controller
-        get_controller_selection
-      when :mouse
-        get_mouse_selection
-      end
-    end
-
-    def check_activation_start
-      case inputs.last_active
-      when :keyboard
-        check_keyboard_activation_start
-      when :controller
-        check_controller_activation_start
-      when :mouse
-        check_mouse_activation_start
-      end
-    end
-
-    def check_activation
-      case inputs.last_active
-      when :keyboard
-        check_keyboard_activation
-      when :controller
-        check_controller_activation
-      when :mouse
-        check_mouse_activation
-      end
-    end
-
-    def check_activation_end
-      case inputs.last_active
-      when :keyboard
-        check_keyboard_activation_end
-      when :controller
-        check_controller_activation_end
-      when :mouse
-        result = check_mouse_activation_end
-        @mouse_up_handled = false if result
-        result
-      end
-    end
-
-    def check_keyboard_activation_start
-      kd = inputs.keyboard.key_down
-      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) }
-    end
-
-    def check_keyboard_activation
-      kh = inputs.keyboard.key_held
-      data.keyboard_input_defaults[:activate].any? { |k| kh.send(k) }
-    end
-
-    def check_keyboard_activation_end
-      ku = inputs.keyboard.key_up
-      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) }
-    end
-
-    def check_controller_activation_start
-      c1 = inputs.controller_one
-      data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) } if c1.connected
-    end
-
-    def check_controller_activation
-      c1 = inputs.controller_one
-      data.controller_input_defaults[:activate].any? { |k| c1.key_held.send(k) } if c1.connected
-    end
-
-    def check_controller_activation_end
-      c1 = inputs.controller_one
-
-      data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) } if c1.connected
-    end
-
-    def check_mouse_activation_start
-      return if @mouse_down_handled
-
-      result = inputs.mouse.down
-      @mouse_down_handled = true if result
-      result
-    end
-
-    def check_mouse_activation
-      inputs.mouse.held
-    end
-
-    def check_mouse_activation_end
-      return if @mouse_up_handled
-
-      inputs.mouse.up
-    end
-
-    ### GET PLAYER SELECTION
-
-    def get_mouse_selection
-      rollover = -1
-      data.options.each_with_index do |option, idx|
-        next if option.action.empty?
-
-        if option.intersect_rect?(inputs.mouse.point)
-          rollover = idx
-          break
-        end
-      end
-
-      rollover
-    end
-
-    def get_keyboard_selection
-      kd = inputs.keyboard.key_down
-
-      if data.keyboard_input_defaults[:next].any? { |k| kd.send(k) }
-        return relative_to_absolute_selection(1)
-      elsif data.keyboard_input_defaults[:prev].any? { |k| kd.send(k) }
-        return relative_to_absolute_selection(-1)
-      end
-
-      nil
-    end
-
-    def get_controller_selection
-      c1 = inputs.controller_one
-
-      if c1.connected
-        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
-          return relative_to_absolute_selection(1)
-        elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
-          return relative_to_absolute_selection(-1)
-        end
-      end
-
-      nil
     end
 
     ### DISPLAY SELECTION CHANGES
@@ -379,10 +188,13 @@ module Forked
 
     ### HELPER
 
-    def relative_to_absolute_selection(index)
-      sel_opt = data.selected_option
-      if data.selected_option.negative? || data.selected_option.nil?
-        sel_opt = index.positive? ? data.options.size - 1 : 0
+    def relative_to_absolute_selection(index, continuous: true)
+      # "==== def relative_to_absolute_selection(#{index} continuous: #{continuous})"
+      sel_opt = data.selected_option == -1 ? data.previous_selected_option : data.selected_option
+      if continuous
+        if (sel_opt.negative? || sel_opt.nil?)
+          sel_opt = index.positive? ? data.options.size - 1 : 0
+        end
       end
       sel_opt += index
       sel_opt.clamp_wrap(0, data.options.size - 1)

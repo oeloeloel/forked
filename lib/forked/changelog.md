@@ -1,4 +1,19 @@
 ## Next version
+
+### Experimental Branch Changes
+* Feature: Content now scrolls if it exceeds the height of the viewable area. See below for scrolling controls.
+* Improvement: Control scheme has changed due to the introduction of scrolling and some improvements have been added. The (configurable) control scheme defaults are as follows:
+  * Scroll content area up or down: 
+    * Mouse: Scroll Wheel
+    * Controller: Left Stick
+  * Cycle through buttons with direct scroll (select the previous or next button and scroll directly to it if it is not visible)
+    * Keyboard: Tab/Shift-Tab, Left/Right or A/D keys
+    * Controller: DPad Left/Right
+  * Cycle through buttons with incremental scroll (select the previous or next button and scroll three lines towards it if it is not visible)
+    * Keyboard: Up/Down or W/S keys
+    * Controller: DPad Up/Down
+  
+
 ### Version 0.0.13
 * Experimental feature: Include Chunk command allows writers to include other chunks in the current chunk. This is useful when the same content is repeated in more than one chunk. The included chunk is appended to the current chunk and should be included from an action block as follows:
 ```
