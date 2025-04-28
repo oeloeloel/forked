@@ -24,8 +24,8 @@ module Forked
         prev_visible:  [:left      ],
         down:          [:down      ],
         up:            [:up        ],
-        page_up:       [:r2        ],
-        page_down:     [:l2        ],
+        page_up:       [:l2        ],
+        page_down:     [:r2        ],
         home:          [           ],
         end:           [           ],
         activate:      [:a,     :b,]

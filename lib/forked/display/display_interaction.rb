@@ -2,100 +2,7 @@ module Forked
   class Display
     attr_accessor :bg_clicked, :mouse_up_handled, :mouse_down_handled, :scroll_handled, :roll_handled
 
-    def init_scrolling
-      # "==== def init_scrolling"
-      @scroll_bottom = 0 # not used?
-      @last_scroll_cause = :player # or :story. Indicates need for autoscrolling
-      @scroll_min ||= 0 # minimum scroll height
-      @scroll_max ||= 0 # maximum scroll height - set in display update
-      @scroll_offset ||= 0 # scroll height
-      @scroll_target = 0
-      @scroll_vel ||= 0 # velocity of scrolling
-      @scroll_speed = 10 # used to increase scroll velocity
-      @scroll_friction = 0.8 # used to slow scroll velocity
-      @scroll_height = 0
-      @autoscroll_step = 4
-      @scroll_handled = false
-      @rollover_handled = false
-      @scroll_lines = 5
-    end
-
-    def reset_scroll
-      @scroll_offset = 0
-      @scroll_target = 0
-    end
-
-    def scroll_by(dist)
-      # "==== def scroll_by #{dist}"
-      @scroll_target -= dist
-      @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
-    end
-
-    def calc_scroll_by_row_amount(rows)
-      para = data.style.paragraph
-      para.size_px = size_enum_to_size_px(para.size_enum)
-      line_height = para.size_px * para.line_spacing
-      line_height * rows
-    end
-
-    def calc_scroll_by_screen_amount
-      args.grid.h - 120
-    end
-
-    def scroll_by_row(n)
-      para = data.style.paragraph
-      line_height = para.size_px * para.line_spacing
-      scroll_dist = line_height * n
-      @scroll_target -= scroll_dist
-      @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
-    end
-
-    # automatically scrolls to @scroll_target
-    def scroll_step_to_target
-      diff = -(@scroll_offset - @scroll_target)
-      @scroll_offset += diff / @autoscroll_step 
-    end
-
-    def mouse_scroll
-      # "==== def mouse_scroll"
-      return if @scroll_handled
-
-      @last_scroll_cause = :player if inputs.mouse.wheel # no to autoscrolling
-      return unless @last_scroll_cause == :player
-
-      calc_scroll_max
-      scroll_accel = ($args.inputs.mouse.wheel&.y || 0) * @scroll_speed
-      @scroll_vel -= scroll_accel
-      @scroll_vel *= @scroll_friction
-      @scroll_vel = 0 if @scroll_vel.abs < 0.01
-      @scroll_target += @scroll_vel
-      @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
-    end
-
-    def autoscroll
-      return unless @last_scroll_cause == :story
-
-      bottom = $top_of_the_bottom + 40
-      scroll_area_height = 720 - bottom
-      autoscroll_target = if @scroll_height < scroll_area_height
-                            0
-                          else
-                            @scroll_height - scroll_area_height
-                          end
-      diff = -(@scroll_offset - autoscroll_target)
-      @scroll_offset += diff / @autoscroll_step
-    end
-
-    def calc_scroll_max
-      @scroll_max += @scroll_offset + ($top_of_the_bottom || 0) + 40
-      @scroll_max = @scroll_max.clamp(0)
-    end
-
-    # never called
-    # def calc_autoscroll
-    #   # "==== calc_autoscroll #{caller}"
-    #   @last_scroll_cause = :story # yes to autoscrolling
-    # end
+    ### INPUT HANDLING
 
     def input
       # "==== def input"
@@ -162,6 +69,114 @@ module Forked
       end
       result
     end
+
+    ### END OF INPUT HANDLING
+
+    
+
+
+    def init_scrolling
+      # "==== def init_scrolling"
+      @scroll_bottom = 0 # not used?
+      @last_scroll_cause = :player # or :story. Indicates need for autoscrolling
+      @scroll_min ||= 0 # minimum scroll height
+      @scroll_max ||= 0 # maximum scroll height - set in display update
+      @scroll_offset ||= 0 # scroll height
+      @scroll_target = 0
+      @scroll_vel ||= 0 # velocity of scrolling
+      @scroll_speed = 10 # used to increase scroll velocity
+      @scroll_friction = 0.8 # used to slow scroll velocity
+      @scroll_height = 0
+      @autoscroll_step = 4
+      @scroll_handled = false
+      @rollover_handled = false
+      @scroll_lines = 5
+    end
+
+    def reset_scroll
+      @scroll_offset = 0
+      @scroll_target = 0
+    end
+
+    def scroll_by(dist)
+      # "==== def scroll_by #{dist}"
+      @scroll_target -= dist
+      @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
+    end
+
+    def calc_scroll_by_row_amount(rows)
+      para = data.style.paragraph
+      para.size_px = size_enum_to_size_px(para.size_enum)
+      line_height = para.size_px * para.line_spacing
+      line_height * rows
+    end
+
+    def calc_scroll_by_screen_amount
+      args.grid.h - 120
+    end
+
+    def scroll_by_row(n)
+      para = data.style.paragraph
+      line_height = para.size_px * para.line_spacing
+      scroll_dist = line_height * n
+      @scroll_target -= scroll_dist
+      @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
+    end
+
+    def scroll_to_top
+      @scroll_target = 0
+    end
+
+    def scroll_to_bottom
+      @scroll_target = @scroll_max
+    end
+
+    # automatically scrolls to @scroll_target
+    def scroll_step_to_target
+      diff = -(@scroll_offset - @scroll_target)
+      @scroll_offset += diff / @autoscroll_step 
+    end
+
+    def mouse_scroll
+      # "==== def mouse_scroll"
+      return if @scroll_handled
+
+      @last_scroll_cause = :player if inputs.mouse.wheel # no to autoscrolling
+      return unless @last_scroll_cause == :player
+
+      calc_scroll_max
+      scroll_accel = ($args.inputs.mouse.wheel&.y || 0) * @scroll_speed
+      @scroll_vel -= scroll_accel
+      @scroll_vel *= @scroll_friction
+      @scroll_vel = 0 if @scroll_vel.abs < 0.01
+      @scroll_target += @scroll_vel
+      @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
+    end
+
+    def autoscroll
+      return unless @last_scroll_cause == :story
+
+      bottom = $top_of_the_bottom + 40
+      scroll_area_height = 720 - bottom
+      autoscroll_target = if @scroll_height < scroll_area_height
+                            0
+                          else
+                            @scroll_height - scroll_area_height
+                          end
+      diff = -(@scroll_offset - autoscroll_target)
+      @scroll_offset += diff / @autoscroll_step
+    end
+
+    def calc_scroll_max
+      @scroll_max += @scroll_offset + ($top_of_the_bottom || 0) + 40
+      @scroll_max = @scroll_max.clamp(0)
+    end
+
+    # never called
+    # def calc_autoscroll
+    #   # "==== calc_autoscroll #{caller}"
+    #   @last_scroll_cause = :story # yes to autoscrolling
+    # end
 
     ### CHECKS
 
@@ -310,7 +325,6 @@ module Forked
       # √ scroll by almost one screen's height
 
       scroll_by_line_amount = calc_scroll_by_row_amount(@scroll_lines)
-
       scroll_by_page_amount = calc_scroll_by_screen_amount
 
       data.keyboard_input_defaults.each do |act, keys|
@@ -388,6 +402,10 @@ module Forked
           when :page_down
             # scroll down by almost one screen
             scroll_by(-scroll_by_page_amount)
+          when :home
+            scroll_to_top
+          when :end
+            scroll_to_bottom
           end
         end
       end
@@ -423,18 +441,101 @@ module Forked
 
       # button is not off-screen
       return 0
-    end    
+    end
 
     def get_controller_selection
-      c1 = inputs.controller_one
+      # "==== def get_controller_selection"
+      kd = inputs.controller_one.key_down
 
-      if c1.connected
-        if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
-          return relative_to_absolute_selection(1)
-        elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
-          return relative_to_absolute_selection(-1)
+      scroll_by_line_amount = calc_scroll_by_row_amount(@scroll_lines)
+      scroll_by_page_amount = calc_scroll_by_screen_amount
+
+      data.controller_input_defaults.each do |act, keys|
+        keys.each do |key|
+         next if !kd.send(key)
+
+         case act
+         when :next
+             # tab forward through all reachable buttons
+             target = relative_to_absolute_selection(1)
+             scroll_to_button(target)
+             return target 
+          when :prev
+            # tab backward through all reachable buttons
+            target = relative_to_absolute_selection(-1)
+            scroll_to_button(target)
+            return target
+          when :next_visible
+            # cycle forward through all visible buttons
+            visible_buttons = get_all_visible_buttons
+            return if visible_buttons.empty?
+
+            # use previously selected option if no selection
+            if data.selected_option == -1
+              data.selected_option = data.previous_selected_option
+            end
+
+            if data.selected_option == -1 ||
+                data.selected_option < visible_buttons[0] ||
+                data.selected_option > visible_buttons[-1]
+              return visible_buttons[0]
+            else
+              selection_idx = visible_buttons.find_index(data.selected_option)
+              next_selection_idx = (selection_idx + 1).clamp_wrap(0, visible_buttons.size - 1)
+              next_selection = visible_buttons[next_selection_idx]
+              return next_selection if rect_is_fully_onscreen?(data.options[next_selection]) 
+            end
+
+          when :prev_visible
+            # cycle backward through all visible buttons
+            visible_buttons = get_all_visible_buttons
+            return if visible_buttons.empty?
+
+            if data.selected_option == -1
+              data.selected_option - data.previous_selected_option
+            end
+
+            if data.selected_option == -1 ||
+                data.selected_option < visible_buttons[0] ||
+                data.selected_option > visible_buttons[-1]
+              return visible_buttons[-1]
+            else
+              selection_idx = visible_buttons.find_index(data.selected_option)
+              next_selection_idx = (selection_idx - 1).clamp_wrap(0, visible_buttons.size - 1)
+              next_selection = visible_buttons[next_selection_idx]
+              return next_selection if rect_is_fully_onscreen?(data.options[next_selection])
+            end
+          when :up
+            # scroll up by specified number of lines
+            scroll_by_line_amount = calc_scroll_by_row_amount(@scroll_lines)
+            scroll_by(scroll_by_line_amount)
+          when :down
+            # scroll down by specified number of lines
+            scroll_by_line_amount = -1 * calc_scroll_by_row_amount(@scroll_lines)
+            scroll_by(scroll_by_line_amount)
+          when :page_up
+            # scroll up by almost one screen
+            scroll_by(scroll_by_page_amount)
+          when :page_down
+            # scroll down by almost one screen
+            scroll_by(-scroll_by_page_amount)
+          when :home
+            scroll_to_top
+          when :end
+            scroll_to_bottom
+          end
         end
       end
+
+    
+
+      # if c1.connected
+      #   if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
+      #     return relative_to_absolute_selection(1)
+      #   elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
+      #     return relative_to_absolute_selection(-1)
+      #   end
+      # end
 
       nil
     end
