@@ -289,9 +289,8 @@ module Forked
 
     def process_new_chunk
       unless state.forked.current_chunk.actions.empty?
-        state.forked.current_chunk.actions.each do |a|
-          
-          evaluate args, a
+        state.forked.current_chunk.actions.each do |action|
+          evaluate args, action
         end
       end
       if state.forked.current_lines.nil?
@@ -328,7 +327,7 @@ Tell Akz to write a better error message."
       display_lines.each do |element|
         # deal first with content that contains atoms
         if element[:atoms]
-          element[:atoms].each_with_index do |atom, j|
+          element[:atoms].each_with_index do |atom, idx|
             next unless (atom[:condition] &&
                         atom[:condition].is_a?(String) &&
                         !atom[:condition].empty?)
@@ -346,7 +345,7 @@ Tell Akz to write a better error message."
               ### CONTROVERSIAL
               # Add space after the result
               result += ' '
-              element[:atoms][j][:text] = "#{result}"
+              element[:atoms][idx][:text] = "#{result}"
             elsif [true, false].include? result
               display_segment = false
               if atom[:condition_segment].to_i == 0 && result == true
@@ -355,10 +354,10 @@ Tell Akz to write a better error message."
                 display_segment = true
               end
 
-              element[:atoms][j][:text] = '' if display_segment != true
+              element[:atoms][idx][:text] = '' if display_segment != true
             else
               # don't display
-              element[:atoms][j][:text] = '' #j > 0 ? ' ' : ''
+              element[:atoms][idx][:text] = '' #j > 0 ? ' ' : ''
             end
           end
         else
@@ -400,79 +399,7 @@ Tell Akz to write a better error message."
       # end
     end
 
-    def present_old(args)
-      display_lines = state.forked.current_lines.copy
-      display_lines.each do |element|
-        # deal first with content that contains atoms
-        if element[:atoms]
-          element[:atoms].each_with_index do |atom, j|
-            next unless (atom[:condition] &&
-                        atom[:condition].is_a?(String) &&
-                        !atom[:condition].empty?)
-            result = evaluate(args, atom[:condition])
-            # when it's a non-empty string, display the result
-            if result.is_a?(String) && !result.empty?
-              # String Interpolation
-              
-              # string interpolation may include newlines
-              # zap them and add a space to ensure separation between words
-              if result.include?("\n")
-                result.gsub!("\n", " ")
-              end
-
-              ### CONTROVERSIAL
-              # Add space after the result
-              result += ' '
-              element[:atoms][j][:text] = "#{result}"
-            elsif [true, false].include? result
-              display_segment = false
-              if atom[:condition_segment].to_i == 0 && result == true
-                display_segment = true
-              elsif atom[:condition_segment].to_i == 1 && result == false
-                display_segment = true
-              end
-
-              element[:atoms][j][:text] = '' if display_segment != true
-            else
-              # don't display
-              element[:atoms][j][:text] = '' #j > 0 ? ' ' : ''
-            end
-          end
-        else
-          # the element does not contain atoms
-          next unless element && element[:condition]
-
-          result = evaluate(args, element[:condition])
-
-          if [true, false].include? result
-              display_element = false
-              if element[:condition_segment].to_i == 0 && result == true
-                display_element = true
-              elsif element[:condition_segment].to_i == 1 && result == false
-                display_element = true
-              end
-
-              element[:type] = :hidden if display_element != true
-            else
-              # don't display
-              element[:type] = :hidden
-            end
-        end
-      end
-
-      new_hash = display_lines.hash
-      if @hashed_display == new_hash && !@refresh
-        return
-      else 
-        $second_hash ||= @hashed_display unless $first_hash.nil?
-        $first_hash ||= @hashed_display
-        @display.update(display_lines, state.forked.navigated)
-        @hashed_display = new_hash
-        @refresh = false
-      end
-    end
-
-    def fetch_story args, story_file
+    def fetch_story _args, story_file
       # story_text = gtk.read_file STORY_FILE
       story_text = gtk.read_file(story_file)
 
@@ -487,13 +414,13 @@ Tell Akz to write a better error message."
     # RUBY EXECUTION
     #####################
 
-    def evaluate(args, command)
+    def evaluate(_args, command)
       # don't evalulate empty commands
       return if command.strip == ("\"\"")
 
       # puts "Evaluating: #{command}"
       begin
-        result = eval(command)
+        eval(command)
       rescue Exception => e
         line_no = e.to_s.split[1].chop.to_i
 

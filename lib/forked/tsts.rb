@@ -57,7 +57,7 @@ module Forked
     # This function will compare the subject hash to the expectation hash
     # If they match, the test passes
     # If they do not match, the test fails
-    def forked_test(test_id: nil, expect: nil, print_subject: false)
+    def forked_test(test_id: nil, expect: nil)
       # if no expect and no id, error out
       unless test_id || expect
         raise "No test id or expectation provided"
@@ -161,9 +161,10 @@ module Forked
 
       outputs.debug << prims
 
-      button_over = inputs.mouse.point.inside_rect?({ x: xoff, y: y, w: bw, h: bh, anchor_x: 0.5, anchor_y: 0.5 } )
+      mouse = inputs.mouse
+      button_over = mouse.point.inside_rect?({ x: xoff, y: y, w: bw, h: bh, anchor_x: 0.5, anchor_y: 0.5 } )
 
-      if inputs.mouse.click && button_over
+      if mouse.click && button_over
         update_expectation id, expectation
       end
     end

@@ -295,18 +295,19 @@ module Forked
       kd = inputs.keyboard.key_down
       kh = inputs.keyboard.key_held
 
-      # TODO
+      # TODO scrolling & button input
 
       # Bugging
       # navigation between pages must reset scroll
 
-      # √ Cycle buttons: Tab/Shift-Tab
-      # √ Cycle visible buttons: Left/Right Arrows
-      # √ Scroll by lines: Up/Down Arrows
-      # √ Pgup/Pgdn
+      # [x] Cycle buttons: Tab/Shift-Tab
+      # [x] Cycle visible buttons: Left/Right Arrows
+      # [x] Scroll by lines: Up/Down Arrows
+      # [x] Pgup/Pgdn
       # Implement everything for controller
-      # √ New file for display interactions (button handling, scrolling, etc)
+      # [x] New file for display interactions (button handling, scrolling, etc)
       # Home/end
+      # [x] continuous scrolling
 
       # √ Cycle buttons:
       # √ Scroll to button (wraparound)
@@ -332,6 +333,20 @@ module Forked
           if key.start_with?('shift_')
             mod = :shift
             key = key.to_s.split('_')[1].to_sym
+          end
+
+          h = kh.send(key)
+          if h && (Kernel.tick_count - h) > 20
+            case act
+            when :down
+              scroll_by_line_amount = -1 * calc_scroll_by_row_amount(1)
+              scroll_by(scroll_by_line_amount)
+              return
+            when :up
+              scroll_by_line_amount = 1* calc_scroll_by_row_amount(1)
+              scroll_by(scroll_by_line_amount)
+              return
+            end
           end
 
           next if !kd.send(key) ||
@@ -446,12 +461,28 @@ module Forked
     def get_controller_selection
       # "==== def get_controller_selection"
       kd = inputs.controller_one.key_down
+      kh = inputs.controller_one.key_held
 
       scroll_by_line_amount = calc_scroll_by_row_amount(@scroll_lines)
       scroll_by_page_amount = calc_scroll_by_screen_amount
 
       data.controller_input_defaults.each do |act, keys|
         keys.each do |key|
+
+        h = kh.send(key)
+        if h && (Kernel.tick_count - h) > 20
+          case act
+          when :down
+            scroll_by_line_amount = -1 * calc_scroll_by_row_amount(1)
+            scroll_by(scroll_by_line_amount)
+            return
+          when :up
+            scroll_by_line_amount = 1* calc_scroll_by_row_amount(1)
+            scroll_by(scroll_by_line_amount)
+            return
+          end
+        end
+
          next if !kd.send(key)
 
          case act
