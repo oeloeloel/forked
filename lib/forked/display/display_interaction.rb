@@ -1,6 +1,7 @@
 module Forked
+  # main display class
   class Display
-    attr_accessor :bg_clicked, :mouse_up_handled, :mouse_down_handled, :scroll_handled, :roll_handled
+    attr_accessor :mouse_up_handled, :mouse_down_handled, :scroll_handled, :roll_handled
 
     ### INPUT HANDLING
 
@@ -8,17 +9,16 @@ module Forked
       # "==== def input"
       scroll_step_to_target
       mouse_scroll
-      autoscroll
       @bg_clicked = click_on_bg
 
       calc_double_click
 
       if @bg_clicked
-        if @double_clicked
-          @autoscroll_step = 1.5
-        else
-          @autoscroll_step = 4
-        end
+        @autoscroll_step = if @double_clicked
+                             1.5
+                           else
+                             4
+                           end
       end
 
       return if data.options.nil? || data.options.empty?
@@ -41,18 +41,14 @@ module Forked
       if args.inputs.mouse.down
         # has the mouse been pressed within a short time of the first press
         # register a possible double click
-        if Kernel.global_tick_count - (inputs.mouse.previous_click&.global_created_at || 0) <= delay
-          @mouse_double_pressed = true
-        else
-          @mouse_double_pressed = false
-        end
+        @mouse_double_pressed = (Kernel.global_tick_count -
+                                (inputs.mouse.previous_click&.global_created_at ||
+                                0) <= delay)
       end
       # has the mouse been released?
-      if args.inputs.mouse.up
-        if @mouse_double_pressed
-          @double_clicked = true
-          return true
-        end
+      if args.inputs.mouse.up && @mouse_double_pressed
+        @double_clicked = true
+        return true
       end
 
       nil
@@ -63,7 +59,7 @@ module Forked
       if args.inputs.mouse.down && !@mouse_down_handled
         @mouse_down_on_bg = true
       elsif args.inputs.mouse.up
-        mouse_up_on_bg = true if !@mouse_up_handled
+        mouse_up_on_bg = true unless @mouse_up_handled
         result = @mouse_down_on_bg && mouse_up_on_bg ? true : false
         @mouse_down_on_bg = false
       end
@@ -71,9 +67,6 @@ module Forked
     end
 
     ### END OF INPUT HANDLING
-
-    
-
 
     def init_scrolling
       # "==== def init_scrolling"
@@ -134,7 +127,7 @@ module Forked
     # automatically scrolls to @scroll_target
     def scroll_step_to_target
       diff = -(@scroll_offset - @scroll_target)
-      @scroll_offset += diff / @autoscroll_step 
+      @scroll_offset += diff / @autoscroll_step
     end
 
     def mouse_scroll
@@ -145,7 +138,7 @@ module Forked
       return unless @last_scroll_cause == :player
 
       calc_scroll_max
-      scroll_accel = ($args.inputs.mouse.wheel&.y || 0) * @scroll_speed
+      scroll_accel = (inputs.mouse.wheel&.y || 0) * @scroll_speed
       @scroll_vel -= scroll_accel
       @scroll_vel *= @scroll_friction
       @scroll_vel = 0 if @scroll_vel.abs < 0.01
@@ -153,30 +146,10 @@ module Forked
       @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
     end
 
-    def autoscroll
-      return unless @last_scroll_cause == :story
-
-      bottom = $top_of_the_bottom + 40
-      scroll_area_height = 720 - bottom
-      autoscroll_target = if @scroll_height < scroll_area_height
-                            0
-                          else
-                            @scroll_height - scroll_area_height
-                          end
-      diff = -(@scroll_offset - autoscroll_target)
-      @scroll_offset += diff / @autoscroll_step
-    end
-
     def calc_scroll_max
-      @scroll_max += @scroll_offset + ($top_of_the_bottom || 0) + 40
+      @scroll_max += @scroll_offset + 40
       @scroll_max = @scroll_max.clamp(0)
     end
-
-    # never called
-    # def calc_autoscroll
-    #   # "==== calc_autoscroll #{caller}"
-    #   @last_scroll_cause = :story # yes to autoscrolling
-    # end
 
     ### CHECKS
 
@@ -228,33 +201,33 @@ module Forked
 
     def check_keyboard_activation_start
       kd = inputs.keyboard.key_down
-      data.keyboard_input_defaults[:activate].any? { |k| kd.send(k) }
+      data.keyboard_input_defaults[:activate].any? { |key| kd.send(key) }
     end
 
     def check_keyboard_activation
       kh = inputs.keyboard.key_held
-      data.keyboard_input_defaults[:activate].any? { |k| kh.send(k) }
+      data.keyboard_input_defaults[:activate].any? { |key| kh.send(key) }
     end
 
     def check_keyboard_activation_end
       ku = inputs.keyboard.key_up
-      data.keyboard_input_defaults[:activate].any? { |k| ku.send(k) }
+      data.keyboard_input_defaults[:activate].any? { |key| ku.send(key) }
     end
 
     def check_controller_activation_start
       c1 = inputs.controller_one
-      data.controller_input_defaults[:activate].any? { |k| c1.key_down.send(k) } if c1.connected
+      data.controller_input_defaults[:activate].any? { |key| c1.key_down.send(key) } if c1.connected
     end
 
     def check_controller_activation
       c1 = inputs.controller_one
-      data.controller_input_defaults[:activate].any? { |k| c1.key_held.send(k) } if c1.connected
+      data.controller_input_defaults[:activate].any? { |key| c1.key_held.send(key) } if c1.connected
     end
 
     def check_controller_activation_end
       c1 = inputs.controller_one
 
-      data.controller_input_defaults[:activate].any? { |k| c1.key_up.send(k) } if c1.connected
+      data.controller_input_defaults[:activate].any? { |key| c1.key_up.send(key) } if c1.connected
     end
 
     def check_mouse_activation_start
@@ -290,40 +263,10 @@ module Forked
 
       rollover
     end
-    
+
     def get_keyboard_selection
       kd = inputs.keyboard.key_down
       kh = inputs.keyboard.key_held
-
-      # TODO scrolling & button input
-
-      # Bugging
-      # navigation between pages must reset scroll
-
-      # [x] Cycle buttons: Tab/Shift-Tab
-      # [x] Cycle visible buttons: Left/Right Arrows
-      # [x] Scroll by lines: Up/Down Arrows
-      # [x] Pgup/Pgdn
-      # Implement everything for controller
-      # [x] New file for display interactions (button handling, scrolling, etc)
-      # Home/end
-      # [x] continuous scrolling
-
-      # √ Cycle buttons:
-      # √ Scroll to button (wraparound)
-      # √ Return new buttons selection (always)
-
-      # √ Cycle visible buttons
-      # √ Select next visible button (wraparound)
-      # √ WHAT IF NO BUTTONS ARE VISIBLE? No action, deselect
-      # √ Return new button selection if not deselected
-
-      # √ Scroll by lines
-      # √ Scroll by 5 lines in direction
-      # ? If current selection is not on-screen, deselect? Maybe not.
-
-      # Pgup/Pgdn
-      # √ scroll by almost one screen's height
 
       scroll_by_line_amount = calc_scroll_by_row_amount(@scroll_lines)
       scroll_by_page_amount = calc_scroll_by_screen_amount
@@ -336,16 +279,16 @@ module Forked
           end
 
           h = kh.send(key)
-          if h && (Kernel.tick_count - h) > 20
+          if h && (Kernel.tick_count - h) > 10
             case act
             when :down
               scroll_by_line_amount = -1 * calc_scroll_by_row_amount(1)
               scroll_by(scroll_by_line_amount)
-              return
+              return nil
             when :up
-              scroll_by_line_amount = 1* calc_scroll_by_row_amount(1)
+              scroll_by_line_amount = 1 * calc_scroll_by_row_amount(1)
               scroll_by(scroll_by_line_amount)
-              return
+              return nil
             end
           end
 
@@ -367,35 +310,30 @@ module Forked
           when :next_visible
             # cycle forward through all visible buttons
             visible_buttons = get_all_visible_buttons
-            return if visible_buttons.empty?
+            return nil if visible_buttons.empty?
 
-            # use previously selected option if no selection
-            if data.selected_option == -1
-              data.selected_option = data.previous_selected_option
-            end
+            data.selected_option = data.previous_selected_option if data.selected_option == -1
 
             if data.selected_option == -1 ||
-                data.selected_option < visible_buttons[0] ||
-                data.selected_option > visible_buttons[-1]
+               data.selected_option < visible_buttons[0] ||
+               data.selected_option > visible_buttons[-1]
               return visible_buttons[0]
             else
               selection_idx = visible_buttons.find_index(data.selected_option)
               next_selection_idx = (selection_idx + 1).clamp_wrap(0, visible_buttons.size - 1)
               next_selection = visible_buttons[next_selection_idx]
-              return next_selection if rect_is_fully_onscreen?(data.options[next_selection]) 
+              return next_selection if rect_is_fully_onscreen?(data.options[next_selection])
             end
           when :prev_visible
             # cycle backward through all visible buttons
             visible_buttons = get_all_visible_buttons
-            return if visible_buttons.empty?
+            return nil if visible_buttons.empty?
 
-            if data.selected_option == -1
-              data.selected_option - data.previous_selected_option
-            end
+            data.selected_option - data.previous_selected_option if data.selected_option == -1
 
             if data.selected_option == -1 ||
-                data.selected_option < visible_buttons[0] ||
-                data.selected_option > visible_buttons[-1]
+               data.selected_option < visible_buttons[0] ||
+               data.selected_option > visible_buttons[-1]
               return visible_buttons[-1]
             else
               selection_idx = visible_buttons.find_index(data.selected_option)
@@ -429,7 +367,7 @@ module Forked
     end
 
     def get_all_visible_buttons
-      data.options.map_with_index do |b, i| 
+      data.options.map_with_index do |b, i|
         i if b.inside_rect?(args.grid.rect)
       end.compact
     end
@@ -446,16 +384,16 @@ module Forked
     end
 
     def button_scroll_dist(button)
-      b = data.options[button]
+      btn = data.options[button]
       # how far below the bottom of the visible screen is the bottom of the button?
-      return b.y if b.y < 0
+      return btn.y if btn.y.negative?
 
       # how far above the top of the visible screen is the top of the button?
-      dist = b.y + b.h - args.grid.h
-      return dist if dist > 0
+      dist = btn.y + btn.h - args.grid.h
+      return dist if dist.positive?
 
       # button is not off-screen
-      return 0
+      0
     end
 
     def get_controller_selection
@@ -468,29 +406,28 @@ module Forked
 
       data.controller_input_defaults.each do |act, keys|
         keys.each do |key|
-
-        h = kh.send(key)
-        if h && (Kernel.tick_count - h) > 20
-          case act
-          when :down
-            scroll_by_line_amount = -1 * calc_scroll_by_row_amount(1)
-            scroll_by(scroll_by_line_amount)
-            return
-          when :up
-            scroll_by_line_amount = 1* calc_scroll_by_row_amount(1)
-            scroll_by(scroll_by_line_amount)
-            return
+          h = kh.send(key)
+          if h && (Kernel.tick_count - h) > 10
+            case act
+            when :down
+              scroll_by_line_amount = -1 * calc_scroll_by_row_amount(1)
+              scroll_by(scroll_by_line_amount)
+              return nil
+            when :up
+              scroll_by_line_amount = 1 * calc_scroll_by_row_amount(1)
+              scroll_by(scroll_by_line_amount)
+              return nil
+            end
           end
-        end
 
-         next if !kd.send(key)
+          next unless kd.send(key)
 
-         case act
-         when :next
-             # tab forward through all reachable buttons
-             target = relative_to_absolute_selection(1)
-             scroll_to_button(target)
-             return target 
+          case act
+          when :next
+            # tab forward through all reachable buttons
+            target = relative_to_absolute_selection(1)
+            scroll_to_button(target)
+            return target
           when :prev
             # tab backward through all reachable buttons
             target = relative_to_absolute_selection(-1)
@@ -499,36 +436,32 @@ module Forked
           when :next_visible
             # cycle forward through all visible buttons
             visible_buttons = get_all_visible_buttons
-            return if visible_buttons.empty?
+            return nil if visible_buttons.empty?
 
             # use previously selected option if no selection
-            if data.selected_option == -1
-              data.selected_option = data.previous_selected_option
-            end
+            data.selected_option = data.previous_selected_option if data.selected_option == -1
 
             if data.selected_option == -1 ||
-                data.selected_option < visible_buttons[0] ||
-                data.selected_option > visible_buttons[-1]
+               data.selected_option < visible_buttons[0] ||
+               data.selected_option > visible_buttons[-1]
               return visible_buttons[0]
             else
               selection_idx = visible_buttons.find_index(data.selected_option)
               next_selection_idx = (selection_idx + 1).clamp_wrap(0, visible_buttons.size - 1)
               next_selection = visible_buttons[next_selection_idx]
-              return next_selection if rect_is_fully_onscreen?(data.options[next_selection]) 
+              return next_selection if rect_is_fully_onscreen?(data.options[next_selection])
             end
 
           when :prev_visible
             # cycle backward through all visible buttons
             visible_buttons = get_all_visible_buttons
-            return if visible_buttons.empty?
+            return nil if visible_buttons.empty?
 
-            if data.selected_option == -1
-              data.selected_option - data.previous_selected_option
-            end
+            data.selected_option - data.previous_selected_option if data.selected_option == -1
 
             if data.selected_option == -1 ||
-                data.selected_option < visible_buttons[0] ||
-                data.selected_option > visible_buttons[-1]
+               data.selected_option < visible_buttons[0] ||
+               data.selected_option > visible_buttons[-1]
               return visible_buttons[-1]
             else
               selection_idx = visible_buttons.find_index(data.selected_option)
@@ -557,16 +490,6 @@ module Forked
           end
         end
       end
-
-    
-
-      # if c1.connected
-      #   if data.controller_input_defaults[:next].any? { |k| c1.key_down.send(k) }
-      #     return relative_to_absolute_selection(1)
-      #   elsif data.controller_input_defaults[:prev].any? { |k| c1.key_down.send(k) }
-      #     return relative_to_absolute_selection(-1)
-      #   end
-      # end
 
       nil
     end
