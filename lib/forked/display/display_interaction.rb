@@ -1,8 +1,6 @@
 module Forked
   # main display class
   class Display
-    attr_accessor :mouse_up_handled, :mouse_down_handled, :scroll_handled, :roll_handled
-
     ### INPUT HANDLING
 
     def input
@@ -10,7 +8,6 @@ module Forked
       scroll_step_to_target
       mouse_scroll
       @bg_clicked = click_on_bg
-
       calc_double_click
 
       if @bg_clicked
@@ -108,10 +105,10 @@ module Forked
       args.grid.h - 120
     end
 
-    def scroll_by_row(n)
+    def scroll_by_row(num)
       para = data.style.paragraph
       line_height = para.size_px * para.line_spacing
-      scroll_dist = line_height * n
+      scroll_dist = line_height * num
       @scroll_target -= scroll_dist
       @scroll_target = @scroll_target.clamp(@scroll_min, @scroll_max)
     end
@@ -215,19 +212,19 @@ module Forked
     end
 
     def check_controller_activation_start
-      c1 = inputs.controller_one
-      data.controller_input_defaults[:activate].any? { |key| c1.key_down.send(key) } if c1.connected
+      ctr = inputs.controller_one
+      data.controller_input_defaults[:activate].any? { |key| ctr.key_down.send(key) } if ctr.connected
     end
 
     def check_controller_activation
-      c1 = inputs.controller_one
-      data.controller_input_defaults[:activate].any? { |key| c1.key_held.send(key) } if c1.connected
+      ctr = inputs.controller_one
+      data.controller_input_defaults[:activate].any? { |key| ctr.key_held.send(key) } if ctr.connected
     end
 
     def check_controller_activation_end
-      c1 = inputs.controller_one
+      ctr = inputs.controller_one
 
-      data.controller_input_defaults[:activate].any? { |key| c1.key_up.send(key) } if c1.connected
+      data.controller_input_defaults[:activate].any? { |key| ctr.key_up.send(key) } if ctr.connected
     end
 
     def check_mouse_activation_start
@@ -278,8 +275,8 @@ module Forked
             key = key.to_s.split('_')[1].to_sym
           end
 
-          h = kh.send(key)
-          if h && (Kernel.tick_count - h) > 10
+          held_at = kh.send(key)
+          if held_at && (Kernel.tick_count - held_at) > 10
             case act
             when :down
               scroll_by_line_amount = -1 * calc_scroll_by_row_amount(1)
@@ -367,8 +364,8 @@ module Forked
     end
 
     def get_all_visible_buttons
-      data.options.map_with_index do |b, i|
-        i if b.inside_rect?(args.grid.rect)
+      data.options.map_with_index do |btn, idx|
+        idx if btn.inside_rect?(args.grid.rect)
       end.compact
     end
 
@@ -406,8 +403,8 @@ module Forked
 
       data.controller_input_defaults.each do |act, keys|
         keys.each do |key|
-          h = kh.send(key)
-          if h && (Kernel.tick_count - h) > 10
+          held_at = kh.send(key)
+          if held_at && (Kernel.tick_count - held_at) > 10
             case act
             when :down
               scroll_by_line_amount = -1 * calc_scroll_by_row_amount(1)
