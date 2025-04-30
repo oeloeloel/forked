@@ -5,13 +5,19 @@
 * Improvement: Control scheme has changed due to the introduction of scrolling and some improvements have been added. The (configurable) control scheme defaults are as follows:
   * Scroll content area up or down: 
     * Mouse: Scroll Wheel
-    * Controller: Left Stick
-  * Cycle through buttons with direct scroll (select the previous or next button and scroll directly to it if it is not visible)
-    * Keyboard: Tab/Shift-Tab, Left/Right or A/D keys
-    * Controller: DPad Left/Right
-  * Cycle through buttons with incremental scroll (select the previous or next button and scroll three lines towards it if it is not visible)
-    * Keyboard: Up/Down or W/S keys
-    * Controller: DPad Up/Down
+    * Keyboard: Up/Down Arrows (or W/S keys)
+    * Controller: DPad or Left Stick Up/Down
+  * Scroll one page up or one page down
+    * Keyboard: Pgup/Pgdown
+    * Controller Left Trigger/Right Trigger
+  * Scroll to top/bottom
+    * Keyboard: Home/End
+  * Cycle through VISIBLE buttons
+    * Keyboard: Left/Right Arrows (or A/D keys)
+    * Controller: Left/Right Dpad or Left Stick
+  * Cycle through ALL buttons
+    * Keyboard: Tab/Shift-Tab
+    * Controller: Left Shoulder Bumper/Right Shoulder Bumper
   
 
 ### Version 0.0.13
