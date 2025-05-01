@@ -1,6 +1,5 @@
-## Next version
 
-### Experimental Branch Changes
+### Version 0.0.13
 * Feature: Content now scrolls if it exceeds the height of the viewable area. See below for scrolling controls.
 * Improvement: Control scheme has changed due to the introduction of scrolling and some improvements have been added. The (configurable) control scheme defaults are as follows:
   * Scroll content area up or down: 
@@ -18,9 +17,7 @@
   * Cycle through ALL buttons
     * Keyboard: Tab/Shift-Tab
     * Controller: Left Shoulder Bumper/Right Shoulder Bumper
-  
 
-### Version 0.0.13
 * Experimental feature: Include Chunk command allows writers to include other chunks in the current chunk. This is useful when the same content is repeated in more than one chunk. The included chunk is appended to the current chunk and should be included from an action block as follows:
 ```
 ## Parent Chunk
@@ -45,7 +42,6 @@ Minor changes:
 * Theme changes to meet changes in style handling for background boxes in buttons, blockquotes and code-blocks
 * Bugfix: Fixed issue where a condition without text could cause an exception
 
-## Current version
 ### Version 0.0.12
 * Orientation Change Handling:
   * Forked now automatically detects an orientation change (see Author Mode changes below). Styles are re-applied after orientation changes. On mobile devices, Forked will change orientation when the device is rotated (be sure to set `orientation=landscape,portrait` in game_metadata.txt)
