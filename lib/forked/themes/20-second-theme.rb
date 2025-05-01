@@ -50,43 +50,34 @@ module TWENTY_SECOND_THEME
           **BLUE,
           size_enum: body_font_size_enum,
           font: CODE_FONT,
-        },
-        code_block_box: {
-          **PALE_PURPLE
+          background_color: PALE_PURPLE
         },
         blockquote: {
           **PURPLE,
           font: ITALIC_FONT,
           size_enum: body_font_size_enum,
+          background_color: BLUE
         },
-        blockquote_box: {
-          **BLUE
-        },
-        button: {
+        button: button = {
           r: 51, g: 51, b: 51,
           font: REGULAR_FONT,
           size_enum: body_font_size_enum,
-        },
-        button_box: {
-          **YELLOW_PALE
+          background_color: YELLOW_PALE
         },
         selected_button: {
+          **button,
           r: 51, g: 51, b: 51, 
-        },
-        selected_button_box: {
-          **YELLOW_BRIGHT
+          background_color: YELLOW_BRIGHT
         },
         disabled_button: {
+          **button,
           r: 51, g: 51, b: 51,
-        },
-        disabled_button_box: {
-          **YELLOW_DARK
+          background_color: YELLOW_DARK
         },
         active_button: {
+          **button,
           r: 51, g: 51, b: 51, 
-        },
-        active_button_box: {
-          **PALE_GREEN
+          background_color: PALE_GREEN
         },
         bold: {
           name: "bold",

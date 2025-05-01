@@ -1,3 +1,50 @@
+## Next version
+
+### Experimental Branch Changes
+* Feature: Content now scrolls if it exceeds the height of the viewable area. See below for scrolling controls.
+* Improvement: Control scheme has changed due to the introduction of scrolling and some improvements have been added. The (configurable) control scheme defaults are as follows:
+  * Scroll content area up or down: 
+    * Mouse: Scroll Wheel
+    * Keyboard: Up/Down Arrows (or W/S keys)
+    * Controller: DPad or Left Stick Up/Down
+  * Scroll one page up or one page down
+    * Keyboard: Pgup/Pgdown
+    * Controller Left Trigger/Right Trigger
+  * Scroll to top/bottom
+    * Keyboard: Home/End
+  * Cycle through VISIBLE buttons
+    * Keyboard: Left/Right Arrows (or A/D keys)
+    * Controller: Left/Right Dpad or Left Stick
+  * Cycle through ALL buttons
+    * Keyboard: Tab/Shift-Tab
+    * Controller: Left Shoulder Bumper/Right Shoulder Bumper
+  
+
+### Version 0.0.13
+* Experimental feature: Include Chunk command allows writers to include other chunks in the current chunk. This is useful when the same content is repeated in more than one chunk. The included chunk is appended to the current chunk and should be included from an action block as follows:
+```
+## Parent Chunk
+:: include_chunk("#child_chunk") ::
+
+This is the content of the parent chunk.
+
+### Child Chunk
+
+This is the content of the child chunk.
+```
+Note that the heading of the child chunk is not displayed and chunk actions in the child chunk will not be executed (but other code, such as conditions/interpolation and trigger actions will).
+
+* Experimental feature: Chunk Headings can be indicated with 3 hashes `###` (a level 3 heading). When working in a code editor that supports markdown, level 3 headings can be collapsed, allowing the writer to focus on and navigate between level 2 headings (`##`). This may be helpful when working with the `include_chunk` command (see above).
+
+Minor changes:
+* Headings are no longer followed by a horizontal rule by default. To underline a header, add `---` (a horizontal rule) to the story file:
+```
+## This Heading is Underlined
+---
+```
+* Theme changes to meet changes in style handling for background boxes in buttons, blockquotes and code-blocks
+* Bugfix: Fixed issue where a condition without text could cause an exception
+
 ## Current version
 ### Version 0.0.12
 * Orientation Change Handling:

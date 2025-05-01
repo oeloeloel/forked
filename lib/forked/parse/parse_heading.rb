@@ -5,8 +5,7 @@ module Forked
       # The heading line starts a new chunk
       # The heading line begins with a double #
       def parse_heading(line, context, story, line_no)
-        return unless line.strip.start_with?('##') &&
-                      !line.strip.start_with?('###')
+        return unless line.strip.start_with?('##')
 
         prohibited_contexts = [:code_block, :action_block, :condition_code_block, :trigger_action]
         mandatory_contexts = []
@@ -16,7 +15,11 @@ module Forked
         context.clear
 
         line.strip!
-        line.delete_prefix!('##').strip!
+        line.delete_prefix!('##')
+        line.strip!
+        line.delete_prefix!('#')
+        line.strip!
+
 
         gfm_slug = make_slug(unescape(line, @escapable)) # GFM style header navigation
 
@@ -40,11 +43,7 @@ module Forked
         hdg = make_heading_hash
         hdg[:text] = unescape(heading, @escapable)
 
-        rul = make_rule_hash
-        rul[:weight] = 3
-
         chk[:content] << hdg
-        chk[:content] << rul
 
         story[:chunks] << chk
         true
