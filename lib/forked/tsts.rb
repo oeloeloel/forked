@@ -4,12 +4,6 @@ module Forked
     # FORKED TESTING
     ################
 
-    # TODO: Testing
-    # [ ] go through test files and 
-    #     [ ] add test ids
-    #     [ ] remove failed expectations
-    #     [ ] underline headings
-
     # Testing Boolean Conditions does not update the test data file
     # [ ] don't update the test expectation if there is no id
 
@@ -17,7 +11,7 @@ module Forked
     # Load the test data from a file
     # Or create a new file if it does not exist
     def ftest_init(file)
-      puts "==== def ftest_init(file)"
+      # "==== def ftest_init(file)"
       putz "loaded file #{file}"
 
       @test_data_file_path = ftest_data_file_path file
@@ -63,7 +57,7 @@ module Forked
     # This function will compare the subject hash to the expectation hash
     # If they match, the test passes
     # If they do not match, the test fails
-    def forked_test(test_id: nil, expect: nil, print_subject: false)
+    def forked_test(test_id: nil, expect: nil)
       # if no expect and no id, error out
       unless test_id || expect
         raise "No test id or expectation provided"
@@ -167,9 +161,10 @@ module Forked
 
       outputs.debug << prims
 
-      button_over = inputs.mouse.point.inside_rect?({ x: xoff, y: y, w: bw, h: bh, anchor_x: 0.5, anchor_y: 0.5 } )
+      mouse = inputs.mouse
+      button_over = mouse.point.inside_rect?({ x: xoff, y: y, w: bw, h: bh, anchor_x: 0.5, anchor_y: 0.5 } )
 
-      if inputs.mouse.click && button_over
+      if mouse.click && button_over
         update_expectation id, expectation
       end
     end
