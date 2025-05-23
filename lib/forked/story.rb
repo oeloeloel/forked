@@ -323,7 +323,13 @@ Tell Akz to write a better error message."
 
     def present(args)
       # display_lines = data.current_lines.copy
-      display_lines = data.current_lines
+
+      # TODO: check on this next line. The `.copy` was removed possibly because I thought
+      # it was not needed or it may have been done to fix a different problem.
+      # it's needed to prevent the original data from being modified when changed
+      # by a conditional.
+  
+      display_lines = data.current_lines.copy
       display_lines.each do |element|
         # deal first with content that contains atoms
         if element[:atoms]
