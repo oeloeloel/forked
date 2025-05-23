@@ -195,7 +195,7 @@ def default_button
     font: 'fonts/roboto/roboto-bold.ttf',
     r: 204, g: 204, b: 204,
     spacing_after: 0.7,
-    spacing_between: 0.25
+    spacing_between: 0.4
   )
 end
 
@@ -205,6 +205,8 @@ def default_button_box
     padding_top: 6,
     padding_right: 15,
     padding_bottom: 6,
+    margin_right: 5,
+    margin_left: 5,
     background_color: { r: 51, g: 51, b: 51 }
   )
 end
