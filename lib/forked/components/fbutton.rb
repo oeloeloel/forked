@@ -31,6 +31,11 @@ module Effed
                       end
       end
 
+      # previous code is conditional on status existing
+      # there's a possibility that status is nil.
+      # adding exception to make that easier to troubleshoot if it happens
+      raise "FORKED: FButton primitives array does not exist" unless @primitives
+
       @output = @primitives.map do |prim|
         {
           **prim,
