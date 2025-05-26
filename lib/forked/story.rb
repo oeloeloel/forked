@@ -322,7 +322,7 @@ Tell Akz to write a better error message."
     end
 
     def present(args)
-      # display_lines = data.current_lines.copy
+      # display_lines = data.current_lines
 
       # TODO: check on this next line. The `.copy` was removed possibly because I thought
       # it was not needed or it may have been done to fix a different problem.
