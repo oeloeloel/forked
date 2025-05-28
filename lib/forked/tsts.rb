@@ -97,7 +97,6 @@ module Forked
     end
 
     def update_expectation test_id, expectation
-      # puts "==== def update_expectation test_id"
       unless test_id
         raise "No test id provided"
       end
@@ -106,15 +105,26 @@ module Forked
     end
 
     def identify_test_subject
+      return if outputs.primitives.empty?
+
       test_mark = []
+      # it's easy to misremember the corret syntax for the test markers, so similar formulations are allowed
+      valid_starts = ["<! start test !>", "<! test start !>", "<! start_test !>", "<! test_start !>"]
+      valid_ends = ["<! end test !>", "<! test end !>", "<! end_test !>", "<! test_end !>"]
       outputs.primitives.each_with_index do |prim, i|
-        if prim&.text && prim&.text&.strip == "<! start test !>"
+        if prim&.text && valid_starts.any?(prim&.text&.strip)
           test_mark << i + 1
-        elsif prim&.text && prim&.text&.strip == "<! end test !>"
+        elsif prim&.text && valid_ends.any?(prim&.text&.strip) 
           test_mark << i - 1
         end
       end
-      return "Test does not contain two marks" if test_mark.count < 2
+
+      # did not find the required test markers
+      if test_mark.count < 2
+        raise "Testing Error: Test does not contain two testing markers. "\
+        "Tests require two markers to be placed around the area to be tested: "\
+        "'<! start test !> and '<! end test !>."
+      end
 
       subject = outputs.primitives[test_mark[0]..test_mark[1]]
       subject.to_s.hash
