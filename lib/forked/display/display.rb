@@ -591,7 +591,6 @@ module Forked
       elsif background.background_color
         outputs.background_color = background.background_color
       end
-
       args.outputs.primitives << data.primitives
     end
   end
