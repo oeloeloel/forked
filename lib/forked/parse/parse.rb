@@ -15,6 +15,7 @@ require_relative 'parse_rule'
 require_relative 'parse_title'
 require_relative 'parse_trigger'
 require_relative 'parse_custom_block'
+require_relative 'parse_button_row'
 
 module Forked
   # parses the story file

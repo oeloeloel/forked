@@ -31,68 +31,6 @@ module Forked
       # parse callout block opening, closing, code section, segments
       def parse_callout(_escaped, line, context, story, _line_no, story_lines)
         return unless context_safe?(context, %i[code_block action_block])
-        # match_start = '<?'
-        # match_separator = '??'
-        match_end = '?>'
-
-        # check for and handle an opening
-        # if open is found on line AND NOTHING ELSE, return true
-        # if open is found and there is a left string, return result ([left, right])
-        # if open is found and text follows, return right
-        # if open is not found, return is nil
-        # result = parse_opening_callout(line, match_start, context, story, story_lines)
-        # case result
-        # when Array # opening was found but text comes first
-        #   return result[0]
-        # when String # open was found, with more on line, continue
-        #   line = result
-        # when true # open found, nothing else on line, we're done
-        #   return result
-        # end
-
-        return unless context.include? :callout
-
-        # result = parse_opening_callout_segment(line, match_separator, context, story_lines)
-        # case result
-        # when TrueClass
-        #   return result
-        # when String
-        #   line = result
-        # when Array
-        #   line = result[0]
-        #   # don't return or block doesn't get processed
-        # end
-
-        # check for and handle a closing
-        result = parse_closing_callout(line, match_end, context, story, story_lines)
-        case result
-        when Array # content before close, continue with result[0]
-          line = result[0]
-        when String # if interpolation is happening, string will be the inter tag and we can stop
-          return result if result == "«««INTER»»»"
-
-          line = result
-        when TrueClass # processed, finished
-          return result
-        when NilClass
-          # didn't find a closing, continue to parse for code
-        end
-
-        if context.include?(:callout_code_block)
-          result = parse_callout_code(line, context, story)
-          case result
-          when TrueClass
-            return result
-          end
-        end
-
-        line
-      end
-
-
-      # parse callout block opening, closing, code section, segments
-      def parse_callout_old(_escaped, line, context, story, _line_no, story_lines)
-        return unless context_safe?(context, %i[code_block action_block])
 
         match_start = '<?'
         match_separator = '??'
@@ -156,7 +94,6 @@ module Forked
       # add lines to the chunk's cond_itions array at the last element
       # this code is not applied until the code block is complete
       def parse_callout_code(line, context, story)
-        # "==== def parse_callout_code(line, context, story) | #{Kernel.tick_count}"
         return unless context.include?(:callout_code_block)
         return if line.strip.empty?
 
@@ -177,7 +114,6 @@ module Forked
       # returns true if match_start is found with no other text
       # returns nil if match_start is not found
       def parse_opening_callout(line, match_start, context, story, story_lines)
-        # "==== def parse_opening_callout(line, match_start, context, story, story_lines)" 
         # return false if match does not exist or if context is wrong
         return if !line.include?(match_start) ||
                   !context_safe?(context, [:callout])
@@ -225,7 +161,6 @@ module Forked
       #   string (right text) if text after match
       #   array [left text, match_end + right text] if text before match
       def parse_closing_callout(line, match_end, context, _story, story_lines)
-        # "==== def parse_closing_callout(line, match_end, context, _story, story_lines)"
         # return nil if line does not include match or context is not correct
         return if !line.include?(match_end) || !context_safe?(context, [], [:callout])
 
@@ -283,7 +218,6 @@ module Forked
       end
 
       def parse_opening_callout_segment(line, match_separator, context, story_lines)
-        # "==== def parse_opening_callout_segment(line, match_separator, context, story_lines)"
         # check segment opening
 
         if line.include?(match_separator) &&
