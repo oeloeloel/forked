@@ -9,6 +9,8 @@ require_relative 'display_image'
 require_relative 'display_paragraph'
 require_relative 'display_rule'
 require_relative 'display_callout'
+require_relative 'display_custom_block'
+require_relative 'display_button_row'
 
 $gtk.reset
 
