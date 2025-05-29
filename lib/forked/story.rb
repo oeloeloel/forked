@@ -149,6 +149,11 @@ module Forked
       raise "FORKED: Broken link. Unable to find the chunk `#{chunk_id}`"
     end
 
+    # returns true if the chunk exists in the story
+    def chunk_exists?(chunk_id)
+      state.forked.story.chunks.any? { |c| c.id == chunk_id}
+    end
+
     # accepts chunk ID, finds the chunk index and calls navigate()
     def navigate_id(chunk_id)
       idx = find_chunk_index_from_id(chunk_id)
