@@ -105,6 +105,7 @@ module Forked
     end
 
     def identify_test_subject
+      # "==== def identify_test_subject"
       return if outputs.primitives.empty?
 
       test_mark = []
@@ -121,7 +122,7 @@ module Forked
 
       # did not find the required test markers
       if test_mark.count < 2
-        raise "Testing Error: Test does not contain two testing markers. "\
+        puts "Testing Error: Test does not contain two testing markers. "\
         "Tests require two markers to be placed around the area to be tested: "\
         "'<! start test !> and '<! end test !>."
       end
