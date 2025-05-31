@@ -4,7 +4,7 @@ module Forked
     class << self
       def parse_custom_block(escaped, line, context, story, line_no, story_lines)
         return if line.strip.empty?
-        return unless context_safe?(context, %i[code_block action_block])
+        return unless context_safe?(context, %i[condition_code_block code_block action_block])
 
         # is there an opening custom block? Get its name and add it to the custom blocks list
         element_name = parse_custom_block_opening(escaped, line, context, story, line_no, story_lines)
