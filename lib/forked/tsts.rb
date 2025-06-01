@@ -125,7 +125,7 @@ module Forked
         puts "Testing Error: Test does not contain two testing markers. "\
         "Tests require two markers to be placed around the area to be tested: "\
         "'<! start test !> and '<! end test !>."
-        return
+        return "Testing Error"
       end
 
       subject = outputs.primitives[test_mark[0]..test_mark[1]]
