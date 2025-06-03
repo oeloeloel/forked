@@ -113,13 +113,6 @@ module Forked
 
       data.primitives << output_labels
 
-      # output_labels.flatten.each do |r|
-      #   outputs.debug << {
-      #     **r,
-      #     w: gtk.calcstringbox(r.text, style.size_enum, style.font)[0],
-      #     h: -style.size_px,
-      #   }.border!
-      # end
       # return the y_pos for the next element
       y = empty_paragraph ? y_pos : new_y_pos
       [y, output_labels]
