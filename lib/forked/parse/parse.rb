@@ -161,7 +161,7 @@ module Forked
         while (line = story_lines.shift)
           line_no += 1 if @increment_line_no
           @increment_line_no = true
-          # puts "#{line_no + 1}: #{line.strip}" unless line.strip.empty?
+          # "#{line_no + 1}: #{line.strip}" unless line.strip.empty?
 
           escaped = escape(line, @escapable)
 
