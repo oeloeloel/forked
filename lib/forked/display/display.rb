@@ -125,7 +125,6 @@ module Forked
         unhighlight_selected_option if data.selected_option >= 0
         if data.selected_option >= 0
           data.previous_selected_option = data.selected_option
-          # putz "previous selected option #{data.previous_selected_option}"
         end
         data.selected_option = select
         highlight_selected_option if data.selected_option >= 0
