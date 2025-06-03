@@ -26,6 +26,12 @@ module Forked
       # process player input (mouse, keyboard, controller)
       check_input
 
+      # make the display hash and send it to the display object
+      # before 02-06-2025, this line ran after the display tick
+      # to fix a bug that caused chunks to display 1 tick after
+      # they are created
+      present args
+
       # create and feed the display object
       @display ||= Display.new(@theme)
       @display.args = args
@@ -33,13 +39,15 @@ module Forked
 
       check_and_handle_orientation_change
 
-      # make the display hash and send it to the display object
-      present args
-
       # create the Author object. Author mode provides tools for the developer.
       @author ||= Author.new(self)
       @author.args = args
       @author.tick
+
+      # tests changed on 02-06-2026 to accomodate the fix for a bug that caused chunks to 
+      # display 1 tick after they are created. This method performs a test if one has been
+      # requested in the story with the `forked_test` command
+      perform_forked_test
     end
 
     def defaults
@@ -173,6 +181,7 @@ module Forked
 
     # navigates to the chunk with the provided index number
     def navigate(idx)
+      # "==== def navigate(idx) | #{Kernel.tick_count}"
       if idx.nil?
         raise "FORKED: TARGET NOT FOUND. "\
         "Cannot navigate to the specified chunk."
@@ -207,6 +216,9 @@ module Forked
       state.forked.options = []
 
       state.forked.navigated = true
+
+      # necesarry to reset the scroll because navigated was already processed this tick
+      @display.reset_scroll
       process_new_chunk
     end
 
@@ -404,6 +416,9 @@ Tell Akz to write a better error message."
       # else 
       $second_hash ||= @hashed_display unless $first_hash.nil?
       $first_hash ||= @hashed_display
+
+      putz "state.forked.navigated: #{state.forked.navigated}" if state.forked.navigated
+
       @display.update(display_lines, state.forked.navigated)
       @hashed_display = new_hash
       @refresh = false
