@@ -207,6 +207,11 @@ module Forked
     ################
 
     def update(content, navigated)
+      # fixes a bug in dev mode after a hot-reload or ctrl-r reset
+      # bug occured on 02-06-2025 when present was moved to be called before
+      # display to resolve issue where primitives appeared 1 tick after chunk loads
+      # *** should not *** affect production
+      return unless data&.style
       # "==== def update(content, navigated) | #{Kernel.tick_count} | caller: #{caller}"
       update_selection(navigated)
 
