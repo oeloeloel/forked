@@ -25,7 +25,7 @@ module Forked
       end
 
       def parse_custom_block_opening(escaped, line, context, story, line_no, story_lines)
-        # puts "==== def parse_custom_block_opening(escaped, line, context, story, line_no, story_lines)"
+        # "==== def parse_custom_block_opening(escaped, line, context, story, line_no, story_lines)"
 
         element_name = register_custom_element(line)
         return unless element_name
