@@ -219,6 +219,8 @@ module Forked
 
       # necesarry to reset the scroll because navigated was already processed this tick
       @display.reset_scroll
+      # same deal for the currently selected option
+      @display.deselect_selected_option
       process_new_chunk
     end
 

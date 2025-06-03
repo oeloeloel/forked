@@ -492,5 +492,10 @@ module Forked
 
       nil
     end
+
+    def deselect_selected_option
+      data.selected_option = -1
+      data.previous_selected_option = -1
+    end
   end
 end
