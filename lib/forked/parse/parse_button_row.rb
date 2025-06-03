@@ -21,17 +21,6 @@ module Forked
 
       # parse button_row block opening, closing, code section, segments
       def parse_button_row(_escaped, line, context, story, _line_no, story_lines)
-
-        # TODO adding button row
-        # [x] need to track buttons added to row
-        # [x] need to check that there is 1 or more buttons
-        # [x] need to check that there is no other non-button thing
-        # [x] need to create a container hash
-        # [x] need to destroy the container hash if there is no button... or handle it on the display side?
-        # [x] need to add the container hash to the story (one time only)
-        # [ ] check the commented block for conditionals
-        # [x] check and probably fix code in button code block
-
         # "==== def parse_button_row(_escaped, line, context, story, _line_no, story_lines)"
         return unless context_safe?(context, %i[code_block action_block])
 
@@ -120,66 +109,6 @@ module Forked
         end
       end
 
-      # when we are inside the code block
-      # add lines to the chunk's cond_itions array at the last element
-      # this code is not applied until the code block is complete
-      # def parse_button_row_code(line, context, story)
-      #   return unless context.include?(:button_row_code_block)
-      #   return if line.strip.empty?
-
-      #   # add the line to the chunk's cond_itions
-      #   story[:chunks][-1][:parse_actions][-1] += line
-
-      #   last_element(story).type = line.strip.to_sym
-
-      #   # stop processing this line
-      #   true
-      # end
-
-      # detects and handles opening block
-      # handles text before and after opening block
-      # opens contexts
-      # returns array [left, match_start + right] if text is found before match_start
-      # returns string if match_start is found with text from right
-      # returns true if match_start is found with no other text
-      # returns nil if match_start is not found
-      # def parse_opening_button_row(line, match_start, context, story, story_lines)
-      #   puts "==== def parse_opening_button_row(line, match_start, context, story, story_lines)"
-      #   # return false if match does not exist or if context is wrong
-      #   return if !line.include?(match_start) ||
-      #             !context_safe?(context, [:button_row])
-
-      #   # check for opening block
-      #   result = split_at_first_unescaped_instance(line, match_start)
-
-      #   # return false if match does not exist (escaped at this point)
-      #   return unless result
-
-      #   # if match is preceded by text
-      #   unless result[0].strip.empty?
-      #     # unshift match start + right text to lines array (if right text is not blank)
-      #     unshift_to_line_array(story_lines, "<: #{result[1]}") # unless result[1].strip.empty?
-
-      #     # return array [left of match, match + right of match]
-      #     return result
-      #   end
-
-      #   # open contexts
-      #   context << :button_row
-      #   context << :button_row_code_block
-
-      #   # create empty parse_actions for filling later
-      #   story[:chunks][-1][:parse_actions] << ''
-
-      #   # create empty button_row container for filling later
-
-      #   # last_content(story, context) << make_button_row_hash
-      #   story[:chunks][-1][:content] << make_button_row_hash
-
-      #   # if match is followed, return string right of match
-      #   # if match is not followed, we're done, return true
-      #   result[1].strip.empty? ? true : result[1]
-      # end
 
       # parse_closing_button_row
       # detects and handles button_row closing (match_end)
@@ -247,44 +176,6 @@ module Forked
         # this line is spent, return true
         true
       end
-
-      # def parse_opening_button_row_segment(line, match_separator, context, story_lines)
-      #   # check segment opening
-
-      #   if line.include?(match_separator) &&
-      #      (context.include?(:button_row) ||
-      #      context.include?(:button_row_segment))
-
-      #     result = split_at_first_unescaped_instance(line, match_separator)
-      #     # the split was made and
-      #     # there is content to the left of the split
-      #     if result
-      #       if !result[0].strip.empty?
-      #         # there's something before the segment (code?)
-      #         line = result[0]
-      #         # # unshift match_separator + right text to lines array (if right text is not blank)
-      #         unshift_to_line_array(story_lines, "#{match_separator} #{result[1]}") # unless result[1].strip.empty?
-      #         return result[0] if context.include?(:button_row_segment)
-
-      #         return result
-      #       elsif context.include?(:button_row_code_block)
-      #         context.delete(:button_row_code_block)
-      #         context << :button_row_segment
-      #         @button_row_segment_count = 0
-      #         unshift_to_line_array(story_lines, result[1].to_s) unless result[1].strip.empty?
-      #         return true
-      #       elsif context.include?(:button_row_segment)
-      #         @button_row_segment_count += 1
-      #         unshift_to_line_array(story_lines, result[1].to_s) unless result[1].strip.empty?
-      #         return true
-      #       else
-      #         line = result[1]
-      #       end
-      #     end
-
-      #     line
-      #   end
-      # end
 
       def make_button_row_hash
         {
