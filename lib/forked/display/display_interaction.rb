@@ -494,6 +494,7 @@ module Forked
     end
 
     def deselect_selected_option
+      # "==== def deselect_selected_option"
       data.selected_option = -1
       data.previous_selected_option = -1
     end
