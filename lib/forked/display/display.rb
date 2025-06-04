@@ -123,9 +123,13 @@ module Forked
 
       if select && !navigated
         unhighlight_selected_option if data.selected_option >= 0
-        if data.selected_option >= 0
-          data.previous_selected_option = data.selected_option
-        end
+
+        # next section removed on 03-06-2025 due to fixing 1 tick display lag issue
+        # this caused the previous selection to be incorrectly recalled after navigation
+        # if data.selected_option >= 0
+          # data.previous_selected_option = data.selected_option
+          # putz "setting previous active option to #{data.selected_option}"
+        # end
         data.selected_option = select
         highlight_selected_option if data.selected_option >= 0
         if inputs.last_active == :mouse
