@@ -328,7 +328,7 @@ module Forked
 
             # TODO: Weird line. Looks like it does nothing. Probably a typo and the - should be a =
             # but fixing it might break things 🤔
-            data.selected_option - data.previous_selected_option if data.selected_option == -1
+            data.selected_option = data.previous_selected_option if data.selected_option == -1
 
             if data.selected_option == -1 ||
                data.selected_option < visible_buttons[0] ||
