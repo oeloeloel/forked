@@ -743,6 +743,14 @@ Tell Akz to write a better error message."
       devmode = gtk.production ? '' : '-dev'
       "data/#{save_type.to_s}-#{state.forked.story_id}#{devmode}.txt"
     end
+
+    # set styles from inside the story file
+    # passes to same method in Display
+    def set_style element_name, style_changes
+      return unless @display
+      
+      @display.set_style element_name, style_changes
+    end
   end
 end
 
