@@ -85,6 +85,15 @@ module Forked
       highlight_selected_option
     end
 
+    # merge a hash into the loaded style data for a component
+    def set_style(element, style)
+      # "==== def set_style(element, style)"
+      return unless style.is_a? Hash
+      return unless data.style&.[](element)
+
+      data.style[element].merge!(style)
+    end
+
     ### UPDATE SELECTION
 
     def update_selection(navigated = nil)
