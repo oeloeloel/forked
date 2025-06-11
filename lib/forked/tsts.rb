@@ -131,7 +131,7 @@ module Forked
       return if outputs.primitives.empty?
 
       test_mark = []
-      # it's easy to misremember the corret syntax for the test markers, so similar formulations are allowed
+      # it's not easy to remember the correct syntax for the test markers, so similar formulations are allowed
       valid_starts = ["<! start test !>", "<! test start !>", "<! start_test !>", "<! test_start !>"]
       valid_ends = ["<! end test !>", "<! test end !>", "<! end_test !>", "<! test_end !>"]
       outputs.primitives.each_with_index do |prim, i|
