@@ -51,8 +51,10 @@ module Forked
       args.state.forked.author_mode_sidebar = @sidebar_display_toggle
 
       @fps_toggle = !@fps_toggle if k_d.send(@framerate_key)
-      outputs.debug << "FPS: #{args.gtk.current_framerate_calc.round.to_s}(#{
-      args.gtk.current_framerate.round.to_s})" if @fps_toggle
+
+      if @fps_toggle
+        outputs.watch "FPS: #{args.gtk.current_framerate.round.to_s} | Simulation: #{args.gtk.current_framerate_calc.round.to_s} | Render: #{args.gtk.current_framerate_render.round.to_s}"
+      end
 
       if k_d.send(@orientation_toggle_key)
         $gtk.toggle_orientation
