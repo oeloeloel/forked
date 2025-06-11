@@ -1,3 +1,22 @@
+### Version 0.0.14
+* Feature: Button Rows. This is a custom block element that displays a series of buttons horizontally on the same line. If there are more buttons than fit on one line, Forked will wrap the buttons over multiple lines. Each line is centered. Syntax:
+```
+<? button_row ??
+  [Climb the highest mountain](#climb_mountain)
+  [Swim the deepest sea](#swim_sea)
+  [Watch TV](#watch_tv)
+?>
+```
+* Experimental Feature: Custom Blocks are a step towards making it easier for a dev to create custom elements without having to overhaul the code base. Custom blocks can contain other elements. The dev only needs to provide a method to parse the element and a method to display it. `button_row` and `callout` are examples of custom blocks.
+* Added ability to justify text (experimental feature, may be slow for larger texts)
+* Added ability to right-align text
+* Added `set_style` method to change display styles for specified element:
+```
+<: set_style(:paragraph, {text_align: :right, size_enum: 10})> 
+```
+* Added method: `chunk_exists?(chunk_id)` method. Allows author to check to see if a chunk exists before navigating to it. Accepts `chunk_id`, returns true if chunk exists and false if chunk does not exist.
+* Bugfixes: Fixed display issue that caused rendering to lag 1 tick behind; fixed *numerous* other issues resulting from fixing the display issue.
+
 
 ### Version 0.0.13
 * Feature: Content now scrolls if it exceeds the height of the viewable area. See below for scrolling controls.

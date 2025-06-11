@@ -15,6 +15,7 @@ module Forked
       putz "loaded file #{file}"
 
       @test_data_file_path = ftest_data_file_path file
+      @test_requested = nil
 
       # attempt to load the test data file 
       result = load_ftest_data_file file
@@ -51,13 +52,34 @@ module Forked
       gtk.write_file (@test_data_file_path), @ftest_data.to_s
     end
 
+    # this is called from inside the forked story file
+    # it can't run in the middle of the tick (there is nothing to check)
+    # so it stores the request for later
+    def forked_test(test_id: nil, expect: nil)
+      unless test_id || expect
+        raise "No test id or expectation provided"
+      end
+
+      @test_requested = {test_id: test_id, expect: expect}
+    end
+
     ### MAIN TEST
 
-    # Forked test function, called from the test file
+    # Forked test function, called from $story
     # This function will compare the subject hash to the expectation hash
     # If they match, the test passes
     # If they do not match, the test fails
-    def forked_test(test_id: nil, expect: nil)
+    def perform_forked_test
+      # only perform a test if it has been requested
+      return unless @test_requested
+
+      # return if not expected
+      # set variables
+      test_id = @test_requested.test_id
+      expect =  @test_requested.expect
+
+      @test_requested = nil
+
       # if no expect and no id, error out
       unless test_id || expect
         raise "No test id or expectation provided"
@@ -66,7 +88,6 @@ module Forked
       subject_hash = identify_test_subject
       expect = identify_expectation test_id, expect
 
-      # putz "identified expectation: #{expect}"
       # This block is not needed but maybe a warning would be helpful here
       # if !expect
       #   raise "No expectation found for test id: #{test_id}"
@@ -87,7 +108,7 @@ module Forked
     # return the provided expectation hash
     # if no expectation is provided, return the saved expectation
     def identify_expectation test_id, expect
-      # puts "==== def identify_expectation expect"
+      # "==== def identify_expectation #{expect}"
 
       if expect
         expect
@@ -97,7 +118,6 @@ module Forked
     end
 
     def update_expectation test_id, expectation
-      # puts "==== def update_expectation test_id"
       unless test_id
         raise "No test id provided"
       end
@@ -106,15 +126,29 @@ module Forked
     end
 
     def identify_test_subject
+      # "==== def identify_text_subject"
+
+      return if outputs.primitives.empty?
+
       test_mark = []
+      # it's not easy to remember the correct syntax for the test markers, so similar formulations are allowed
+      valid_starts = ["<! start test !>", "<! test start !>", "<! start_test !>", "<! test_start !>"]
+      valid_ends = ["<! end test !>", "<! test end !>", "<! end_test !>", "<! test_end !>"]
       outputs.primitives.each_with_index do |prim, i|
-        if prim&.text && prim&.text&.strip == "<! start test !>"
+        if prim&.text && valid_starts.any?(prim&.text&.strip)
           test_mark << i + 1
-        elsif prim&.text && prim&.text&.strip == "<! end test !>"
+        elsif prim&.text && valid_ends.any?(prim&.text&.strip) 
           test_mark << i - 1
         end
       end
-      return "Test does not contain two marks" if test_mark.count < 2
+
+      # did not find the required test markers
+      if test_mark.count < 2
+        puts "Testing Error: Test does not contain two testing markers. "\
+        "Tests require two markers to be placed around the area to be tested: "\
+        "'<! start test !> and '<! end test !>."
+        return "Testing Error"
+      end
 
       subject = outputs.primitives[test_mark[0]..test_mark[1]]
       subject.to_s.hash
@@ -128,7 +162,7 @@ module Forked
     end
 
     def ftest_result_fail(id, expectation)
-      # puts "==== def ftest_result_fail(id)"
+      # "==== def ftest_result_fail(id)"
       xoff = 20
       y = 60
       font_size = -2

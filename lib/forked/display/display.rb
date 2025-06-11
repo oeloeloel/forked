@@ -9,6 +9,8 @@ require_relative 'display_image'
 require_relative 'display_paragraph'
 require_relative 'display_rule'
 require_relative 'display_callout'
+require_relative 'display_custom_block'
+require_relative 'display_button_row'
 
 $gtk.reset
 
@@ -83,6 +85,15 @@ module Forked
       highlight_selected_option
     end
 
+    # merge a hash into the loaded style data for a component
+    def set_style(element, style)
+      # "==== def set_style(element, style)"
+      return unless style.is_a? Hash
+      return unless data.style&.[](element)
+
+      data.style[element].merge!(style)
+    end
+
     ### UPDATE SELECTION
 
     def update_selection(navigated = nil)
@@ -121,10 +132,13 @@ module Forked
 
       if select && !navigated
         unhighlight_selected_option if data.selected_option >= 0
-        if data.selected_option >= 0
-          data.previous_selected_option = data.selected_option
-          # putz "previous selected option #{data.previous_selected_option}"
-        end
+
+        # next section removed on 03-06-2025 due to fixing 1 tick display lag issue
+        # this caused the previous selection to be incorrectly recalled after navigation
+        # if data.selected_option >= 0
+          # data.previous_selected_option = data.selected_option
+          # putz "setting previous active option to #{data.selected_option}"
+        # end
         data.selected_option = select
         highlight_selected_option if data.selected_option >= 0
         if inputs.last_active == :mouse
@@ -205,6 +219,89 @@ module Forked
     ################
 
     def update(content, navigated)
+      # fixes a bug in dev mode after a hot-reload or ctrl-r reset
+      # bug occured on 02-06-2025 when present was moved to be called before
+      # display to resolve issue where primitives appeared 1 tick after chunk loads
+      # *** should not *** affect production
+      return unless data&.style
+      # "==== def update(content, navigated) | #{Kernel.tick_count} | caller: #{caller}"
+      update_selection(navigated)
+
+      reset_scroll if navigated
+
+      data.primitives = []
+      data.options = []
+
+      ### Add @scroll_offset to y_pos to scroll all elements
+      y_pos = data.style.display.margin_top.from_top + @scroll_offset
+
+      original_y_pos = 600
+      next_y_pos = y_pos
+      height = data.style.display.margin_top
+
+      content.each_with_index do |item, i|
+        previous_element_type = content[i - 1][:type]
+        @last_element_type = content[i - 1][:type]
+        @last_printed_element_type ||= :none
+
+        case item[:type]
+        when :heading
+          next_y_pos = display_heading(y_pos, item, previous_element_type)
+          height += y_pos - next_y_pos
+        when :rule
+          next_y_pos = display_rule(y_pos, item, previous_element_type)
+          height += y_pos - next_y_pos
+        when :paragraph
+          next_y_pos = display_paragraph(y_pos, item)
+          height += y_pos - next_y_pos
+        when :code_block
+          next_y_pos = display_code_block(y_pos, item, previous_element_type)
+          height += y_pos - next_y_pos
+        when :blockquote
+          next_y_pos = display_blockquote(y_pos, item)
+          height += y_pos - next_y_pos
+        when :trigger, :button
+          next_y_pos = display_button(y_pos, item, content, i)
+          height += y_pos - next_y_pos
+          highlight_selected_option
+        when :image
+          next_y_pos = display_image(y_pos, item)
+          height += y_pos - next_y_pos
+        when :blank
+          # nothing
+        when :hidden
+          # nothing
+        when :callout
+          next_y_pos = display_callout(y_pos, item)
+          height += y_pos - next_y_pos
+        when :callout_menu
+          next_y_pos = display_callout_menu(y_pos, item)
+          height += y_pos - next_y_pos
+        when :carousel_menu
+          next_y_pos = display_carousel_menu(y_pos, item)
+          height += y_pos - next_y_pos
+        else
+          # this might be a custom block, check it
+          next_y_pos = display_custom_block(y_pos, item)
+          # if it's not a registered custom block, it will return nil
+          raise "Unexpected item type: #{item.type}" unless next_y_pos
+
+          height += y_pos - next_y_pos
+        end
+
+        if !(next_y_pos - y_pos).zero? ||
+           item[:type] == :blank
+          @last_printed_element_type = item[:type]
+        end
+
+        @scroll_max = -next_y_pos
+        y_pos = next_y_pos
+      end
+
+      @scroll_height = height
+    end
+
+    def update_old_20250529(content, navigated)
       update_selection(navigated)
 
       reset_scroll if navigated
@@ -275,53 +372,6 @@ module Forked
       end
 
       @scroll_height = height
-    end
-
-    def update_old(content, navigated)
-      update_selection(navigated)
-
-      data.primitives = []
-      data.options = []
-
-      y_pos = data.style.display.margin_top.from_top
-      next_y_pos = y_pos
-
-      content.each_with_index do |item, i|
-        previous_element_type = content[i - 1][:type]
-        @last_element_type = content[i - 1][:type]
-        @last_printed_element_type ||= :none
-
-        case item[:type]
-        when :heading
-          next_y_pos = display_heading(y_pos, item, previous_element_type)
-        when :rule
-          next_y_pos = display_rule(y_pos, item, previous_element_type)
-        when :paragraph
-          next_y_pos = display_paragraph(y_pos, item)
-        when :code_block
-          next_y_pos = display_code_block(y_pos, item, previous_element_type)
-        when :blockquote
-          # next_y_pos = display_blockquote(y_pos, item, previous_element_type, content, i)
-          next_y_pos = display_blockquote(y_pos, item)
-        when :button
-          next_y_pos = display_button(y_pos, item, content, i)
-          highlight_selected_option
-        when :image
-          next_y_pos = display_image(y_pos, item)
-        when :blank
-          # nothing
-        when :hidden
-          # nothing
-        when :callout
-          next_y_pos = display_callout(y_pos, item)
-        end
-
-        if !(next_y_pos - y_pos).zero? ||
-           item[:type] == :blank
-          @last_printed_element_type = item[:type]
-        end
-        y_pos = next_y_pos
-      end
     end
 
     ###############
@@ -591,7 +641,6 @@ module Forked
       elsif background.background_color
         outputs.background_color = background.background_color
       end
-
       args.outputs.primitives << data.primitives
     end
   end

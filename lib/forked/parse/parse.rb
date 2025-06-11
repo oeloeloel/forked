@@ -14,6 +14,8 @@ require_relative 'parse_preformatted_line'
 require_relative 'parse_rule'
 require_relative 'parse_title'
 require_relative 'parse_trigger'
+require_relative 'parse_custom_block'
+require_relative 'parse_button_row'
 
 module Forked
   # parses the story file
@@ -39,7 +41,127 @@ module Forked
         while (line = story_lines.shift)
           line_no += 1 if @increment_line_no
           @increment_line_no = true
-          # puts "#{line_no + 1}: #{line.strip}" unless line.strip.empty?
+          # "#{line_no + 1}: #{line.strip}" unless line.strip.empty?
+
+          escaped = escape(line, @escapable)
+
+          ### PREFORMATTED LINE (^@@) and stop parsing it
+          result = parse_preformatted_line(escaped, context, story, line_no)
+          next if result
+
+          ### STRIP C COMMENT (//) and continue parsing line
+          result = parse_c_comment(escaped, context)
+          if result
+            next if result == true
+
+            line = result
+            escaped = result
+          end
+
+          ### HTML COMMENTS (<!-- -->)
+          result = parse_html_comment(escaped, context, line_no)
+          next unless result
+
+          escaped = result
+
+          ### TITLE
+          result = parse_title(escaped, context, story, line_no)
+          next if result
+
+          # Forked wants the first non-blank, non comment line of
+          # the story file to be the title. The exception was
+          # removed here to allow for different behaviour here
+          # (possible secret title page behaviour)
+
+          ### CUSTOM BLOCK (includes callout)
+          result = parse_custom_block(escaped, line, context, story, line_no, story_lines)
+          case result
+          when TrueClass
+            next # finished processing line, go to next line
+          when NilClass
+            # nothing doing, continue processing line
+          else
+            raise "Unexpected result parsing condition block: #{result.class}"
+          end
+
+          ### BLOCKQUOTE
+          result = parse_blockquote(line, context, story, line_no)
+          next if result
+
+          ### HEADING LINE
+          result = parse_heading(escaped, context, story, line_no)
+          next if result
+
+          ### RULE
+          result = parse_rule(escaped, context, story, line_no)
+          next if result
+
+          ### CODE FENCE
+          result = parse_code_fence(escaped, context, story, line_no)
+          next if result
+
+          ### TRIGGER
+          # currently works for newstyle colon and old-style backtick trigger actions
+          result = parse_trigger(escaped, context, story, line_no)
+          next if result
+
+          ### IMAGE
+          result = parse_image2(escaped, context, story, line_no)
+          next if result
+
+          ### CONDITION
+          result = parse_condition_block2(escaped, line, context, story, line_no, story_lines)
+          case result
+          when String # line must change, continue processing
+            line = result
+            escaped = escape(line, @escapable)
+          when TrueClass
+            next # finished processing line, go to next line
+          when NilClass
+            # nothing doing, continue processing line
+          else
+            raise "Unexpected result parsing condition block: #{result.class}"
+          end
+
+          ### CODE BLOCK
+          result = parse_code_block(escaped, line, context, story, line_no)
+          next if result
+
+          ### ACTION BLOCK
+          result = parse_action_block(escaped, line, context, story, line_no)
+          next if result
+
+          # PARAGRAPH
+          parse_paragraph2(escaped, context, story, line_no)
+
+          # MEANINGFUL BLANK LINE
+          result = parse_blank(line, context, story, line_no)
+          next if result
+        end
+
+        story
+      end
+
+
+      def parse_old(story_file)
+        raise 'FORKED: The story file is missing.' if story_file.nil?
+        raise 'FORKED: The story file is empty.' if story_file.empty?
+
+        # used when parsing inline styles
+        @style_marks = make_style_marks
+
+        # Empty story
+        story = make_story_hash
+        context = [:title] # we're looking for a title and nothing else right now
+        @escapable = make_escapable_list
+        story_lines = story_file.lines
+        line_no = -1
+        @increment_line_no = true
+
+        while (line = story_lines.shift)
+          line_no += 1 if @increment_line_no
+          @increment_line_no = true
+          # "#{line_no + 1}: #{line.strip}" unless line.strip.empty?
 
           escaped = escape(line, @escapable)
 

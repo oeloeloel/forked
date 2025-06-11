@@ -26,6 +26,12 @@ module Forked
       # process player input (mouse, keyboard, controller)
       check_input
 
+      # make the display hash and send it to the display object
+      # before 02-06-2025, this line ran after the display tick
+      # to fix a bug that caused chunks to display 1 tick after
+      # they are created
+      present args
+
       # create and feed the display object
       @display ||= Display.new(@theme)
       @display.args = args
@@ -33,13 +39,15 @@ module Forked
 
       check_and_handle_orientation_change
 
-      # make the display hash and send it to the display object
-      present args
-
       # create the Author object. Author mode provides tools for the developer.
       @author ||= Author.new(self)
       @author.args = args
       @author.tick
+
+      # tests changed on 02-06-2026 to accomodate the fix for a bug that caused chunks to 
+      # display 1 tick after they are created. This method performs a test if one has been
+      # requested in the story with the `forked_test` command
+      perform_forked_test
     end
 
     def defaults
@@ -149,6 +157,11 @@ module Forked
       raise "FORKED: Broken link. Unable to find the chunk `#{chunk_id}`"
     end
 
+    # returns true if the chunk exists in the story
+    def chunk_exists?(chunk_id)
+      state.forked.story.chunks.any? { |c| c.id == chunk_id}
+    end
+
     # accepts chunk ID, finds the chunk index and calls navigate()
     def navigate_id(chunk_id)
       idx = find_chunk_index_from_id(chunk_id)
@@ -168,6 +181,7 @@ module Forked
 
     # navigates to the chunk with the provided index number
     def navigate(idx)
+      # "==== def navigate(idx) | #{Kernel.tick_count}"
       if idx.nil?
         raise "FORKED: TARGET NOT FOUND. "\
         "Cannot navigate to the specified chunk."
@@ -202,6 +216,11 @@ module Forked
       state.forked.options = []
 
       state.forked.navigated = true
+
+      # necesarry to reset the scroll because navigated was already processed this tick
+      @display.reset_scroll
+      # same deal for the currently selected option
+      @display.deselect_selected_option
       process_new_chunk
     end
 
@@ -322,8 +341,14 @@ Tell Akz to write a better error message."
     end
 
     def present(args)
-      # display_lines = data.current_lines.copy
-      display_lines = data.current_lines
+      # display_lines = data.current_lines
+
+      # TODO: check on this next line. The `.copy` was removed possibly because I thought
+      # it was not needed or it may have been done to fix a different problem.
+      # it's needed to prevent the original data from being modified when changed
+      # by a conditional.
+  
+      display_lines = data.current_lines.copy
       display_lines.each do |element|
         # deal first with content that contains atoms
         if element[:atoms]
@@ -393,6 +418,9 @@ Tell Akz to write a better error message."
       # else 
       $second_hash ||= @hashed_display unless $first_hash.nil?
       $first_hash ||= @hashed_display
+
+      putz "state.forked.navigated: #{state.forked.navigated}" if state.forked.navigated
+
       @display.update(display_lines, state.forked.navigated)
       @hashed_display = new_hash
       @refresh = false
@@ -714,6 +742,14 @@ Tell Akz to write a better error message."
     def save_path_get(save_type)
       devmode = gtk.production ? '' : '-dev'
       "data/#{save_type.to_s}-#{state.forked.story_id}#{devmode}.txt"
+    end
+
+    # set styles from inside the story file
+    # passes to same method in Display
+    def set_style element_name, style_changes
+      return unless @display
+      
+      @display.set_style element_name, style_changes
     end
   end
 end

@@ -19,15 +19,22 @@ module Effed
 
     def force_status_change(status)
       # disabled, enabled, focused, active
-      @primitives = if status == :active && @data.active
-                      @data.active
-                    elsif status == :focused && @data.focused && !$gtk.platform?(:touch)
-                      @data.focused
-                    elsif status == :disabled && @data.disabled
-                      @data.disabled
-                    else
-                      @data.enabled
-                    end
+      if status
+        @primitives = if status == :active && @data.active
+                        @data.active
+                      elsif status == :focused && @data.focused && !$gtk.platform?(:touch)
+                        @data.focused
+                      elsif status == :disabled && @data.disabled
+                        @data.disabled
+                      else
+                        @data.enabled
+                      end
+      end
+
+      # previous code is conditional on status existing
+      # there's a possibility that status is nil.
+      # adding exception to make that easier to troubleshoot if it happens
+      raise "FORKED: FButton primitives array does not exist" unless @primitives
 
       @output = @primitives.map do |prim|
         {
@@ -39,6 +46,18 @@ module Effed
           h: prim.h || @data.rect.h
         }
       end
+    end
+
+    def x=(x)
+      @data.rect.x = x
+      @x = x
+      force_status_change(nil)
+    end
+
+    def y=(y)
+      @data.rect.y = y
+      @y = y
+      force_status_change(nil)
     end
 
     def draw_override(ffi_draw)
@@ -74,7 +93,7 @@ module Effed
     end
 
     def serialize
-      { x: @x, y: @y, w: @w, h: @h, text: @text }
+      { x: @x, y: @y, w: @w, h: @h, text: @text, action: @action }
     end
 
     def inspect

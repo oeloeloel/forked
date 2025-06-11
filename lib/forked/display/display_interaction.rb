@@ -326,7 +326,9 @@ module Forked
             visible_buttons = get_all_visible_buttons
             return nil if visible_buttons.empty?
 
-            data.selected_option - data.previous_selected_option if data.selected_option == -1
+            # TODO: Weird line. Looks like it does nothing. Probably a typo and the - should be a =
+            # but fixing it might break things 🤔
+            data.selected_option = data.previous_selected_option if data.selected_option == -1
 
             if data.selected_option == -1 ||
                data.selected_option < visible_buttons[0] ||
@@ -489,6 +491,12 @@ module Forked
       end
 
       nil
+    end
+
+    def deselect_selected_option
+      # "==== def deselect_selected_option"
+      data.selected_option = -1
+      data.previous_selected_option = -1
     end
   end
 end
